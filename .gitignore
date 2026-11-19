@@ -1,6 +1,10 @@
 # Dependencies
 node_modules/
 
+# Sourcebooks & PDFs (Keep copyrighted rulebooks local only)
+sourcebooks/
+*.pdf
+
 # Local Environment & Logs
 *.log
 .env

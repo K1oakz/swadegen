@@ -762,6 +762,51 @@ export function calculateSkillRollModifiers(
     }
   }
 
+  // --- Sci-Fi Modifiers ---
+  // Hacking
+  if (lowerId === 'hacking' || lowerName.includes('hacking')) {
+    if (hasEdge('scifi_power_hacker')) {
+      totalMod += 2;
+      breakdown.push('Power Hacker: +2');
+    }
+  }
+
+  // Science
+  if (lowerId === 'science' || lowerName.includes('science')) {
+    if (hasEdge('scifi_exo_scientist')) {
+      totalMod += 2;
+      breakdown.push('Exo Scientist: +2');
+    }
+  }
+
+  // Piloting / Driving / Boating
+  if (lowerId === 'piloting' || lowerId === 'driving' || lowerId === 'boating') {
+    if (hasEdge('scifi_soft_touch')) {
+      totalMod += 2;
+      breakdown.push('Soft Touch: +2');
+    }
+    if (lowerId === 'piloting' && hasEdge('scifi_rocket_jock')) {
+      totalMod += 2;
+      breakdown.push('Rocket Jock: +2');
+    }
+  }
+
+  // Persuasion
+  if (lowerId === 'persuasion' || lowerName.includes('persuasion')) {
+    if (hasEdge('scifi_deceptive')) {
+      totalMod += 2;
+      breakdown.push('Deceptive: +2');
+    }
+  }
+
+  // Low Tech Hindrance (applies to high-tech skills)
+  const lowTech = getHindrance('scifi_low_tech');
+  if (lowTech && ['electronics', 'hacking', 'repair', 'science'].includes(lowerId)) {
+    const penalty = lowTech.severity === 'Major' ? 4 : 2;
+    totalMod -= penalty;
+    breakdown.push(`Low Tech (${lowTech.severity}): -${penalty}`);
+  }
+
   return { totalMod, breakdown };
 }
 

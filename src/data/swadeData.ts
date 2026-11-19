@@ -305,6 +305,277 @@ export const SWADE_ANCESTRIES: AncestryDef[] = [
       { name: 'The Thirst (Minor)', description: 'Must consume fresh blood periodically or suffer Fatigue.' }
     ]
   },
+  // --- SCIENCE FICTION COMPANION ANCESTRIES ---
+  {
+    id: 'centaux',
+    name: 'Centaux',
+    source: 'scifi',
+    summary: 'Centaur-like species with four animal legs and a humanoid upper body. Fast, stable, but large Size.',
+    paceMod: 2,
+    sizeMod: 1,
+    toughnessMod: 1,
+    traits: [
+      { name: 'Big', description: 'Centaux bodies are large and ungainly. Subtract 2 from Trait rolls when using equipment not designed for them; clothing and armor cost double.' },
+      { name: 'Fleet-Footed', description: 'Pace is 8 and running die is d8.' },
+      { name: 'Stable', description: 'Four legs ignore Difficult Ground penalties.' },
+      { name: 'Distinctive Appearance', description: 'Stand out in any crowd; easy to identify.' }
+    ]
+  },
+  {
+    id: 'draken',
+    name: 'Draken',
+    source: 'scifi',
+    summary: 'Tough, intimidating reptilian beings reminiscent of dragons, with armored head crests and strong frames.',
+    attributeBonuses: { strength: 1 },
+    paceMod: -1,
+    toughnessMod: 1,
+    traits: [
+      { name: 'Strong', description: 'Draken are physically powerful; start with a d6 in Strength.' },
+      { name: 'Hard Head (Horns)', description: 'Headbutt crest deals Str+d4 natural damage.' },
+      { name: 'Armor +1', description: 'Dense scaly hide grants +1 Toughness.' },
+      { name: 'Slow', description: 'Pace is reduced by 1 (Pace 5) and running die is d4.' },
+      { name: 'Gruff', description: 'Quick to intimidate rather than cajole; subtract 2 from Persuasion rolls.' }
+    ]
+  },
+  {
+    id: 'scifi_elemental',
+    name: 'Elemental (Stone)',
+    source: 'scifi',
+    summary: 'Beings composed of living rock and mineral. Incredibly durable and strong, but ponderous and slow-thinking.',
+    attributeBonuses: { strength: 1, vigor: 1 },
+    paceMod: -1,
+    toughnessMod: 2,
+    traits: [
+      { name: 'Brute Force', description: 'Start with d6 in Strength and d6 in Vigor.' },
+      { name: 'Dense Rock Form', description: '+2 Toughness and immune to bleeding, disease, and poison.' },
+      { name: 'Big', description: '-2 to use equipment not built for them; gear costs double.' },
+      { name: 'Boneheaded', description: '-1 penalty on all Smarts rolls.' },
+      { name: 'Reduced Pace', description: 'Pace is 5 and running die is d4.' }
+    ]
+  },
+  {
+    id: 'floran',
+    name: 'Floran',
+    source: 'scifi',
+    summary: 'Plant-based sapient beings. Bloodless and regenerative in sunlight, but vulnerable to fire and cold darkness.',
+    traits: [
+      { name: 'Bloodless', description: 'Automatically stabilize whenever Bleeding Out.' },
+      { name: 'Sunlight Dependency', description: 'Must bask in sunlight (natural or UV) 1 hour daily or suffer Fatigue.' },
+      { name: 'Photosynthetic Recovery', description: 'Recovers 1 Fatigue level per hour spent in bright sunshine.' },
+      { name: 'Environmental Weakness (Fire)', description: 'Take +4 damage from fire and heat attacks.' }
+    ]
+  },
+  {
+    id: 'gelatinoid',
+    name: 'Gelatinoid',
+    source: 'scifi',
+    summary: 'Amorphous translucent ooze beings capable of altering shape, with no vital organs and immune to called shots.',
+    traits: [
+      { name: 'Gelatinous Amorphous Form', description: 'No vital organs; immune to Called Shots and takes half damage from piercing attacks.' },
+      { name: 'Cyber Resistant', description: 'Cannot install standard cyberware or mechanical implants.' },
+      { name: 'Pheromone Communication', description: 'Communicates via pheromones; requires translator device to converse with other species.' }
+    ]
+  },
+  {
+    id: 'gen_miner',
+    name: 'Gen Miner',
+    source: 'scifi',
+    summary: 'Genetically tailored heavy-laborers with reinforced bone plating, high-G endurance, and dark vision.',
+    attributeBonuses: { vigor: 1 },
+    toughnessMod: 1,
+    traits: [
+      { name: 'Hardened Physique', description: 'Start with d6 in Vigor and +1 Toughness from reinforced bone structure.' },
+      { name: 'Low Light Vision', description: 'Ignore penalties for Dim and Dark lighting conditions.' },
+      { name: 'Atmospheric Dependency', description: 'Engineered for specific atmospheric mix; needs rebreather in other environments.' },
+      { name: 'Radiation Resistance', description: '+4 to resist environmental radiation and cosmic rays.' }
+    ]
+  },
+  {
+    id: 'gen_trooper',
+    name: 'Gen Trooper',
+    source: 'scifi',
+    summary: 'Bred shock-troopers engineered for combat lethality with hardwired reflexes and pain suppression.',
+    traits: [
+      { name: 'Combat Reflexes', description: '+2 to recover from being Shaken.' },
+      { name: 'Nerves of Steel', description: 'Ignore 1 point of Wound penalties.' },
+      { name: 'Ruthless Conditioning', description: 'Conditioned to complete orders ruthlessly or hunted by former creators (Wanted).' }
+    ]
+  },
+  {
+    id: 'insectoid',
+    name: 'Insectoid',
+    source: 'scifi',
+    summary: 'Chitinous hive-species with 360-degree compound eyes, razor claws, natural armor, and hive empathy.',
+    toughnessMod: 2,
+    traits: [
+      { name: 'Armor +2', description: 'Thick beetle-like chitin carapace grants +2 Armor.' },
+      { name: '360-Degree Vision', description: 'Compound eyes ignore 1 point of Gang Up bonus.' },
+      { name: 'Natural Claws', description: 'Claws deal Str+d4, AP 2 damage.' },
+      { name: 'Communal / Hive Mind', description: '+2 to Spirit rolls within 12" of allies; -2 when isolated.' },
+      { name: 'Vocal Limitations', description: 'Requires an electronic translator to speak human languages.' }
+    ]
+  },
+  {
+    id: 'mimic',
+    name: 'Mimic',
+    source: 'scifi',
+    summary: 'Changelings who duplicate the physical form and voice of others, with fluid internal organs.',
+    traits: [
+      { name: 'Shapeshift', description: 'As a limited action, assume the appearance of another being of similar Size.' },
+      { name: 'No Vital Organs', description: 'Shifted internal organs negate extra damage from Called Shots.' },
+      { name: 'Cyber Resistant', description: 'Physiology rejects cyberware implants.' },
+      { name: 'Outsider (Minor)', description: 'Deep galactic distrust of impersonators; -2 Persuasion.' }
+    ]
+  },
+  {
+    id: 'oracle',
+    name: 'Oracle',
+    source: 'scifi',
+    summary: 'Psychically gifted mystics with innate precognitive senses and natural telepathic communication.',
+    toughnessMod: -1,
+    traits: [
+      { name: 'Danger Sense', description: 'Intuitive precognition warns of ambushes and hazards.' },
+      { name: 'Telepathy', description: 'Mental communication with any sapient mind within 12" (24 yards).' },
+      { name: 'Frail', description: 'Slender, fragile build subtracts 1 from Toughness.' }
+    ]
+  },
+  {
+    id: 'quadroid',
+    name: 'Quadroid',
+    source: 'scifi',
+    summary: 'Four-armed beings capable of rapid multi-weapon combat, climbing, and grappling.',
+    toughnessMod: -1,
+    traits: [
+      { name: 'Additional Action', description: 'Four arms allow ignoring 2 points of physical Multi-Action penalties per turn.' },
+      { name: 'Extra Limbs', description: '+1 Gang Up bonus when multi-wielding, +1 Athletics for climbing and grappling.' },
+      { name: 'Thin Skinned', description: 'Hot-headed temperament; -4 to resist Taunt.' },
+      { name: 'Frail', description: 'Slender frame reduces Toughness by 1.' }
+    ]
+  },
+  {
+    id: 'rascal',
+    name: 'Rascal',
+    source: 'scifi',
+    summary: 'Diminutive, quick-witted mammalian scavengers (~16" tall) wielding hyper-advanced gadgets.',
+    sizeMod: -3,
+    toughnessMod: -3,
+    traits: [
+      { name: 'Diminutive (Size -3)', description: 'Stands ~16" tall; -3 Toughness; maximum natural Strength is d6.' },
+      { name: 'Small Target', description: 'Ranged attacks against rascals suffer a -2 penalty.' },
+      { name: 'High Tech (Major)', description: 'Disdains primitive technology; -4 to operate low-tech devices.' },
+      { name: 'Ancestral Enemy', description: 'Hostility against insectoids (-2 Persuasion).' }
+    ]
+  },
+  {
+    id: 'rider',
+    name: 'Rider',
+    source: 'scifi',
+    summary: 'Symbiotic entities inhabiting host bodies, able to survive destruction of a host and graft into a new form.',
+    traits: [
+      { name: 'Husk Host', description: 'Can graft into a new body within 24 hours if current host is destroyed.' },
+      { name: 'Communal', description: '+2 Spirit rolls when within 12" of species brethren.' },
+      { name: 'Outsider (Minor)', description: 'Organic species view symbiotic parasites with unease (-2 Persuasion).' }
+    ]
+  },
+  {
+    id: 'robot',
+    name: 'Robot',
+    source: 'scifi',
+    summary: 'Full mechanical chassis built for specialized functions, with construct resilience and prime programming.',
+    traits: [
+      { name: 'Construct', description: '+2 to recover from Shaken; ignore 1 point of Wound penalties; immune to poison and disease.' },
+      { name: 'Programmed (Major)', description: 'Bound by strict factory directives or corporate ownership.' },
+      { name: 'Asimov Circuits', description: 'Pacifist (Major) coding forbids harming sentient living beings.' },
+      { name: 'Unnatural', description: 'Must be repaired with Repair skill; cannot benefit from Healing skill.' }
+    ]
+  },
+  {
+    id: 'synthetic_being',
+    name: 'Synthetic Being',
+    source: 'scifi',
+    summary: 'Quasibiological replicants engineered for dangerous colonial duties, immune to pathogens.',
+    traits: [
+      { name: 'Immunity to Disease & Poison', description: 'Quasibiological biology is immune to biological toxins and pathogens.' },
+      { name: 'Programmed (Major)', description: 'Bound by hardcoded parameters and prime mission guidelines.' },
+      { name: 'Synthetic Biology', description: 'Cannot heal naturally; requires medical treatment or Repair to recover.' }
+    ]
+  },
+  {
+    id: 'voidling',
+    name: 'Voidling',
+    source: 'scifi',
+    summary: 'Creatures of living cosmic energy native to the vacuum of space, immune to decompression and vacuum.',
+    traits: [
+      { name: 'Spacer', description: "Doesn't breathe; completely immune to vacuum decompression and background radiation." },
+      { name: 'Bloodless', description: 'Automatically stabilizes when Bleeding Out.' },
+      { name: 'Cannot Speak', description: 'Lacks vocal cords; communicates via translator screen.' }
+    ]
+  },
+  {
+    id: 'yeti',
+    name: 'Yeti',
+    source: 'scifi',
+    summary: 'Massive, thick-furred humanoids from arctic planets with tremendous physical power and cold immunity.',
+    attributeBonuses: { strength: 1 },
+    sizeMod: 1,
+    toughnessMod: 1,
+    traits: [
+      { name: 'Brawny & Big', description: 'Start with d6 in Strength and +1 Toughness; standard gear costs double.' },
+      { name: 'Cold Resistance', description: '+4 to resist cold hazards; reduce cold damage by 4.' },
+      { name: 'Heat Weakness', description: '-4 to resist heat Fatigue; +4 damage from heat and fire attacks.' }
+    ]
+  },
+  {
+    id: 'aurax',
+    name: 'Aurax',
+    source: 'scifi',
+    summary: 'Heavy hippopotamoid centaux from primitive worlds with immense strength and natural bulk.',
+    attributeBonuses: { strength: 1, vigor: 1 },
+    paceMod: 1,
+    sizeMod: 1,
+    toughnessMod: 2,
+    traits: [
+      { name: 'Massive Build', description: 'Start with d6 in Strength and d6 in Vigor; +2 Toughness.' },
+      { name: 'Four-Legged', description: 'Ignore Difficult Ground penalties; Pace 7.' },
+      { name: 'Low Tech (Major)', description: 'Primitive background; -2 to operate high-tech devices.' }
+    ]
+  },
+  {
+    id: 'deader',
+    name: 'Deader',
+    source: 'scifi',
+    summary: 'Slug-like parasteens grafted to preserved humanoid bodies in environmental suits; calculating and fearless.',
+    traits: [
+      { name: 'Calculating', description: 'Gains Calculating Edge; ignores up to 2 points of penalties when attacking after evaluating foes.' },
+      { name: 'Fearless', description: 'Immune to Fear and Intimidation tests.' },
+      { name: 'Corpse Suit Dependency', description: 'Requires preserved sealed suit; hull breach leads to rapid organic rot.' }
+    ]
+  },
+  {
+    id: 'kalian',
+    name: 'Kalian',
+    source: 'scifi',
+    summary: 'Hot-headed, four-armed duelists known for quick-draw marksmanship, lightning reflexes, and acrobatics.',
+    attributeBonuses: { agility: 1 },
+    traits: [
+      { name: 'Agile', description: 'Naturally agile; start with d6 in Agility.' },
+      { name: 'Four Arms', description: 'Ignore 2 points of Multi-Action penalties each round; +1 Gang Up bonus.' },
+      { name: 'Thin Skinned', description: 'Notoriously touchy; -4 to resist Taunt.' }
+    ]
+  },
+  {
+    id: 'serran',
+    name: 'Serran',
+    source: 'scifi',
+    summary: 'Reflective, slight humanoids with uncanny precognitive danger sense, serving as elite scouts and navigators.',
+    attributeBonuses: { smarts: 1 },
+    toughnessMod: -1,
+    traits: [
+      { name: 'Danger Sense', description: 'Extraordinary precognitive sixth sense warns of hazards and ambushes.' },
+      { name: 'Precognitive Smarts', description: 'Start with d6 in Smarts.' },
+      { name: 'Slight Build', description: 'Delicate skeletal frame subtracts 1 from Toughness.' }
+    ]
+  },
   {
     id: 'custom',
     name: 'Custom Ancestry',
@@ -407,7 +678,120 @@ export const SWADE_HINDRANCES: HindranceDef[] = [
   { id: 'vow', name: 'Vow', severity: 'Minor/Major', summary: 'Sworn oath to a deity, order, cause, or group.', effect: 'Sacred oath of service' },
   { id: 'wanted', name: 'Wanted', severity: 'Minor/Major', summary: 'Hunted by authorities for past crimes (real or framed).', effect: 'Bounty on their head' },
   { id: 'yellow', name: 'Yellow', severity: 'Major', summary: '-2 to Fear checks and resisting Intimidation.', effect: '-2 Fear & Intimidation checks' },
-  { id: 'young', name: 'Young', severity: 'Minor/Major', summary: 'fewer attribute/skill points at creation, but starts with extra Benny each session.', effect: '+1 Benny per session' }
+  { id: 'young', name: 'Young', severity: 'Minor/Major', summary: 'fewer attribute/skill points at creation, but starts with extra Benny each session.', effect: '+1 Benny per session' },
+  // --- SCIENCE FICTION COMPANION HINDRANCES ---
+  {
+    id: 'scifi_ailment',
+    name: 'Ailment',
+    severity: 'Minor/Major',
+    summary: 'Chronic incurable illness; -1 (Minor) or -2 (Major) to resist Fatigue from any source.',
+    effect: '-1/-2 Fatigue resistance',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_amorous',
+    name: 'Amorous',
+    severity: 'Minor',
+    summary: 'Easily enamored by attractive beings; -2 to resist Tests by anyone with Attractive or Very Attractive.',
+    effect: '-2 vs Tests from Attractive foes',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_atmospheric_dependency',
+    name: 'Atmospheric Dependency',
+    severity: 'Minor/Major',
+    summary: 'Dependent on a specific atmosphere. Deprived of rebreather/suit, make Vigor roll every hour (Minor) or minute (Major) or suffer Fatigue.',
+    effect: 'Requires rebreather/suit outside native atmosphere',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_bullet_magnet',
+    name: 'Bullet Magnet',
+    severity: 'Minor',
+    summary: 'Uncanny bad luck around gunfire. Hit on a roll of 1 or 2 on Innocent Bystander checks.',
+    effect: 'Hit on 1-2 on Innocent Bystander checks',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_dependent',
+    name: 'Dependent',
+    severity: 'Minor/Major',
+    summary: 'Responsible for an innocent companion (pet, child, junior officer) who must be protected.',
+    effect: 'Protects an innocent dependent',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_ex_drone',
+    name: 'Ex-Drone',
+    severity: 'Major',
+    summary: 'Severed from a hive collective; suffers -2 to Spirit rolls when isolated or alone.',
+    effect: '-2 Spirit rolls when isolated',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_ftl_sickness',
+    name: 'FTL Sickness',
+    severity: 'Minor/Major',
+    summary: 'Severe disorientation and nausea following hyperspace jumps. Fatigued for 1d6 hours after FTL transit.',
+    effect: 'Fatigued after FTL jump',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_low_zero_g_worlder',
+    name: 'Low/Zero-G Worlder',
+    severity: 'Major',
+    summary: 'Raised in low or zero gravity; -2 to Strength and Vigor rolls made in standard (1G) or heavy gravity.',
+    effect: '-2 Strength & Vigor in 1G or heavier',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_low_tech',
+    name: 'Low Tech',
+    severity: 'Minor/Major',
+    summary: 'From a primitive culture; -2 (Minor) or -4 (Major) to Electronics, Hacking, Repair, and Science rolls with advanced tech.',
+    effect: '-2/-4 on advanced technology rolls',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_programmed',
+    name: 'Programmed',
+    severity: 'Major',
+    summary: 'Hardwired directives, corporate ownership guidelines, or prime laws that must be obeyed without question.',
+    effect: 'Bound by strict directives and protocols',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_rebellious',
+    name: 'Rebellious',
+    severity: 'Minor',
+    summary: 'Deep disdain for military discipline and authority; -2 to Spirit rolls to follow orders in combat.',
+    effect: '-2 Spirit rolls to follow orders',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_selfless',
+    name: 'Selfless',
+    severity: 'Minor/Major',
+    summary: 'Always puts the safety and wellbeing of crewmates, ship, or innocents ahead of their own life.',
+    effect: 'Puts allies and innocents first',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_trouble_magnet',
+    name: 'Trouble Magnet',
+    severity: 'Minor/Major',
+    summary: 'Trouble seeks this traveler out: pirates, space patrols, mechanical breakdowns, and bounties happen constantly.',
+    effect: 'Draws frequent hostile encounters',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_zero_g_sickness',
+    name: 'Zero-G Sickness',
+    severity: 'Minor',
+    summary: 'Prone to severe space sickness; -2 to Agility and Smarts rolls in microgravity.',
+    effect: '-2 Agility & Smarts in Zero-G',
+    source: 'scifi'
+  },
 ];
 
 export const SWADE_EDGES: EdgeDef[] = [
@@ -1300,7 +1684,232 @@ export const SWADE_EDGES: EdgeDef[] = [
     minSkills: { fighting: 12 },
     parryBonus: 1,
     summary: 'Parry +1 and melee bonus damage die increases from d6 to d8 (+2 Parry and d10 with Master of Arms).'
-  }
+  },
+  // --- SCIENCE FICTION COMPANION EDGES ---
+  {
+    id: 'scifi_captain',
+    name: 'Captain',
+    category: 'Background',
+    rankRequired: 'Novice',
+    requirementsText: 'Novice, Command, Piloting d8+',
+    minSkills: { piloting: 8 },
+    summary: 'The spacer starts play as owner and skipper of their own starship or scout vessel.',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_favored_terrain',
+    name: 'Favored Terrain (Sci-Fi)',
+    category: 'Background',
+    rankRequired: 'Novice',
+    requirementsText: 'Novice, Survival d6+',
+    minSkills: { survival: 6 },
+    summary: 'Draw extra initiative card and get free reroll on Notice and Survival in chosen alien biome or space stations.',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_geared_up',
+    name: 'Geared Up',
+    category: 'Background',
+    rankRequired: 'Novice',
+    requirementsText: 'Novice (Creation only)',
+    summary: 'Begins play with 10 times standard starting funds ($10,000) in equipment, cyberware, or robot mods.',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_heavy_g_worlder',
+    name: 'Heavy-G Worlder',
+    category: 'Background',
+    rankRequired: 'Novice',
+    requirementsText: 'Novice, Strength d6+, Vigor d6+',
+    minAttributes: { strength: 6, vigor: 6 },
+    summary: 'Acclimated to crushing gravity; ignores heavy gravity penalties and adds +2 to resist knockdown/pushback.',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_ammo_counter',
+    name: 'Ammo Counter',
+    category: 'Combat',
+    rankRequired: 'Novice',
+    requirementsText: 'Novice, Shooting d6+',
+    minSkills: { shooting: 6 },
+    summary: 'Tracks every round and energy charge; never runs out of ammo on a Critical Failure.',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_opportunistic',
+    name: 'Opportunistic',
+    category: 'Combat',
+    rankRequired: 'Veteran',
+    requirementsText: 'Veteran',
+    summary: 'Free attack against any adjacent enemy who fails a Test or Attack against them.',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_team_leader',
+    name: 'Team Leader',
+    category: 'Leadership',
+    rankRequired: 'Seasoned',
+    requirementsText: 'Seasoned, Command',
+    summary: 'Can spend own Bennies for any crew member or subordinate within Command Range.',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_favored_power',
+    name: 'Favored Power',
+    category: 'Power',
+    rankRequired: 'Seasoned',
+    requirementsText: 'Seasoned, Arcane Background',
+    requiresArcane: true,
+    summary: 'Reduces Power Point cost by 1 (minimum 1) when casting a chosen signature power.',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_atmospheric_acclimation',
+    name: 'Atmospheric Acclimation',
+    category: 'Professional',
+    rankRequired: 'Novice',
+    requirementsText: 'Novice, Vigor d6+',
+    minAttributes: { vigor: 6 },
+    summary: '+2 to Vigor rolls to resist hostile or thin atmosphere conditions and toxic air.',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_bubble_gum',
+    name: 'Bubble Gum & Bailing Wire',
+    category: 'Professional',
+    rankRequired: 'Seasoned',
+    requirementsText: 'Seasoned, Repair d8+',
+    minSkills: { repair: 8 },
+    summary: 'Make emergency repairs to starships, mechs, and vehicles in half the time without tools.',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_evasive_maneuvers',
+    name: 'Evasive Maneuvers',
+    category: 'Professional',
+    rankRequired: 'Veteran',
+    requirementsText: 'Veteran, Ace, Piloting d8+',
+    minSkills: { piloting: 8 },
+    summary: "Subtract 2 from all incoming attacks against the character's ship or vehicle when taking evasive action.",
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_exo_scientist',
+    name: 'Exo Scientist',
+    category: 'Professional',
+    rankRequired: 'Novice',
+    requirementsText: 'Novice, Science d8+',
+    minSkills: { science: 8 },
+    summary: '+2 to Science and Common Knowledge rolls regarding alien biology, strange planets, and precursor relics.',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_gravitic_acclimation',
+    name: 'Gravitic Acclimation',
+    category: 'Professional',
+    rankRequired: 'Novice',
+    requirementsText: 'Novice, Agility d6+',
+    minAttributes: { agility: 6 },
+    summary: 'Ignores all movement and Trait roll penalties for low gravity and zero gravity environments.',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_power_hacker',
+    name: 'Power Hacker',
+    category: 'Professional',
+    rankRequired: 'Novice',
+    requirementsText: 'Novice, Hacking d8+',
+    minSkills: { hacking: 8 },
+    summary: '+2 to Hacking rolls to breach secured AI systems, military encryption, and starship mainframe firewalls.',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_rocket_jock',
+    name: 'Rocket Jock',
+    category: 'Professional',
+    rankRequired: 'Seasoned',
+    requirementsText: 'Seasoned, Piloting d8+',
+    minSkills: { piloting: 8 },
+    summary: 'Adds +2 to Chase and dogfighting rolls; ignores 2 points of starship maneuvering penalties.',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_sneak_attack',
+    name: 'Sneak Attack',
+    category: 'Combat',
+    rankRequired: 'Seasoned',
+    requirementsText: 'Seasoned',
+    summary: 'Adds +d6 damage when hitting a Vulnerable target or attacking from Ambush/Surprise.',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_improved_sneak_attack',
+    name: 'Improved Sneak Attack',
+    category: 'Combat',
+    rankRequired: 'Veteran',
+    requirementsText: 'Veteran, Sneak Attack',
+    summary: 'Sneak Attack bonus damage increases from +d6 to +d8.',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_soft_touch',
+    name: 'Soft Touch',
+    category: 'Professional',
+    rankRequired: 'Novice',
+    requirementsText: 'Novice, Driving d4+ or Piloting d4+',
+    summary: '+2 to vehicle maneuvering rolls when landing in difficult conditions or docking under fire.',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_trick_shot',
+    name: 'Trick Shot',
+    category: 'Combat',
+    rankRequired: 'Seasoned',
+    requirementsText: 'Seasoned, Shooting d8+',
+    minSkills: { shooting: 8 },
+    summary: 'Ignore 2 points of Cover or Called Shot penalties when firing ranged or energy weapons.',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_uncanny_reflexes',
+    name: 'Uncanny Reflexes',
+    category: 'Combat',
+    rankRequired: 'Veteran',
+    requirementsText: 'Veteran, Agility d8+, Athletics d8+',
+    minAttributes: { agility: 8 },
+    minSkills: { athletics: 8 },
+    summary: 'Subtract 2 from incoming area effect weapons (grenades, blaster bursts, breath weapons) and +2 to Evasion.',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_deceptive',
+    name: 'Deceptive',
+    category: 'Social',
+    rankRequired: 'Seasoned',
+    requirementsText: 'Seasoned, Smarts d8+',
+    minAttributes: { smarts: 8 },
+    summary: '+2 to Persuasion rolls when bluffing, lying, or running an undercover con.',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_immortal',
+    name: 'Immortal',
+    category: 'Legendary',
+    rankRequired: 'Legendary',
+    requirementsText: 'Legendary',
+    summary: 'The character ceases to age, is immune to natural disease and aging, and cannot die of old age.',
+    source: 'scifi'
+  },
+  {
+    id: 'scifi_savior_of_the_universe',
+    name: 'Savior of the Universe',
+    category: 'Legendary',
+    rankRequired: 'Legendary',
+    requirementsText: 'Legendary',
+    benniesBonus: 1,
+    summary: 'The galaxy looks to this legend; gains +1 Benny per session and allies add +1 to Spirit checks when with them.',
+    source: 'scifi'
+  },
 ];
 
 export const SWADE_ARCANE_BACKGROUNDS: ArcaneBackgroundDef[] = [
@@ -1437,7 +2046,26 @@ export const SWADE_WEAPONS_CATALOG: Omit<WeaponItem, 'id' | 'equipped'>[] = [
   { name: 'Submachine Gun (MP5)', category: 'Ranged', damage: '2d6', ap: 1, range: '12/24/48', rof: 3, minStr: 6, weight: 7, cost: 350, notes: 'RoF 3, 3-Round Burst' },
   { name: 'Assault Rifle (M16/AK47)', category: 'Ranged', damage: '2d8', ap: 2, range: '24/48/96', rof: 3, minStr: 6, weight: 8, cost: 450, notes: 'RoF 3, AP 2' },
   { name: 'Laser Pistol', category: 'Ranged', damage: '2d6', ap: 2, range: '15/30/60', rof: 1, minStr: 4, weight: 2, cost: 250, notes: 'No Recoil, Cauterize' },
-  { name: 'Laser Rifle', category: 'Ranged', damage: '3d6', ap: 2, range: '30/60/120', rof: 3, minStr: 6, weight: 5, cost: 500, notes: 'RoF 3, No Recoil' }
+  { name: 'Laser Rifle', category: 'Ranged', damage: '3d6', ap: 2, range: '30/60/120', rof: 3, minStr: 6, weight: 5, cost: 500, notes: 'RoF 3, No Recoil' },
+  // --- SCIENCE FICTION COMPANION WEAPONS ---
+  { name: 'Ripper Sword', category: 'Melee', damage: '2d6+4', ap: 0, range: 'Melee', rof: 1, minStr: 4, weight: 8, cost: 300, notes: 'Chain Blade, motorized diamond teeth', source: 'scifi' },
+  { name: 'Ripper Halberd', category: 'Melee', damage: '2d6+4', ap: 0, range: 'Melee', rof: 1, minStr: 8, weight: 10, cost: 450, notes: 'Chain Blade, Reach 1, Two Hands', source: 'scifi' },
+  { name: 'EMP Staff', category: 'Melee', damage: 'Str+d6', ap: 0, range: 'Melee', rof: 1, minStr: 6, parryMod: 1, weight: 4, cost: 510, notes: 'EMP, Parry +1, Reach 1, Two Hands', source: 'scifi' },
+  { name: 'Energy Sword', category: 'Melee', damage: 'Str+d6', ap: 4, range: 'Melee', rof: 1, minStr: 4, weight: 2, cost: 900, notes: 'Plasma/laser blade, Cauterize, Heavy Weapon', source: 'scifi' },
+  { name: 'Energy Axe', category: 'Melee', damage: 'Str+d8', ap: 6, range: 'Melee', rof: 1, minStr: 8, weight: 6, cost: 1100, notes: 'High-frequency plasma edge, Heavy Weapon', source: 'scifi' },
+  { name: 'Gravity Hammer', category: 'Melee', damage: 'Str+d10+d6', ap: 2, range: 'Melee', rof: 1, minStr: 10, weight: 10, cost: 1500, notes: 'Graviton impactor, Repulse blast', source: 'scifi' },
+  { name: 'Stun Baton', category: 'Melee', damage: 'Str+d4', ap: 0, range: 'Melee', rof: 1, minStr: 4, weight: 2, cost: 260, notes: 'Nonlethal; target makes Vigor roll or Stunned', source: 'scifi' },
+  { name: 'Vibro Blade', category: 'Melee', damage: 'Str+d6+d4', ap: 2, range: 'Melee', rof: 1, minStr: 4, weight: 1, cost: 525, notes: 'High-frequency ultrasonic vibrating dagger', source: 'scifi' },
+  { name: 'Vibro Sword', category: 'Melee', damage: 'Str+d8+d6', ap: 2, range: 'Melee', rof: 1, minStr: 6, weight: 3, cost: 600, notes: 'Ultrasonic military sword, AP 2', source: 'scifi' },
+  { name: 'Blaster Pistol', category: 'Ranged', damage: '2d6+2', ap: 2, range: '12/24/48', rof: 1, minStr: 4, weight: 1, cost: 200, notes: 'Particle accelerator pistol, 50 shots', source: 'scifi' },
+  { name: 'Blaster Pistol, Heavy', category: 'Ranged', damage: '3d6', ap: 2, range: '10/20/40', rof: 1, minStr: 6, weight: 3, cost: 300, notes: 'Heavy particle blaster, 40 shots', source: 'scifi' },
+  { name: 'Blaster Carbine', category: 'Ranged', damage: '2d6+2', ap: 2, range: '15/30/60', rof: 3, minStr: 6, weight: 5, cost: 400, notes: 'Rapid particle carbine, RoF 3, 60 shots', source: 'scifi' },
+  { name: 'Blaster Rifle', category: 'Ranged', damage: '3d6', ap: 2, range: '24/48/96', rof: 3, minStr: 6, weight: 8, cost: 600, notes: 'Military particle rifle, 3-Round Burst, 60 shots', source: 'scifi' },
+  { name: 'Laser Pistol (Sci-Fi)', category: 'Ranged', damage: '2d6', ap: 2, range: '15/30/60', rof: 1, minStr: 4, weight: 2, cost: 250, notes: 'Coherent pulse, Semi-Auto, 30 shots', source: 'scifi' },
+  { name: 'Laser Rifle (Sci-Fi)', category: 'Ranged', damage: '3d6', ap: 4, range: '30/60/120', rof: 3, minStr: 6, weight: 7, cost: 700, notes: 'Military laser rifle, Cauterize, 50 shots', source: 'scifi' },
+  { name: 'Plasma Pistol', category: 'Ranged', damage: '2d8', ap: 4, range: '10/20/40', rof: 1, minStr: 6, weight: 3, cost: 450, notes: 'Superheated plasma, Heavy Weapon, 20 shots', source: 'scifi' },
+  { name: 'Plasma Rifle', category: 'Ranged', damage: '3d8', ap: 6, range: '20/40/80', rof: 2, minStr: 8, weight: 9, cost: 950, notes: 'Heavy plasma bolt, Heavy Weapon, 30 shots', source: 'scifi' },
+  { name: 'Flechette Pistol', category: 'Ranged', damage: '2d6', ap: 0, range: '10/20/40', rof: 3, minStr: 4, weight: 2, cost: 180, notes: 'Shatter-needles; safe inside starship hulls', source: 'scifi' },
 ];
 
 export const SWADE_ARMOR_CATALOG: Omit<ArmorItem, 'id' | 'equipped'>[] = [
@@ -1450,7 +2078,14 @@ export const SWADE_ARMOR_CATALOG: Omit<ArmorItem, 'id' | 'equipped'>[] = [
   { name: 'Infantry Battle Suit (Sci-Fi)', type: 'Armor', armorBonus: 6, parryBonus: 0, minStr: 8, weight: 15, cost: 800, notes: 'Sealed HUD suit' },
   { name: 'Small Shield (Buckler)', type: 'Shield', armorBonus: 0, parryBonus: 1, coverBonus: 0, minStr: 4, weight: 4, cost: 50, notes: 'Parry +1' },
   { name: 'Medium Shield', type: 'Shield', armorBonus: 0, parryBonus: 2, coverBonus: 2, minStr: 6, weight: 8, cost: 100, notes: 'Parry +2, Cover -2 vs Ranged' },
-  { name: 'Large / Riot Shield', type: 'Shield', armorBonus: 0, parryBonus: 3, coverBonus: 4, minStr: 8, weight: 12, cost: 200, notes: 'Parry +3, Cover -4 vs Ranged' }
+  { name: 'Large / Riot Shield', type: 'Shield', armorBonus: 0, parryBonus: 3, coverBonus: 4, minStr: 8, weight: 12, cost: 200, notes: 'Parry +3, Cover -4 vs Ranged' },
+  // --- SCIENCE FICTION COMPANION ARMOR & SPACESUITS ---
+  { name: 'Spacesuit (Standard EVA)', type: 'Armor', armorBonus: 1, parryBonus: 0, minStr: 4, weight: 18, cost: 500, notes: 'Sealed EVA suit; 12 hours life support & vacuum protection', source: 'scifi' },
+  { name: 'Spacesuit, Armored', type: 'Armor', armorBonus: 4, parryBonus: 0, minStr: 6, weight: 26, cost: 2500, notes: 'Sealed armored suit, 24 hrs life support, composite armor', source: 'scifi' },
+  { name: 'Spacesuit, Combat', type: 'Armor', armorBonus: 4, parryBonus: 0, minStr: 6, weight: 20, cost: 5000, notes: '+4 Armor, +2 Toughness, integrated comms & tactical HUD', source: 'scifi' },
+  { name: 'Exoskeleton Power Frame', type: 'Armor', armorBonus: 2, parryBonus: 0, minStr: 6, weight: 25, cost: 8000, notes: '+2 Armor, +2 die steps to Strength, Pace +2', source: 'scifi' },
+  { name: 'Heavy Combat Power Armor', type: 'Armor', armorBonus: 8, parryBonus: 0, minStr: 8, weight: 45, cost: 25000, notes: '+8 Heavy Armor, sealed environmental, jump-jets', source: 'scifi' },
+  { name: 'Deflector Shield', type: 'Shield', armorBonus: 0, parryBonus: 2, coverBonus: 2, minStr: 4, weight: 3, cost: 1200, notes: 'Personal deflector screen; +2 Parry, -2 ranged attack penalty', source: 'scifi' },
 ];
 
 export const INITIAL_SKILLS_TEMPLATE = () =>

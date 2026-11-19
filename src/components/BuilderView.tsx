@@ -48,6 +48,7 @@ interface BuilderViewProps {
 }
 
 type BuilderTab =
+  | 'sources'
   | 'identity'
   | 'hindrances'
   | 'attributes'
@@ -63,7 +64,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
   onUpdateCharacter,
   onRollTrait
 }) => {
-  const [activeTab, setActiveTab] = useState<BuilderTab>('identity');
+  const [activeTab, setActiveTab] = useState<BuilderTab>('sources');
 
   // Filter states
   const [hindranceSearch, setHindranceSearch] = useState('');
@@ -143,39 +144,44 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
   };
 
   const tabs: { id: BuilderTab; label: string; badge?: string; badgeAlert?: boolean }[] = [
-    { id: 'identity', label: '1. Concept & Ancestry' },
+    {
+      id: 'sources',
+      label: '1. Source Books',
+      badge: `${(character.sourceBooks || ['core']).length} Active`
+    },
+    { id: 'identity', label: '2. Identity & Ancestry' },
     {
       id: 'hindrances',
-      label: '2. Hindrances',
+      label: '3. Hindrances',
       badge: `${hindSpent}/${hindEarned.cappedTotal} pts`,
       badgeAlert: hindRemaining !== 0
     },
     {
       id: 'attributes',
-      label: '3. Attributes',
+      label: '4. Attributes',
       badge: `${attrPts.spent}/${attrPts.budget}`,
       badgeAlert: attrPts.remaining !== 0
     },
     {
       id: 'skills',
-      label: '4. Skills',
+      label: '5. Skills',
       badge: `${skillPts.spent}/${skillPts.budget}`,
       badgeAlert: skillPts.remaining !== 0
     },
     {
       id: 'edges',
-      label: '5. Edges & Advances',
+      label: '6. Edges & Advances',
       badge: `${edgePts.spent}/${edgePts.budget}`,
       badgeAlert: edgePts.remaining !== 0
     },
     {
       id: 'powers',
-      label: '6. Powers',
+      label: '7. Powers',
       badge: character.powers.length > 0 ? `${character.powers.length}` : undefined
     },
     {
       id: 'gear',
-      label: '7. Weapons & Gear',
+      label: '8. Weapons & Gear',
       badge: `$${character.currency}`
     }
   ];
@@ -237,7 +243,202 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
         })}
       </div>
 
-      {/* TAB 1: IDENTITY, ANCESTRY & SETTING RULES */}
+            {/* TAB 1: SOURCE BOOKS SELECTION */}
+      {activeTab === 'sources' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div
+            style={{
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: 16,
+              padding: 20
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
+              <div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 900, color: '#a855f7', display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span>📚</span> STEP 1: SELECT RULEBOOKS & SOURCE BOOKS
+                </h3>
+                <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: 4 }}>
+                  Choose which books and companions apply to this character. All ancestries, hindrances, edges, powers, and armory choices in the following steps will be strictly restricted to your selected source books.
+                </p>
+              </div>
+              <span
+                style={{
+                  fontSize: '0.78rem',
+                  color: '#f3e8ff',
+                  background: 'rgba(168, 85, 247, 0.25)',
+                  border: '1px solid #a855f7',
+                  padding: '4px 10px',
+                  borderRadius: 10,
+                  fontWeight: 800
+                }}
+              >
+                {(character.sourceBooks || ['core']).length} Active Book{(character.sourceBooks || ['core']).length > 1 ? 's' : ''}
+              </span>
+            </div>
+
+            {/* Quick Preset Buttons */}
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '14px 0 18px 0' }}>
+              <button
+                type="button"
+                onClick={() => onUpdateCharacter({ sourceBooks: ['core'] })}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: 8,
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid var(--border-subtle)',
+                  color: 'var(--text-primary)',
+                  cursor: 'pointer'
+                }}
+              >
+                📕 Core Rules Only
+              </button>
+              <button
+                type="button"
+                onClick={() => onUpdateCharacter({ sourceBooks: ['core', 'scifi'] })}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: 8,
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  background: 'rgba(56, 189, 248, 0.15)',
+                  border: '1px solid #38bdf8',
+                  color: '#bae6fd',
+                  cursor: 'pointer'
+                }}
+              >
+                🚀 Sci-Fi Campaign (Core + Sci-Fi)
+              </button>
+              <button
+                type="button"
+                onClick={() => onUpdateCharacter({ sourceBooks: ['core', 'fantasy'] })}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: 8,
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  background: 'rgba(34, 197, 94, 0.15)',
+                  border: '1px solid #22c55e',
+                  color: '#bbf7d0',
+                  cursor: 'pointer'
+                }}
+              >
+                🧙 Fantasy Campaign (Core + Fantasy)
+              </button>
+              <button
+                type="button"
+                onClick={() => onUpdateCharacter({ sourceBooks: SWADE_SOURCE_BOOKS.map((b) => b.id) })}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: 8,
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  background: 'rgba(168, 85, 247, 0.15)',
+                  border: '1px solid #a855f7',
+                  color: '#f3e8ff',
+                  cursor: 'pointer'
+                }}
+              >
+                ✨ Enable All Sourcebooks
+              </button>
+            </div>
+
+            {/* Source Books Grid */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                gap: 12
+              }}
+            >
+              {SWADE_SOURCE_BOOKS.map((book) => {
+                const activeBooks = character.sourceBooks || ['core'];
+                const isEnabled = activeBooks.includes(book.id);
+                return (
+                  <button
+                    key={book.id}
+                    type="button"
+                    onClick={() => {
+                      const next = isEnabled
+                        ? activeBooks.filter((id) => id !== book.id)
+                        : [...activeBooks, book.id];
+                      onUpdateCharacter({ sourceBooks: next.length > 0 ? next : ['core'] });
+                    }}
+                    style={{
+                      textAlign: 'left',
+                      padding: '14px 16px',
+                      borderRadius: 14,
+                      background: isEnabled
+                        ? 'linear-gradient(135deg, rgba(168, 85, 247, 0.25), rgba(126, 34, 206, 0.2))'
+                        : 'rgba(0, 0, 0, 0.3)',
+                      border: isEnabled ? '2px solid #a855f7' : '1px solid var(--border-subtle)',
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 12,
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    <div style={{ fontSize: '1.8rem', lineHeight: 1, marginTop: 2 }}>{book.icon}</div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6 }}>
+                        <span style={{ fontWeight: 800, fontSize: '0.95rem', color: isEnabled ? '#f3e8ff' : 'var(--text-secondary)' }}>
+                          {book.name}
+                        </span>
+                        <span
+                          style={{
+                            fontSize: '0.68rem',
+                            fontWeight: 900,
+                            padding: '3px 8px',
+                            borderRadius: 6,
+                            background: isEnabled ? '#a855f7' : 'rgba(255, 255, 255, 0.08)',
+                            color: isEnabled ? '#fff' : 'var(--text-muted)'
+                          }}
+                        >
+                          {isEnabled ? '✓ ACTIVE' : 'OFF'}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 4, lineHeight: 1.4 }}>
+                        {book.description}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Next Step Banner */}
+            <div style={{ marginTop: 22, display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                onClick={() => setActiveTab('identity')}
+                style={{
+                  padding: '12px 24px',
+                  borderRadius: 12,
+                  background: 'linear-gradient(135deg, #a855f7 0%, #7e22ce 100%)',
+                  border: '1px solid #c084fc',
+                  color: '#fff',
+                  fontWeight: 900,
+                  fontSize: '0.92rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  boxShadow: '0 4px 14px rgba(168, 85, 247, 0.35)'
+                }}
+              >
+                <span>Continue to Step 2: Identity & Ancestry</span>
+                <span>➔</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 2: IDENTITY & ANCESTRY */}
       {activeTab === 'identity' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {/* Basic Identity Card */}
@@ -367,90 +568,6 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
             </div>
           </div>
 
-          {/* Source Books Selection Card */}
-          <div
-            style={{
-              background: 'var(--bg-card)',
-              border: '1px solid var(--border-subtle)',
-              borderRadius: 16,
-              padding: 16
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6, flexWrap: 'wrap', gap: 6 }}>
-              <h3 style={{ fontSize: '0.98rem', fontWeight: 800, color: '#a855f7' }}>
-                📚 SOURCE BOOKS
-              </h3>
-              <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 700 }}>
-                {(character.sourceBooks || ['core']).length} Active Book{(character.sourceBooks || ['core']).length > 1 ? 's' : ''}
-              </span>
-            </div>
-            <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: 12 }}>
-              Select which rulebooks and companions to use as sources for this character's ancestries, hindrances, edges, powers, and armory.
-            </p>
-
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))',
-                gap: 10
-              }}
-            >
-              {SWADE_SOURCE_BOOKS.map((book) => {
-                const activeBooks = character.sourceBooks || ['core'];
-                const isEnabled = activeBooks.includes(book.id);
-                return (
-                  <button
-                    key={book.id}
-                    type="button"
-                    onClick={() => {
-                      const next = isEnabled
-                        ? activeBooks.filter((id) => id !== book.id)
-                        : [...activeBooks, book.id];
-                      onUpdateCharacter({ sourceBooks: next.length > 0 ? next : ['core'] });
-                    }}
-                    style={{
-                      textAlign: 'left',
-                      padding: '11px 13px',
-                      borderRadius: 12,
-                      background: isEnabled
-                        ? 'linear-gradient(135deg, rgba(168, 85, 247, 0.22), rgba(126, 34, 206, 0.18))'
-                        : 'rgba(0, 0, 0, 0.3)',
-                      border: isEnabled ? '1.5px solid #a855f7' : '1px solid var(--border-subtle)',
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: 10,
-                      cursor: 'pointer'
-                    }}
-                  >
-                    <div style={{ fontSize: '1.4rem', lineHeight: 1, marginTop: 2 }}>{book.icon}</div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6 }}>
-                        <span style={{ fontWeight: 800, fontSize: '0.88rem', color: isEnabled ? '#f3e8ff' : 'var(--text-secondary)' }}>
-                          {book.name}
-                        </span>
-                        <span
-                          style={{
-                            fontSize: '0.66rem',
-                            fontWeight: 900,
-                            padding: '2px 6px',
-                            borderRadius: 6,
-                            background: isEnabled ? '#a855f7' : 'rgba(255, 255, 255, 0.08)',
-                            color: isEnabled ? '#fff' : 'var(--text-muted)'
-                          }}
-                        >
-                          {isEnabled ? 'ENABLED' : 'OFF'}
-                        </span>
-                      </div>
-                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: 3 }}>
-                        {book.description}
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
           {/* Ancestry Selection Grid */}
           <div
             style={{
@@ -475,9 +592,9 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
               }}
             >
               {SWADE_ANCESTRIES.filter((anc) => {
-                const activeBooks = character.sourceBooks || ['core'];
-                if (anc.source && anc.source !== 'custom' && !activeBooks.includes(anc.source)) return false;
-                return true;
+                const activeBooks = character.sourceBooks && character.sourceBooks.length > 0 ? character.sourceBooks : ['core'];
+                if (anc.source === 'custom') return true;
+                return activeBooks.includes(anc.source || 'core');
               }).map((anc) => {
                 const selected = character.ancestryId === anc.id;
                 return (
@@ -677,11 +794,35 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
                 style={{ width: '100%' }}
               />
             </div>
+
+            {/* Continue to Hindrances Banner */}
+            <div style={{ marginTop: 18, display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                onClick={() => setActiveTab('hindrances')}
+                style={{
+                  padding: '11px 22px',
+                  borderRadius: 12,
+                  background: 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)',
+                  border: '1px solid #7dd3fc',
+                  color: '#082f49',
+                  fontWeight: 900,
+                  fontSize: '0.88rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8
+                }}
+              >
+                <span>Continue to Step 3: Hindrances</span>
+                <span>➔</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
 
-      {/* TAB 2: HINDRANCES & 4-POINT ALLOCATOR */}
+      {/* TAB 3: HINDRANCES & 4-POINT ALLOCATOR */}
       {activeTab === 'hindrances' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {/* Hindrance Point Allocator Card */}
@@ -1066,8 +1207,8 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
               }}
             >
               {SWADE_HINDRANCES.filter((h) => {
-                const activeBooks = character.sourceBooks || ['core'];
-                if (h.source && !activeBooks.includes(h.source)) return false;
+                const activeBooks = character.sourceBooks && character.sourceBooks.length > 0 ? character.sourceBooks : ['core'];
+                if (!activeBooks.includes(h.source || 'core')) return false;
                 if (
                   hindranceSearch.trim() &&
                   !h.name.toLowerCase().includes(hindranceSearch.toLowerCase()) &&
@@ -2055,8 +2196,8 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
               }}
             >
               {SWADE_EDGES.filter((ed) => {
-                const activeBooks = character.sourceBooks || ['core'];
-                if (ed.source && !activeBooks.includes(ed.source)) return false;
+                const activeBooks = character.sourceBooks && character.sourceBooks.length > 0 ? character.sourceBooks : ['core'];
+                if (!activeBooks.includes(ed.source || 'core')) return false;
                 if (edgeCategoryFilter !== 'All' && ed.category !== edgeCategoryFilter) return false;
                 if (
                   edgeSearch.trim() &&
@@ -2355,12 +2496,18 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
                 gap: 9
               }}
             >
-              {SWADE_POWERS.filter(
-                (p) =>
-                  !powerSearch.trim() ||
-                  p.name.toLowerCase().includes(powerSearch.toLowerCase()) ||
-                  p.summary.toLowerCase().includes(powerSearch.toLowerCase())
-              ).map((p) => (
+              {SWADE_POWERS.filter((p) => {
+                const activeBooks = character.sourceBooks && character.sourceBooks.length > 0 ? character.sourceBooks : ['core'];
+                if (!activeBooks.includes(p.source || 'core')) return false;
+                if (
+                  powerSearch.trim() &&
+                  !p.name.toLowerCase().includes(powerSearch.toLowerCase()) &&
+                  !p.summary.toLowerCase().includes(powerSearch.toLowerCase())
+                ) {
+                  return false;
+                }
+                return true;
+              }).map((p) => (
                 <div
                   key={p.id}
                   style={{
@@ -2619,7 +2766,10 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
                 ADD WEAPON FROM SWADE ARMORY:
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, maxHeight: 200, overflowY: 'auto' }}>
-                {SWADE_WEAPONS_CATALOG.map((catW, i) => (
+                {SWADE_WEAPONS_CATALOG.filter((catW) => {
+                  const activeBooks = character.sourceBooks && character.sourceBooks.length > 0 ? character.sourceBooks : ['core'];
+                  return activeBooks.includes(catW.source || 'core');
+                }).map((catW, i) => (
                   <button
                     key={i}
                     onClick={() =>
@@ -2724,7 +2874,10 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
                 ADD ARMOR OR SHIELD FROM CATALOG:
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                {SWADE_ARMOR_CATALOG.map((catA, i) => (
+                {SWADE_ARMOR_CATALOG.filter((catA) => {
+                  const activeBooks = character.sourceBooks && character.sourceBooks.length > 0 ? character.sourceBooks : ['core'];
+                  return activeBooks.includes(catA.source || 'core');
+                }).map((catA, i) => (
                   <button
                     key={i}
                     onClick={() =>
