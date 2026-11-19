@@ -88,108 +88,7 @@ export const DiceRollerModal: React.FC<DiceRollerModalProps> = ({
           </button>
         </div>
 
-        {/* Quick Custom Die Roller */}
-        <div
-          style={{
-            background: 'rgba(0, 0, 0, 0.35)',
-            border: '1px solid var(--border-subtle)',
-            borderRadius: 14,
-            padding: 12,
-            marginBottom: 14
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, flexWrap: 'wrap', gap: 8 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 700 }}>TN:</span>
-              {[4, 5, 6, 7, 8].map((tn) => (
-                <button
-                  key={tn}
-                  onClick={() => setTargetNumber(tn)}
-                  style={{
-                    padding: '4px 8px',
-                    borderRadius: 6,
-                    fontSize: '0.75rem',
-                    fontWeight: 800,
-                    background: targetNumber === tn ? '#f59e0b' : 'rgba(255,255,255,0.07)',
-                    color: targetNumber === tn ? '#110d08' : 'var(--text-secondary)'
-                  }}
-                >
-                  {tn}
-                </button>
-              ))}
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 700 }}>MOD:</span>
-              <button
-                onClick={() => setCustomMod(customMod - 1)}
-                style={{ width: 28, height: 28, borderRadius: 6, background: 'rgba(255,255,255,0.08)', fontWeight: 800 }}
-              >
-                −
-              </button>
-              <span style={{ fontWeight: 900, fontSize: '0.85rem', minWidth: 24, textAlign: 'center' }}>
-                {customMod >= 0 ? `+${customMod}` : customMod}
-              </span>
-              <button
-                onClick={() => setCustomMod(customMod + 1)}
-                style={{ width: 28, height: 28, borderRadius: 6, background: 'rgba(255,255,255,0.08)', fontWeight: 800 }}
-              >
-                +
-              </button>
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 6 }}>
-            <button
-              onClick={() =>
-                onRollTrait({
-                  label: 'Unskilled Check',
-                  dieSides: 4,
-                  isUnskilled: true,
-                  baseModifier: customMod,
-                  targetNumber
-                })
-              }
-              style={{
-                padding: '9px 4px',
-                borderRadius: 9,
-                background: 'rgba(255, 255, 255, 0.07)',
-                border: '1px solid var(--border-subtle)',
-                fontSize: '0.76rem',
-                fontWeight: 800,
-                color: 'var(--text-secondary)'
-              }}
-            >
-              d4-2
-            </button>
-            {DIE_STEPS.map((d) => (
-              <button
-                key={d}
-                onClick={() =>
-                  onRollTrait({
-                    label: `Custom d${d} Roll`,
-                    dieSides: d,
-                    baseModifier: customMod,
-                    targetNumber
-                  })
-                }
-                style={{
-                  padding: '9px 4px',
-                  borderRadius: 9,
-                  background: 'rgba(245, 158, 11, 0.18)',
-                  border: '1px solid rgba(245, 158, 11, 0.45)',
-                  fontSize: '0.84rem',
-                  fontWeight: 900,
-                  color: '#fbbf24'
-                }}
-              >
-                🎲 d{d}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Latest Roll Spotlight */}
+        {/* 1. TOP SPOTLIGHT: LATEST ROLL RESULTS */}
         {latestRoll ? (
           <div
             style={{
@@ -368,21 +267,126 @@ export const DiceRollerModal: React.FC<DiceRollerModalProps> = ({
           <div
             style={{
               textAlign: 'center',
-              padding: '24px 12px',
+              padding: '16px 12px',
               color: 'var(--text-muted)',
-              fontSize: '0.84rem'
+              fontSize: '0.84rem',
+              background: 'rgba(0, 0, 0, 0.25)',
+              borderRadius: 14,
+              border: '1px dashed var(--border-subtle)',
+              marginBottom: 14
             }}
           >
-            Tap any die above or any Trait on your Character Sheet to roll!
+            🎲 Tap any Trait or Weapon on your Character Sheet or use the dice below to roll!
           </div>
         )}
 
-        {/* Roll History Log */}
-        {rollHistory.length > 1 && (
+        {/* 2. MIDDLE: QUICK CUSTOM DIE ROLLER */}
+        <div
+          style={{
+            background: 'rgba(0, 0, 0, 0.35)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 14,
+            padding: 12,
+            marginBottom: 14
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, flexWrap: 'wrap', gap: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 700 }}>TN:</span>
+              {[4, 5, 6, 7, 8].map((tn) => (
+                <button
+                  key={tn}
+                  onClick={() => setTargetNumber(tn)}
+                  style={{
+                    padding: '4px 8px',
+                    borderRadius: 6,
+                    fontSize: '0.75rem',
+                    fontWeight: 800,
+                    background: targetNumber === tn ? '#f59e0b' : 'rgba(255,255,255,0.07)',
+                    color: targetNumber === tn ? '#110d08' : 'var(--text-secondary)'
+                  }}
+                >
+                  {tn}
+                </button>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 700 }}>MOD:</span>
+              <button
+                onClick={() => setCustomMod(customMod - 1)}
+                style={{ width: 28, height: 28, borderRadius: 6, background: 'rgba(255,255,255,0.08)', fontWeight: 800 }}
+              >
+                −
+              </button>
+              <span style={{ fontWeight: 900, fontSize: '0.85rem', minWidth: 24, textAlign: 'center' }}>
+                {customMod >= 0 ? `+${customMod}` : customMod}
+              </span>
+              <button
+                onClick={() => setCustomMod(customMod + 1)}
+                style={{ width: 28, height: 28, borderRadius: 6, background: 'rgba(255,255,255,0.08)', fontWeight: 800 }}
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 6 }}>
+            <button
+              onClick={() =>
+                onRollTrait({
+                  label: 'Unskilled Check',
+                  dieSides: 4,
+                  isUnskilled: true,
+                  baseModifier: customMod,
+                  targetNumber
+                })
+              }
+              style={{
+                padding: '9px 4px',
+                borderRadius: 9,
+                background: 'rgba(255, 255, 255, 0.07)',
+                border: '1px solid var(--border-subtle)',
+                fontSize: '0.76rem',
+                fontWeight: 800,
+                color: 'var(--text-secondary)'
+              }}
+            >
+              d4-2
+            </button>
+            {DIE_STEPS.map((d) => (
+              <button
+                key={d}
+                onClick={() =>
+                  onRollTrait({
+                    label: `Custom d${d} Roll`,
+                    dieSides: d,
+                    baseModifier: customMod,
+                    targetNumber
+                  })
+                }
+                style={{
+                  padding: '9px 4px',
+                  borderRadius: 9,
+                  background: 'rgba(245, 158, 11, 0.18)',
+                  border: '1px solid rgba(245, 158, 11, 0.45)',
+                  fontSize: '0.84rem',
+                  fontWeight: 900,
+                  color: '#fbbf24'
+                }}
+              >
+                🎲 d{d}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 3. BOTTOM: ROLL HISTORY LOG */}
+        {rollHistory.length > 0 && (
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
               <span style={{ fontSize: '0.76rem', fontWeight: 800, color: 'var(--text-muted)' }}>
-                RECENT ROLL HISTORY ({rollHistory.length})
+                📜 RECENT ROLL LOG ({rollHistory.length})
               </span>
               <button
                 onClick={onClearHistory}
@@ -391,24 +395,24 @@ export const DiceRollerModal: React.FC<DiceRollerModalProps> = ({
                 Clear Log
               </button>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 190, overflowY: 'auto' }}>
-              {rollHistory.slice(1).map((item) => (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 180, overflowY: 'auto' }}>
+              {rollHistory.map((item, idx) => (
                 <div
                   key={item.id}
                   style={{
                     padding: '8px 11px',
                     borderRadius: 9,
-                    background: 'rgba(0, 0, 0, 0.3)',
-                    border: '1px solid var(--border-subtle)',
+                    background: idx === 0 ? 'rgba(245, 158, 11, 0.12)' : 'rgba(0, 0, 0, 0.3)',
+                    border: idx === 0 ? '1px solid rgba(245, 158, 11, 0.35)' : '1px solid var(--border-subtle)',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     fontSize: '0.78rem'
                   }}
                 >
-                  <div>
-                    <strong style={{ color: '#fff' }}>{item.label}</strong>
-                    <span style={{ color: 'var(--text-muted)', marginLeft: 6 }}>
+                  <div style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 8 }}>
+                    <strong style={{ color: idx === 0 ? '#fbbf24' : '#fff' }}>{item.label}</strong>
+                    <span style={{ color: 'var(--text-muted)', marginLeft: 6, fontSize: '0.73rem' }}>
                       (d{item.traitDieResult.sides}: {item.traitDieResult.total}
                       {item.usedWildDie && item.wildDieResult ? ` | Wild: ${item.wildDieResult.total}` : ''})
                     </span>
@@ -416,8 +420,11 @@ export const DiceRollerModal: React.FC<DiceRollerModalProps> = ({
                   <span
                     style={{
                       fontWeight: 900,
+                      whiteSpace: 'nowrap',
                       color: item.isCriticalFailure
                         ? '#ef4444'
+                        : item.rollType === 'damage'
+                        ? '#fca5a5'
                         : item.raises > 0
                         ? '#fbbf24'
                         : item.isSuccess
@@ -425,7 +432,7 @@ export const DiceRollerModal: React.FC<DiceRollerModalProps> = ({
                         : 'var(--text-muted)'
                     }}
                   >
-                    {item.finalTotal} {item.raises > 0 ? `(+${item.raises}R)` : ''}
+                    {item.finalTotal} {item.rollType !== 'damage' && item.raises > 0 ? `(+${item.raises}R)` : ''}
                   </span>
                 </div>
               ))}

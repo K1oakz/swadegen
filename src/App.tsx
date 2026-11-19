@@ -89,6 +89,7 @@ export const App: React.FC = () => {
       ...params
     });
     setRollHistory((prev) => [entry, ...prev.slice(0, 29)]);
+    setIsDiceTrayOpen(true);
   };
 
   const handleRollDamage = (params: {
@@ -101,6 +102,7 @@ export const App: React.FC = () => {
       ...params
     });
     setRollHistory((prev) => [entry, ...prev.slice(0, 29)]);
+    setIsDiceTrayOpen(true);
   };
 
   const handleRerollWithBenny = (entry: RollLogEntry) => {
@@ -124,6 +126,7 @@ export const App: React.FC = () => {
         bonusRaiseD6: p.bonusRaiseD6
       });
       setRollHistory((prev) => [rerollEntry, ...prev.slice(0, 29)]);
+      setIsDiceTrayOpen(true);
     } else {
       const elanBonus = activeCharacter.edges.some((e) => e.edgeId === 'elan') ? 2 : 0;
       const rerollEntry = executeSwadeTraitRoll({
@@ -135,6 +138,7 @@ export const App: React.FC = () => {
         targetNumber: p.targetNumber
       });
       setRollHistory((prev) => [rerollEntry, ...prev.slice(0, 29)]);
+      setIsDiceTrayOpen(true);
     }
   };
 
