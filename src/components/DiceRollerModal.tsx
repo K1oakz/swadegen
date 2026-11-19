@@ -279,7 +279,7 @@ export const DiceRollerModal: React.FC<DiceRollerModalProps> = ({
                   </span>
                   {latestRoll.traitDieResult.acedCount > 0 && (
                     <span style={{ marginLeft: 6, color: '#fbbf24', fontWeight: 900 }}>
-                      {latestRoll.rollType === 'damage' ? `⚡ Max Roll (${latestRoll.traitDieResult.sides})` : `⚡ ACED x${latestRoll.traitDieResult.acedCount}!`}
+                      ⚡ ACED{latestRoll.traitDieResult.acedCount > 1 ? ` x${latestRoll.traitDieResult.acedCount}` : ''}!
                     </span>
                   )}
                 </div>
@@ -314,7 +314,7 @@ export const DiceRollerModal: React.FC<DiceRollerModalProps> = ({
                         </span>
                         {ex.acedCount > 0 && (
                           <span style={{ marginLeft: 6, color: '#fbbf24', fontWeight: 900 }}>
-                            {latestRoll.rollType === 'damage' ? `⚡ Max Roll (${ex.sides})` : '⚡ ACED!'}
+                            ⚡ ACED{ex.acedCount > 1 ? ` x${ex.acedCount}` : ''}!
                           </span>
                         )}
                       </div>

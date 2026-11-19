@@ -507,17 +507,10 @@ export function rollExplodingDie(sides: number): DieExplosionResult {
 }
 
 /**
- * Standard die for damage rolls.
- * Aces on damage rolls do not generate bonus dice for the roll.
+ * Damage dice in SWADE explode (Ace) when maximum is rolled.
  */
 export function rollDamageDie(sides: number): DieExplosionResult {
-  const r = Math.floor(Math.random() * sides) + 1;
-  return {
-    sides,
-    rolls: [r],
-    total: r,
-    acedCount: r === sides ? 1 : 0
-  };
+  return rollExplodingDie(sides);
 }
 
 /**
@@ -918,8 +911,8 @@ export function executeSwadeTraitRoll(params: {
 
 /**
  * Parses SWADE damage formulas like "Str+d8", "Str+d6+2", "2d6+1", "3d6"
- * Rolls dice without exploding bonus dice on Aces.
- * Only the explicit attack raise adds a +d6 bonus damage die.
+ * Damage dice explode (Ace) when maximum is rolled.
+ * An attack raise adds an exploding +d6 bonus damage die.
  */
 export function executeSwadeDamageRoll(params: {
   character: SwadeCharacter;
