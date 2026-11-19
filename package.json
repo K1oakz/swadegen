@@ -1,0 +1,32 @@
+{
+  "name": "swade-character-generator",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build && node scripts/bundle-singlefile.js",
+    "build:web": "tsc && vite build && node scripts/bundle-singlefile.js",
+    "preview": "vite preview",
+    "serve:web": "vite preview --port 5000 --host",
+    "cap:sync": "cap sync android",
+    "cap:open": "cap open android",
+    "cap:build": "npm run build && npx cap sync android",
+    "apk:debug": "npm run cap:build && cd android && .\\gradlew assembleDebug",
+    "apk:clean": "cd android && .\\gradlew --stop && .\\gradlew clean assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/cli": "^6.1.2",
+    "@capacitor/core": "^6.1.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.4.5",
+    "vite": "^5.4.11"
+  }
+}

@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Local Environment & Logs
+*.log
+.env
+.env.local
+.env.*.local
+
+# Editor & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Android local config & build caches
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.idea/
+android/captures/
+*.apk
+*.aab
+*.dex
