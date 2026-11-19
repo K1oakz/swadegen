@@ -229,6 +229,29 @@ export interface PlayState {
   aiming: boolean;         // +2 Shooting/Athletics(throwing) or ignore 4 pts penalty
 }
 
+export interface InstalledRobotMod {
+  id: string;
+  name: string;
+  category: 'negative' | 'core' | 'defensive' | 'locomotion' | 'offensive';
+  slots: number; // positive = consumes, negative = grants
+  cost: number;
+  count: number;
+  description: string;
+  effect?: string;
+  armorBonus?: number;
+  toughnessBonus?: number;
+  paceBonus?: number;
+}
+
+export interface RobotConfig {
+  frameSize: number;
+  frameName: string;
+  baseSlots: number;
+  baseWeight: string;
+  baseCost: number;
+  installedMods: InstalledRobotMod[];
+}
+
 export interface SwadeCharacter {
   id: string;
   name: string;
@@ -258,6 +281,7 @@ export interface SwadeCharacter {
   customSizeMod: number;
   settingRules: SettingRulesConfig;
   sourceBooks?: string[];
+  robotConfig?: RobotConfig;
   playState: PlayState;
   backstory: string;
   notes: string;

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { RobotBuilderTab } from './RobotBuilderTab';
 import {
   AdvanceEntry,
   ArcaneBackgroundId,
@@ -50,6 +51,7 @@ interface BuilderViewProps {
 type BuilderTab =
   | 'sources'
   | 'identity'
+  | 'robot'
   | 'hindrances'
   | 'attributes'
   | 'skills'
@@ -65,6 +67,26 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
   onRollTrait
 }) => {
   const [activeTab, setActiveTab] = useState<BuilderTab>('sources');
+
+  const isRobot = character.ancestryId === 'robot';
+
+  useEffect(() => {
+    if (activeTab === 'robot' && !isRobot) {
+      setActiveTab('identity');
+    }
+  }, [isRobot, activeTab]);
+
+  const robotConfig = character.robotConfig;
+  const robotBaseSlots = robotConfig?.baseSlots ?? 3;
+  const robotBonusSlots =
+    robotConfig?.installedMods
+      .filter((m) => m.slots < 0)
+      .reduce((sum, m) => sum + Math.abs(m.slots) * m.count, 0) ?? 0;
+  const robotTotalSlots = robotBaseSlots + robotBonusSlots;
+  const robotSlotsSpent =
+    robotConfig?.installedMods
+      .filter((m) => m.slots > 0)
+      .reduce((sum, m) => sum + m.slots * m.count, 0) ?? 0;
 
   // Filter states
   const [hindranceSearch, setHindranceSearch] = useState('');
@@ -150,38 +172,48 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
       badge: `${(character.sourceBooks || ['core']).length} Active`
     },
     { id: 'identity', label: '2. Identity & Ancestry' },
+    ...(isRobot
+      ? [
+          {
+            id: 'robot' as BuilderTab,
+            label: '3. 🤖 Robot Options',
+            badge: `${robotSlotsSpent}/${robotTotalSlots} Slots`,
+            badgeAlert: robotSlotsSpent > robotTotalSlots
+          }
+        ]
+      : []),
     {
       id: 'hindrances',
-      label: '3. Hindrances',
+      label: `${isRobot ? '4' : '3'}. Hindrances`,
       badge: `${hindSpent}/${hindEarned.cappedTotal} pts`,
       badgeAlert: hindRemaining !== 0
     },
     {
       id: 'attributes',
-      label: '4. Attributes',
+      label: `${isRobot ? '5' : '4'}. Attributes`,
       badge: `${attrPts.spent}/${attrPts.budget}`,
       badgeAlert: attrPts.remaining !== 0
     },
     {
       id: 'skills',
-      label: '5. Skills',
+      label: `${isRobot ? '6' : '5'}. Skills`,
       badge: `${skillPts.spent}/${skillPts.budget}`,
       badgeAlert: skillPts.remaining !== 0
     },
     {
       id: 'edges',
-      label: '6. Edges & Advances',
+      label: `${isRobot ? '7' : '6'}. Edges & Advances`,
       badge: `${edgePts.spent}/${edgePts.budget}`,
       badgeAlert: edgePts.remaining !== 0
     },
     {
       id: 'powers',
-      label: '7. Powers',
+      label: `${isRobot ? '8' : '7'}. Powers`,
       badge: character.powers.length > 0 ? `${character.powers.length}` : undefined
     },
     {
       id: 'gear',
-      label: '8. Weapons & Gear',
+      label: `${isRobot ? '9' : '8'}. Weapons & Gear`,
       badge: `$${character.currency}`
     }
   ];
@@ -795,17 +827,19 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
               />
             </div>
 
-            {/* Continue to Hindrances Banner */}
+            {/* Continue to Next Banner */}
             <div style={{ marginTop: 18, display: 'flex', justifyContent: 'flex-end' }}>
               <button
                 type="button"
-                onClick={() => setActiveTab('hindrances')}
+                onClick={() => setActiveTab(isRobot ? 'robot' : 'hindrances')}
                 style={{
                   padding: '11px 22px',
                   borderRadius: 12,
-                  background: 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)',
-                  border: '1px solid #7dd3fc',
-                  color: '#082f49',
+                  background: isRobot
+                    ? 'linear-gradient(135deg, #a855f7 0%, #7e22ce 100%)'
+                    : 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)',
+                  border: `1px solid ${isRobot ? '#c084fc' : '#7dd3fc'}`,
+                  color: isRobot ? '#fff' : '#082f49',
                   fontWeight: 900,
                   fontSize: '0.88rem',
                   cursor: 'pointer',
@@ -814,12 +848,22 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
                   gap: 8
                 }}
               >
-                <span>Continue to Step 3: Hindrances</span>
+                <span>{isRobot ? 'Continue to Step 3: 🤖 Robot Options' : 'Continue to Step 3: Hindrances'}</span>
                 <span>➔</span>
               </button>
             </div>
           </div>
         </div>
+      )}
+
+      {/* ROBOT OPTIONS TAB (Only displayed when Robot ancestry is active) */}
+      {activeTab === 'robot' && isRobot && (
+        <RobotBuilderTab
+          character={character}
+          onUpdateCharacter={onUpdateCharacter}
+          onNextTab={() => setActiveTab('hindrances')}
+          onPrevTab={() => setActiveTab('identity')}
+        />
       )}
 
       {/* TAB 3: HINDRANCES & 4-POINT ALLOCATOR */}

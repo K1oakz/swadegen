@@ -235,6 +235,9 @@ export function calculateDerivedStats(character: SwadeCharacter): DerivedStatsSu
   if (character.edges.some((e) => e.edgeId === 'brawny')) size += 1;
   if (character.hindrances.some((h) => h.hindranceId === 'obese')) size += 1;
   if (character.hindrances.some((h) => h.hindranceId === 'small')) size -= 1;
+  if (character.ancestryId === 'robot' && character.robotConfig?.frameSize) {
+    size += character.robotConfig.frameSize;
+  }
 
   // Pace & Running Die
   let pace = 6 + (ancestry.paceMod || 0) + character.customPaceMod;
@@ -255,6 +258,15 @@ export function calculateDerivedStats(character: SwadeCharacter): DerivedStatsSu
       runningDie = 4;
     }
   });
+
+  // Robot Locomotion Mods
+  if (character.ancestryId === 'robot' && character.robotConfig) {
+    character.robotConfig.installedMods.forEach((m) => {
+      if (m.paceBonus) {
+        pace += m.paceBonus * (m.count || 1);
+      }
+    });
+  }
   pace = Math.max(1, pace);
 
   // Parry = 2 + half Fighting die + Shield + Equipped Weapon Parry + Edges + Custom
@@ -332,8 +344,26 @@ export function calculateDerivedStats(character: SwadeCharacter): DerivedStatsSu
   const equippedArmors = character.armor.filter((a) => a.equipped && a.type === 'Armor');
   const armorBonus = equippedArmors.reduce((max, a) => Math.max(max, a.armorBonus), 0);
 
-  if (armorBonus > 0) {
-    toughnessBreakdown.push(`Armor: +${armorBonus}`);
+  // Robot Armor & Toughness Mods
+  let robotArmorBonus = 0;
+  if (character.ancestryId === 'robot' && character.robotConfig) {
+    character.robotConfig.installedMods.forEach((m) => {
+      if (m.toughnessBonus) {
+        const tb = m.toughnessBonus * (m.count || 1);
+        toughnessBase += tb;
+        toughnessBreakdown.push(`Robot Mod (${m.name}): ${tb > 0 ? '+' : ''}${tb}`);
+      }
+      if (m.armorBonus) {
+        const ab = m.armorBonus * (m.count || 1);
+        robotArmorBonus += ab;
+        toughnessBreakdown.push(`Robot Plating: +${ab} Armor`);
+      }
+    });
+  }
+
+  const totalArmor = armorBonus + robotArmorBonus;
+  if (totalArmor > 0) {
+    if (armorBonus > 0) toughnessBreakdown.push(`Equipped Armor: +${armorBonus}`);
   } else if (character.settingRules.unarmoredHero) {
     toughnessBase += 2;
     toughnessBreakdown.push('Unarmored Hero Rule: +2');
@@ -344,7 +374,7 @@ export function calculateDerivedStats(character: SwadeCharacter): DerivedStatsSu
     toughnessBreakdown.push(`Custom: ${character.customToughnessMod > 0 ? '+' : ''}${character.customToughnessMod}`);
   }
 
-  const toughnessTotal = toughnessBase + armorBonus;
+  const toughnessTotal = toughnessBase + totalArmor;
 
   // Power Points
   const ab = SWADE_ARCANE_BACKGROUNDS.find((a) => a.id === character.arcaneBackgroundId);
@@ -420,7 +450,7 @@ export function calculateDerivedStats(character: SwadeCharacter): DerivedStatsSu
     parryBreakdown,
     toughnessTotal,
     toughnessBase,
-    armorBonus,
+    armorBonus: totalArmor,
     toughnessBreakdown,
     maxPowerPoints,
     startingBennies,
