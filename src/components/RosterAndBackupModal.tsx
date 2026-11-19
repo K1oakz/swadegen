@@ -9,7 +9,6 @@ interface RosterAndBackupModalProps {
   activeCharacterId: string;
   onSelectCharacter: (id: string) => void;
   onCreateBlank: () => void;
-  onCreateRandom: () => void;
   onDuplicateCharacter: (char: SwadeCharacter) => void;
   onDeleteCharacter: (id: string) => void;
   onImportCharacters: (chars: SwadeCharacter[]) => void;
@@ -23,7 +22,6 @@ export const RosterAndBackupModal: React.FC<RosterAndBackupModalProps> = ({
   activeCharacterId,
   onSelectCharacter,
   onCreateBlank,
-  onCreateRandom,
   onDuplicateCharacter,
   onDeleteCharacter,
   onImportCharacters,
@@ -183,6 +181,7 @@ export const RosterAndBackupModal: React.FC<RosterAndBackupModalProps> = ({
                   onClose();
                 }}
                 style={{
+                  flex: 1,
                   padding: '11px 12px',
                   borderRadius: 11,
                   background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
@@ -192,23 +191,6 @@ export const RosterAndBackupModal: React.FC<RosterAndBackupModalProps> = ({
                 }}
               >
                 ➕ New Blank Wild Card
-              </button>
-              <button
-                onClick={() => {
-                  onCreateRandom();
-                  onClose();
-                }}
-                style={{
-                  padding: '11px 12px',
-                  borderRadius: 11,
-                  background: 'rgba(56, 189, 248, 0.18)',
-                  border: '1px solid #38bdf8',
-                  color: '#38bdf8',
-                  fontWeight: 900,
-                  fontSize: '0.84rem'
-                }}
-              >
-                🎲 Generate Random Hero
               </button>
             </div>
 

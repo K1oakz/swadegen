@@ -22,46 +22,11 @@ export const SWADE_SOURCE_BOOKS: SourceBook[] = [
     description: 'Standard Savage Worlds Adventure Edition Core Rules.'
   },
   {
-    id: 'fantasy',
-    name: 'Fantasy Companion',
-    abbr: 'Fantasy',
-    icon: '🧙',
-    description: 'High fantasy ancestries (Orcs, Goblins), arcane archers, paladins, and mythic armory.'
-  },
-  {
     id: 'scifi',
     name: 'Science Fiction Companion',
     abbr: 'Sci-Fi',
     icon: '🚀',
-    description: 'Cyborgs, insectoids, laser & plasma rifles, power armor, and cyberware.'
-  },
-  {
-    id: 'horror',
-    name: 'Horror Companion',
-    abbr: 'Horror',
-    icon: '🧛',
-    description: 'Dhampirs, gothic monster-hunters, sanity mechanics, and occult relics.'
-  },
-  {
-    id: 'superpowers',
-    name: 'Super Powers Companion',
-    abbr: 'Super Powers',
-    icon: '⚡',
-    description: 'Four-color and gritty superhuman archetypes, power points, and mutant powers.'
-  },
-  {
-    id: 'deadlands',
-    name: 'Deadlands: The Weird West',
-    abbr: 'Deadlands',
-    icon: '🤠',
-    description: 'Gunslingers, Hucksters, Mad Scientists, Blessed, and Harrowed of the Weird West.'
-  },
-  {
-    id: 'pathfinder',
-    name: 'Pathfinder for Savage Worlds',
-    abbr: 'Pathfinder',
-    icon: '🛡️',
-    description: 'Golarion fantasy classes, domains, deities, and core Pathfinder ancestries.'
+    description: 'Spaceships, robots, cyberware, power armor, blasters, plasma weapons, and alien ancestries.'
   }
 ];
 

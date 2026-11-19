@@ -12,8 +12,8 @@ import {
 interface TopBarProps {
   character: SwadeCharacter;
   totalCharacters: number;
-  activeMode: 'roster' | 'builder' | 'play';
-  onSetMode: (mode: 'roster' | 'builder' | 'play') => void;
+  activeMode: 'roster' | 'builder' | 'play' | 'starships';
+  onSetMode: (mode: 'roster' | 'builder' | 'play' | 'starships') => void;
   onOpenRoster: () => void;
   onOpenBackup: () => void;
   onOpenDiceTray: () => void;
@@ -196,6 +196,22 @@ export const TopBar: React.FC<TopBarProps> = ({
                 }}
               >
                 ⚔️ Play Sheet
+              </button>
+              <button
+                onClick={() => onSetMode('starships')}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: 8,
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  background:
+                    activeMode === 'starships'
+                      ? 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)'
+                      : 'transparent',
+                  color: activeMode === 'starships' ? '#ffffff' : 'var(--text-secondary)'
+                }}
+              >
+                🚀 Spaceships
               </button>
             </div>
 

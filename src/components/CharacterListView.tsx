@@ -8,7 +8,6 @@ interface CharacterListViewProps {
   activeCharacterId: string;
   onSelectCharacter: (id: string, mode: 'play' | 'builder') => void;
   onCreateBlank: () => void;
-  onCreateRandom: () => void;
   onDuplicateCharacter: (char: SwadeCharacter) => void;
   onDeleteCharacter: (id: string) => void;
   onOpenBackup: () => void;
@@ -19,7 +18,6 @@ export const CharacterListView: React.FC<CharacterListViewProps> = ({
   activeCharacterId,
   onSelectCharacter,
   onCreateBlank,
-  onCreateRandom,
   onDuplicateCharacter,
   onDeleteCharacter,
   onOpenBackup
@@ -88,24 +86,6 @@ export const CharacterListView: React.FC<CharacterListViewProps> = ({
               }}
             >
               ➕ Create New Character
-            </button>
-
-            <button
-              onClick={onCreateRandom}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                padding: '10px 14px',
-                borderRadius: 12,
-                background: 'rgba(56, 189, 248, 0.16)',
-                border: '1px solid rgba(56, 189, 248, 0.45)',
-                color: '#38bdf8',
-                fontWeight: 800,
-                fontSize: '0.82rem'
-              }}
-            >
-              🎲 Quick Random Hero
             </button>
 
             <button

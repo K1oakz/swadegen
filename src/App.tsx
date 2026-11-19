@@ -13,9 +13,14 @@ import { PlayModeView } from './components/PlayModeView';
 import { CharacterListView } from './components/CharacterListView';
 import { DiceRollerModal } from './components/DiceRollerModal';
 import { RosterAndBackupModal } from './components/RosterAndBackupModal';
+import { StarshipManagerView } from './components/StarshipManagerView';
+import { StarshipVessel } from './types/starship';
+import { STOCK_STARSHIPS } from './data/starshipData';
 
 const STORAGE_KEY_ROSTER = 'swade_character_forge_roster_v1';
 const STORAGE_KEY_ACTIVE_ID = 'swade_character_forge_active_id_v1';
+const STORAGE_KEY_STARSHIPS = 'swade_starships_v1';
+const STORAGE_KEY_ACTIVE_STARSHIP_ID = 'swade_active_starship_id_v1';
 
 export const App: React.FC = () => {
   const [characters, setCharacters] = useState<SwadeCharacter[]>(() => {
@@ -41,7 +46,30 @@ export const App: React.FC = () => {
     return SAMPLE_CHARACTERS[0].id;
   });
 
-  const [activeMode, setActiveMode] = useState<'roster' | 'builder' | 'play'>('roster');
+  const [starships, setStarships] = useState<StarshipVessel[]>(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY_STARSHIPS);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      console.error('Failed loading starships from localStorage:', e);
+    }
+    return STOCK_STARSHIPS;
+  });
+
+  const [activeStarshipId, setActiveStarshipId] = useState<string>(() => {
+    try {
+      const savedId = localStorage.getItem(STORAGE_KEY_ACTIVE_STARSHIP_ID);
+      if (savedId) return savedId;
+    } catch {
+      // ignore
+    }
+    return STOCK_STARSHIPS[0].id;
+  });
+
+  const [activeMode, setActiveMode] = useState<'roster' | 'builder' | 'play' | 'starships'>('roster');
   const [rollHistory, setRollHistory] = useState<RollLogEntry[]>([]);
   const [isDiceTrayOpen, setIsDiceTrayOpen] = useState(false);
   const [rosterModalMode, setRosterModalMode] = useState<'roster' | 'backup' | null>(null);
@@ -62,6 +90,22 @@ export const App: React.FC = () => {
     }
   }, [activeCharacterId]);
 
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY_STARSHIPS, JSON.stringify(starships));
+    } catch (e) {
+      console.error('Error saving starships:', e);
+    }
+  }, [starships]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY_ACTIVE_STARSHIP_ID, activeStarshipId);
+    } catch {
+      // ignore
+    }
+  }, [activeStarshipId]);
+
   const activeCharacter =
     characters.find((c) => c.id === activeCharacterId) || characters[0];
 
@@ -73,6 +117,45 @@ export const App: React.FC = () => {
           : c
       )
     );
+  };
+
+  const handleUpdateActiveStarship = (updates: Partial<StarshipVessel>) => {
+    setStarships((prev) =>
+      prev.map((s) =>
+        s.id === activeStarshipId
+          ? { ...s, ...updates, updatedAt: Date.now() }
+          : s
+      )
+    );
+  };
+
+  const handleCreateStarship = (newVessel: StarshipVessel) => {
+    setStarships((prev) => [newVessel, ...prev]);
+    setActiveStarshipId(newVessel.id);
+  };
+
+  const handleDeleteStarship = (id: string) => {
+    setStarships((prev) => {
+      const remaining = prev.filter((s) => s.id !== id);
+      if (id === activeStarshipId && remaining.length > 0) {
+        setActiveStarshipId(remaining[0].id);
+      }
+      return remaining;
+    });
+  };
+
+  const handleDuplicateStarship = (id: string) => {
+    const target = starships.find((s) => s.id === id);
+    if (!target) return;
+    const duplicated: StarshipVessel = {
+      ...target,
+      id: 'starship_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+      name: `${target.name} (Copy)`,
+      registry: `${target.registry}-CP`,
+      updatedAt: Date.now()
+    };
+    setStarships((prev) => [duplicated, ...prev]);
+    setActiveStarshipId(duplicated.id);
   };
 
   // --- Dice Rolling Handlers ---
@@ -150,12 +233,6 @@ export const App: React.FC = () => {
     setActiveMode('builder');
   };
 
-  const handleCreateRandom = () => {
-    const rand = generateRandomSwadeCharacter();
-    setCharacters((prev) => [rand, ...prev]);
-    setActiveCharacterId(rand.id);
-  };
-
   const handleDuplicateCharacter = (char: SwadeCharacter) => {
     const copy: SwadeCharacter = {
       ...JSON.parse(JSON.stringify(char)),
@@ -222,7 +299,6 @@ export const App: React.FC = () => {
               setActiveMode(mode);
             }}
             onCreateBlank={handleCreateBlank}
-            onCreateRandom={handleCreateRandom}
             onDuplicateCharacter={handleDuplicateCharacter}
             onDeleteCharacter={handleDeleteCharacter}
             onOpenBackup={() => setRosterModalMode('backup')}
@@ -233,18 +309,38 @@ export const App: React.FC = () => {
             onUpdateCharacter={handleUpdateActiveCharacter}
             onRollTrait={handleRollTrait}
           />
-        ) : (
+        ) : activeMode === 'play' ? (
           <PlayModeView
             character={activeCharacter}
             onUpdateCharacter={handleUpdateActiveCharacter}
             onRollTrait={handleRollTrait}
             onRollDamage={handleRollDamage}
           />
+        ) : (
+          <StarshipManagerView
+            starships={starships}
+            activeStarshipId={activeStarshipId}
+            onSelectStarship={setActiveStarshipId}
+            onUpdateActiveStarship={handleUpdateActiveStarship}
+            onCreateStarship={handleCreateStarship}
+            onDeleteStarship={handleDeleteStarship}
+            onDuplicateStarship={handleDuplicateStarship}
+            onRollDamage={(dmgFormula, label) =>
+              handleRollDamage({ label, damageFormula: dmgFormula })
+            }
+            onRollTrait={({ label, sides, modifier, isWildCard }) =>
+              handleRollTrait({
+                label,
+                dieSides: sides as DieSides,
+                baseModifier: modifier
+              })
+            }
+          />
         )}
       </main>
 
-      {/* Bottom Floating Roll Result Bar (Hidden in Builder and Roster modes) */}
-      {latestRoll && !isDiceTrayOpen && activeMode === 'play' && (
+      {/* Bottom Floating Roll Result Bar (Shown in Play and Starships modes) */}
+      {latestRoll && !isDiceTrayOpen && (activeMode === 'play' || activeMode === 'starships') && (
         <div
           onClick={() => setIsDiceTrayOpen(true)}
           style={{
@@ -357,7 +453,6 @@ export const App: React.FC = () => {
           activeCharacterId={activeCharacter.id}
           onSelectCharacter={setActiveCharacterId}
           onCreateBlank={handleCreateBlank}
-          onCreateRandom={handleCreateRandom}
           onDuplicateCharacter={handleDuplicateCharacter}
           onDeleteCharacter={handleDeleteCharacter}
           onImportCharacters={handleImportCharacters}

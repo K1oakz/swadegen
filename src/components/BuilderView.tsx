@@ -346,23 +346,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
               </button>
               <button
                 type="button"
-                onClick={() => onUpdateCharacter({ sourceBooks: ['core', 'fantasy'] })}
-                style={{
-                  padding: '6px 12px',
-                  borderRadius: 8,
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  background: 'rgba(34, 197, 94, 0.15)',
-                  border: '1px solid #22c55e',
-                  color: '#bbf7d0',
-                  cursor: 'pointer'
-                }}
-              >
-                🧙 Fantasy Campaign (Core + Fantasy)
-              </button>
-              <button
-                type="button"
-                onClick={() => onUpdateCharacter({ sourceBooks: SWADE_SOURCE_BOOKS.map((b) => b.id) })}
+                onClick={() => onUpdateCharacter({ sourceBooks: ['scifi'] })}
                 style={{
                   padding: '6px 12px',
                   borderRadius: 8,
@@ -374,7 +358,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
                   cursor: 'pointer'
                 }}
               >
-                ✨ Enable All Sourcebooks
+                🛸 Sci-Fi Companion Only
               </button>
             </div>
 
