@@ -128,7 +128,7 @@ export const RosterAndBackupModal: React.FC<RosterAndBackupModalProps> = ({
                 color: activeTab === 'roster' ? '#110d08' : 'var(--text-secondary)'
               }}
             >
-              👥 Character Roster ({characters.length})
+              Character Roster ({characters.length})
             </button>
             <button
               onClick={() => setActiveTab('export')}
@@ -141,7 +141,7 @@ export const RosterAndBackupModal: React.FC<RosterAndBackupModalProps> = ({
                 color: activeTab === 'export' ? '#110d08' : 'var(--text-secondary)'
               }}
             >
-              📤 Export JSON
+              Export JSON
             </button>
             <button
               onClick={() => setActiveTab('import')}
@@ -154,7 +154,7 @@ export const RosterAndBackupModal: React.FC<RosterAndBackupModalProps> = ({
                 color: activeTab === 'import' ? '#110d08' : 'var(--text-secondary)'
               }}
             >
-              📥 Import JSON
+              Import JSON
             </button>
           </div>
           <button
@@ -174,14 +174,14 @@ export const RosterAndBackupModal: React.FC<RosterAndBackupModalProps> = ({
         {/* ROSTER TAB */}
         {activeTab === 'roster' && (
           <div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 14 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 8, marginBottom: 14 }}>
               <button
                 onClick={() => {
                   onCreateBlank();
                   onClose();
                 }}
                 style={{
-                  flex: 1,
+                  width: '100%',
                   padding: '11px 12px',
                   borderRadius: 11,
                   background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
@@ -190,7 +190,7 @@ export const RosterAndBackupModal: React.FC<RosterAndBackupModalProps> = ({
                   fontSize: '0.84rem'
                 }}
               >
-                ➕ New Blank Wild Card
+                + New Blank Wild Card
               </button>
             </div>
 
@@ -223,12 +223,43 @@ export const RosterAndBackupModal: React.FC<RosterAndBackupModalProps> = ({
                       style={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: 10,
+                        gap: 12,
                         textAlign: 'left',
                         flex: 1
                       }}
                     >
-                      <span style={{ fontSize: '1.6rem' }}>{ch.avatarEmoji || '🎲'}</span>
+                      {ch.avatarImage ? (
+                        <img
+                          src={ch.avatarImage}
+                          alt={ch.name}
+                          style={{
+                            width: 44,
+                            height: 44,
+                            borderRadius: 10,
+                            objectFit: 'cover',
+                            border: `1px solid ${isSelected ? '#f59e0b' : 'var(--border-subtle)'}`,
+                            background: '#111'
+                          }}
+                        />
+                      ) : (
+                        <div
+                          style={{
+                            width: 44,
+                            height: 44,
+                            borderRadius: 10,
+                            background: isSelected ? 'rgba(245, 158, 11, 0.25)' : 'rgba(255, 255, 255, 0.08)',
+                            border: `1px solid ${isSelected ? '#f59e0b' : 'var(--border-subtle)'}`,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontWeight: 900,
+                            fontSize: '1.1rem',
+                            color: isSelected ? '#fbbf24' : '#fff'
+                          }}
+                        >
+                          {ch.name ? ch.name.charAt(0).toUpperCase() : 'H'}
+                        </div>
+                      )}
                       <div>
                         <div style={{ fontWeight: 900, fontSize: '0.94rem', color: '#fff' }}>
                           {ch.name}{' '}
@@ -303,7 +334,7 @@ export const RosterAndBackupModal: React.FC<RosterAndBackupModalProps> = ({
                   fontSize: '0.82rem'
                 }}
               >
-                💾 Download .JSON File
+                Download .JSON File
               </button>
               <button
                 onClick={handleCopyJson}
@@ -317,7 +348,7 @@ export const RosterAndBackupModal: React.FC<RosterAndBackupModalProps> = ({
                   fontSize: '0.82rem'
                 }}
               >
-                📋 Copy JSON to Clipboard
+                Copy JSON to Clipboard
               </button>
               {copyStatus && (
                 <span style={{ fontSize: '0.78rem', color: '#4ade80', alignSelf: 'center', fontWeight: 700 }}>
@@ -393,7 +424,7 @@ export const RosterAndBackupModal: React.FC<RosterAndBackupModalProps> = ({
                   fontSize: '0.82rem'
                 }}
               >
-                📥 Import JSON
+                Import JSON
               </button>
             </div>
           </div>

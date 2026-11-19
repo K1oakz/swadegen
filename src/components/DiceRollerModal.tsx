@@ -66,7 +66,7 @@ export const DiceRollerModal: React.FC<DiceRollerModalProps> = ({
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
           <div>
             <h3 style={{ fontSize: '1.08rem', fontWeight: 900, color: '#fbbf24' }}>
-              🎲 SAVAGE WORLDS EXPLODING DICE TRAY
+              SAVAGE WORLDS EXPLODING DICE TRAY
             </h3>
             <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>
               {character.isWildCard
@@ -146,14 +146,14 @@ export const DiceRollerModal: React.FC<DiceRollerModalProps> = ({
                 }}
               >
                 {latestRoll.isCriticalFailure
-                  ? '💀 CRITICAL FAILURE!'
+                  ? 'CRITICAL FAILURE!'
                   : latestRoll.rollType === 'damage'
-                  ? `💥 ${latestRoll.finalTotal} DAMAGE`
+                  ? `${latestRoll.finalTotal} DAMAGE`
                   : latestRoll.raises > 0
-                  ? `🔥 SUCCESS + ${latestRoll.raises} RAISE${latestRoll.raises > 1 ? 'S' : ''}!`
+                  ? `SUCCESS + ${latestRoll.raises} RAISE${latestRoll.raises > 1 ? 'S' : ''}!`
                   : latestRoll.isSuccess
-                  ? '✅ SUCCESS'
-                  : '❌ FAILURE'}
+                  ? 'SUCCESS'
+                  : 'FAILURE'}
               </div>
             </div>
 
@@ -178,7 +178,7 @@ export const DiceRollerModal: React.FC<DiceRollerModalProps> = ({
                   </span>
                   {latestRoll.traitDieResult.acedCount > 0 && (
                     <span style={{ marginLeft: 6, color: '#fbbf24', fontWeight: 900 }}>
-                      ⚡ ACED{latestRoll.traitDieResult.acedCount > 1 ? ` x${latestRoll.traitDieResult.acedCount}` : ''}!
+                      ACED{latestRoll.traitDieResult.acedCount > 1 ? ` x${latestRoll.traitDieResult.acedCount}` : ''}!
                     </span>
                   )}
                 </div>
@@ -191,7 +191,7 @@ export const DiceRollerModal: React.FC<DiceRollerModalProps> = ({
                     </span>
                     {latestRoll.wildDieResult.acedCount > 0 && (
                       <span style={{ marginLeft: 6, color: '#fbbf24', fontWeight: 900 }}>
-                        ⚡ ACED x{latestRoll.wildDieResult.acedCount}!
+                        ACED x{latestRoll.wildDieResult.acedCount}!
                       </span>
                     )}
                   </div>
@@ -203,7 +203,7 @@ export const DiceRollerModal: React.FC<DiceRollerModalProps> = ({
                       latestRoll.label.includes('Raise') &&
                       idx === latestRoll.extraDiceResults!.length - 1;
                     const dieLabel = latestRoll.rollType === 'damage'
-                      ? (isRaiseDie ? '🔥 Raise Bonus Die' : `Damage Die ${idx + 2}`)
+                      ? (isRaiseDie ? 'Raise Bonus Die' : `Damage Die ${idx + 2}`)
                       : `Bonus Die`;
                     return (
                       <div key={idx} style={{ fontSize: '0.82rem', color: '#fff', fontWeight: 700 }}>
@@ -213,7 +213,7 @@ export const DiceRollerModal: React.FC<DiceRollerModalProps> = ({
                         </span>
                         {ex.acedCount > 0 && (
                           <span style={{ marginLeft: 6, color: '#fbbf24', fontWeight: 900 }}>
-                            ⚡ ACED{ex.acedCount > 1 ? ` x${ex.acedCount}` : ''}!
+                            ACED{ex.acedCount > 1 ? ` x${ex.acedCount}` : ''}!
                           </span>
                         )}
                       </div>
@@ -256,7 +256,7 @@ export const DiceRollerModal: React.FC<DiceRollerModalProps> = ({
                     fontSize: '0.82rem'
                   }}
                 >
-                  🪙 Spend 1 Benny to Reroll ({character.playState.bennies} left)
+                  Spend 1 Benny to Reroll ({character.playState.bennies} left)
                   {latestRoll.rollType === 'trait' && hasElan ? ' [+2 Elan Bonus!]' : ''}
                   {latestRoll.rollType === 'damage' && hasNoMercy ? ' [+2 No Mercy Bonus!]' : ''}
                 </button>
@@ -276,7 +276,7 @@ export const DiceRollerModal: React.FC<DiceRollerModalProps> = ({
               marginBottom: 14
             }}
           >
-            🎲 Tap any Trait or Weapon on your Character Sheet or use the dice below to roll!
+            Tap any Trait or Weapon on your Character Sheet or use the dice below to roll!
           </div>
         )}
 
@@ -375,7 +375,7 @@ export const DiceRollerModal: React.FC<DiceRollerModalProps> = ({
                   color: '#fbbf24'
                 }}
               >
-                🎲 d{d}
+                d{d}
               </button>
             ))}
           </div>
@@ -386,7 +386,7 @@ export const DiceRollerModal: React.FC<DiceRollerModalProps> = ({
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
               <span style={{ fontSize: '0.76rem', fontWeight: 800, color: 'var(--text-muted)' }}>
-                📜 RECENT ROLL LOG ({rollHistory.length})
+                RECENT ROLL LOG ({rollHistory.length})
               </span>
               <button
                 onClick={onClearHistory}

@@ -285,7 +285,8 @@ export interface SwadeCharacter {
   playState: PlayState;
   backstory: string;
   notes: string;
-  avatarEmoji: string;
+  avatarEmoji?: string;
+  avatarImage?: string; // uploaded base64 data URI or image URL
   updatedAt: number;
 }
 

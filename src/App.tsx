@@ -204,7 +204,7 @@ export const App: React.FC = () => {
       const noMercyBonus = activeCharacter.edges.some((e) => e.edgeId === 'no_mercy') ? '+2' : '';
       const rerollEntry = executeSwadeDamageRoll({
         character: activeCharacter,
-        label: `🪙 Benny Reroll: ${p.label}`,
+        label: `Benny Reroll: ${p.label}`,
         damageFormula: `${p.damageFormula}${noMercyBonus}`,
         bonusRaiseD6: p.bonusRaiseD6
       });
@@ -214,7 +214,7 @@ export const App: React.FC = () => {
       const elanBonus = activeCharacter.edges.some((e) => e.edgeId === 'elan') ? 2 : 0;
       const rerollEntry = executeSwadeTraitRoll({
         character: activeCharacter,
-        label: `🪙 Benny Reroll: ${p.label}`,
+        label: `Benny Reroll: ${p.label}`,
         dieSides: p.dieSides,
         isUnskilled: p.isUnskilled,
         baseModifier: (p.baseModifier || 0) + elanBonus,
@@ -386,7 +386,7 @@ export const App: React.FC = () => {
                 textOverflow: 'ellipsis'
               }}
             >
-              🎲 {latestRoll.label}
+              {latestRoll.label}
             </div>
             <div style={{ fontSize: '0.73rem', color: 'var(--text-secondary)' }}>
               d{latestRoll.traitDieResult.sides}: [{latestRoll.traitDieResult.rolls.join('+')}]

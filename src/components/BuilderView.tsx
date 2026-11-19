@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { RobotBuilderTab } from './RobotBuilderTab';
 import {
   AdvanceEntry,
@@ -59,14 +59,53 @@ type BuilderTab =
   | 'powers'
   | 'gear';
 
-const AVATAR_EMOJIS = ['⚔️', '🤠', '🧙‍♂️', '🏹', '🦾', '🕵️', '🧛', '🛡️', '🚀', '🐺', '💀', '🔥', '⚡', '🎲'];
-
 export const BuilderView: React.FC<BuilderViewProps> = ({
   character,
   onUpdateCharacter,
   onRollTrait
 }) => {
   const [activeTab, setActiveTab] = useState<BuilderTab>('sources');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxDim = 400;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxDim) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          }
+        } else {
+          if (height > maxDim) {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          onUpdateCharacter({ avatarImage: compressedDataUrl });
+        }
+      };
+      img.src = event.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
 
   const isRobot = character.ancestryId === 'robot';
 
@@ -176,7 +215,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
       ? [
           {
             id: 'robot' as BuilderTab,
-            label: '3. 🤖 Robot Options',
+            label: '3. Robot Options',
             badge: `${robotSlotsSpent}/${robotTotalSlots} Slots`,
             badgeAlert: robotSlotsSpent > robotTotalSlots
           }
@@ -289,7 +328,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
               <div>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 900, color: '#a855f7', display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span>📚</span> STEP 1: SELECT RULEBOOKS & SOURCE BOOKS
+                  STEP 1: SELECT RULEBOOKS & SOURCE BOOKS
                 </h3>
                 <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: 4 }}>
                   Choose which books and companions apply to this character. All ancestries, hindrances, edges, powers, and armory choices in the following steps will be strictly restricted to your selected source books.
@@ -326,7 +365,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
                   cursor: 'pointer'
                 }}
               >
-                📕 Core Rules Only
+                Core Rules Only
               </button>
               <button
                 type="button"
@@ -342,7 +381,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
                   cursor: 'pointer'
                 }}
               >
-                🚀 Sci-Fi Campaign (Core + Sci-Fi)
+                Sci-Fi Campaign (Core + Sci-Fi)
               </button>
               <button
                 type="button"
@@ -358,7 +397,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
                   cursor: 'pointer'
                 }}
               >
-                🛸 Sci-Fi Companion Only
+                Sci-Fi Companion Only
               </button>
             </div>
 
@@ -467,7 +506,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
             }}
           >
             <h3 style={{ fontSize: '0.98rem', fontWeight: 800, color: '#fbbf24', marginBottom: 12 }}>
-              🪪 CHARACTER IDENTITY
+              CHARACTER IDENTITY
             </h3>
 
             <div
@@ -518,51 +557,126 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
               </div>
             </div>
 
-            {/* Avatar Emoji & Wild Card Toggle */}
+            {/* Character Portrait & Image Management */}
             <div
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                gap: 12
+                marginBottom: 14,
+                padding: '14px 16px',
+                borderRadius: 14,
+                background: 'rgba(0, 0, 0, 0.35)',
+                border: '1px solid var(--border-subtle)'
               }}
             >
-              <div>
-                <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginBottom: 5, fontWeight: 700 }}>
-                  AVATAR ICON
-                </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                  {AVATAR_EMOJIS.map((em) => (
-                    <button
-                      key={em}
-                      onClick={() => onUpdateCharacter({ avatarEmoji: em })}
-                      style={{
-                        width: 34,
-                        height: 34,
-                        borderRadius: 8,
-                        fontSize: '1.1rem',
-                        background:
-                          character.avatarEmoji === em
-                            ? 'rgba(245, 158, 11, 0.3)'
-                            : 'rgba(255, 255, 255, 0.05)',
-                        border:
-                          character.avatarEmoji === em
-                            ? '1px solid #f59e0b'
-                            : '1px solid transparent'
-                      }}
-                    >
-                      {em}
-                    </button>
-                  ))}
-                </div>
+              <div style={{ fontSize: '0.74rem', color: '#fbbf24', marginBottom: 10, fontWeight: 800, textTransform: 'uppercase' }}>
+                Character Portrait / Image
               </div>
 
+              <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+                {/* Image Preview Box */}
+                <div
+                  style={{
+                    width: 76,
+                    height: 76,
+                    borderRadius: 12,
+                    background: '#1a1511',
+                    border: '1.5px solid var(--border-strong)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden',
+                    flexShrink: 0,
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
+                  }}
+                >
+                  {character.avatarImage ? (
+                    <img
+                      src={character.avatarImage}
+                      alt={character.name}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  ) : (
+                    <span style={{ fontSize: '1.8rem', fontWeight: 900, color: 'var(--text-muted)' }}>
+                      {character.name.trim().charAt(0).toUpperCase() || 'H'}
+                    </span>
+                  )}
+                </div>
+
+                {/* Upload & Link Controls */}
+                <div style={{ flex: '1 1 260px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={handleImageFileUpload}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      style={{
+                        padding: '7px 14px',
+                        borderRadius: 8,
+                        background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                        color: '#120d08',
+                        fontWeight: 800,
+                        fontSize: '0.78rem',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Upload Image File
+                    </button>
+
+                    {character.avatarImage && (
+                      <button
+                        type="button"
+                        onClick={() => onUpdateCharacter({ avatarImage: '' })}
+                        style={{
+                          padding: '7px 12px',
+                          borderRadius: 8,
+                          background: 'rgba(239, 68, 68, 0.15)',
+                          border: '1px solid #ef4444',
+                          color: '#fca5a5',
+                          fontWeight: 700,
+                          fontSize: '0.78rem',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Remove Image
+                      </button>
+                    )}
+                  </div>
+
+                  <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                    <input
+                      type="text"
+                      placeholder="Or paste direct image URL (https://...)"
+                      value={character.avatarImage || ''}
+                      onChange={(e) => onUpdateCharacter({ avatarImage: e.target.value })}
+                      style={{
+                        flex: 1,
+                        padding: '7px 10px',
+                        borderRadius: 8,
+                        fontSize: '0.8rem',
+                        background: 'rgba(0, 0, 0, 0.4)'
+                      }}
+                    />
+                  </div>
+                  <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
+                    Upload an image file from your device (JPG/PNG) or enter an image web URL.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Character Tier Toggle */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
               <div>
                 <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginBottom: 5, fontWeight: 700 }}>
                   CHARACTER TIER
                 </div>
                 <button
+                  type="button"
                   onClick={() => onUpdateCharacter({ isWildCard: !character.isWildCard })}
                   style={{
                     padding: '9px 14px',
@@ -577,8 +691,8 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
                   }}
                 >
                   {character.isWildCard
-                    ? '★ Wild Card (d6 Wild Die, 3 Wounds, 3 Bennies)'
-                    : '☆ Extra / Henchman (No Wild Die, 1 Wound)'}
+                    ? 'Wild Card (d6 Wild Die, 3 Wounds, 3 Bennies)'
+                    : 'Extra / Henchman (No Wild Die, 1 Wound)'}
                 </button>
               </div>
             </div>
@@ -594,7 +708,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
             }}
           >
             <h3 style={{ fontSize: '0.98rem', fontWeight: 800, color: '#38bdf8', marginBottom: 4 }}>
-              🧬 ANCESTRY / RACE
+              ANCESTRY / RACE
             </h3>
             <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: 12 }}>
               Your Ancestry grants automatic starting Attribute/Skill bonuses, free Edges (Human), and racial traits.
@@ -695,7 +809,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
               }}
             >
               <h4 style={{ fontSize: '0.88rem', fontWeight: 800, color: '#fbbf24', marginBottom: 10 }}>
-                ⚙️ OPTIONAL SWADE SETTING RULES
+                OPTIONAL SWADE SETTING RULES
               </h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 <button
@@ -793,7 +907,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
               }}
             >
               <h4 style={{ fontSize: '0.88rem', fontWeight: 800, color: '#fbbf24' }}>
-                📜 BACKSTORY & CAMPAIGN NOTES
+                BACKSTORY & CAMPAIGN NOTES
               </h4>
               <textarea
                 rows={3}
@@ -832,7 +946,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
                   gap: 8
                 }}
               >
-                <span>{isRobot ? 'Continue to Step 3: 🤖 Robot Options' : 'Continue to Step 3: Hindrances'}</span>
+                <span>{isRobot ? 'Continue to Step 3: Robot Options' : 'Continue to Step 3: Hindrances'}</span>
                 <span>➔</span>
               </button>
             </div>
@@ -874,7 +988,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
             >
               <div>
                 <h3 style={{ fontSize: '0.98rem', fontWeight: 800, color: '#fbbf24' }}>
-                  ⚖️ HINDRANCE POINT ALLOCATION (Max 4 Points)
+                  HINDRANCE POINT ALLOCATION (Max 4 Points)
                 </h3>
                 <p style={{ fontSize: '0.76rem', color: 'var(--text-secondary)' }}>
                   Major Hindrances grant <strong>2 pts</strong>; Minor Hindrances grant <strong>1 pt</strong> (up to 4 pts max). Spend your earned points below:
@@ -1052,7 +1166,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
             }}
           >
             <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#fca5a5', marginBottom: 10 }}>
-              ⚠️ SELECTED HINDRANCES ({character.hindrances.length})
+              SELECTED HINDRANCES ({character.hindrances.length})
             </h4>
 
             {character.hindrances.length === 0 ? (
@@ -1190,7 +1304,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, marginBottom: 12, flexWrap: 'wrap' }}>
               <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#fbbf24' }}>
-                📖 SWADE HINDRANCES COMPENDIUM ({SWADE_HINDRANCES.length})
+                SWADE HINDRANCES COMPENDIUM ({SWADE_HINDRANCES.length})
               </h4>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                 <input
@@ -1373,7 +1487,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
           >
             <div>
               <h3 style={{ fontSize: '0.98rem', fontWeight: 800, color: '#fbbf24' }}>
-                💪 ATTRIBUTES (5 Base Points + Hindrance/Advance Bonuses)
+                ATTRIBUTES (5 Base Points + Hindrance/Advance Bonuses)
               </h3>
               <p style={{ fontSize: '0.76rem', color: 'var(--text-secondary)' }}>
                 Every Attribute starts at <strong>d4</strong> (or <strong>d6</strong> with Ancestry bonus). Raising one die step costs 1 point.
@@ -1593,7 +1707,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
           >
             <div>
               <h3 style={{ fontSize: '0.98rem', fontWeight: 800, color: '#38bdf8' }}>
-                🎯 SKILLS ({character.settingRules.moreSkillPoints ? 15 : 12} Base Points + Bonuses)
+                SKILLS ({character.settingRules.moreSkillPoints ? 15 : 12} Base Points + Bonuses)
               </h3>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                 <strong>Core Skills (★)</strong> start at d4 for free. Raising a skill costs <strong>1 pt</strong> per step up to its Linked Attribute, and <strong>2 pts</strong> per step above its Linked Attribute.
@@ -1881,7 +1995,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
             >
               <div>
                 <h3 style={{ fontSize: '0.98rem', fontWeight: 800, color: '#fbbf24' }}>
-                  🏅 CHARACTER EDGES
+                  CHARACTER EDGES
                 </h3>
                 <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                   Humans start with 1 free Edge. Additional Edges come from Hindrance Points (2 pts each), Born a Hero, or Advances.
@@ -2038,7 +2152,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
               <div>
                 <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#38bdf8' }}>
-                  📈 ADVANCEMENTS & RANK PROGRESSION ({derived.rank})
+                  ADVANCEMENTS & RANK PROGRESSION ({derived.rank})
                 </h4>
                 <p style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>
                   0–3 Novice • 4–7 Seasoned • 8–11 Veteran • 12–15 Heroic • 16+ Legendary. Logging an Edge, Attribute, or Skills advance automatically expands your point budgets!
@@ -2156,7 +2270,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
               <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#fbbf24' }}>
-                📖 SWADE EDGES COMPENDIUM ({SWADE_EDGES.length})
+                SWADE EDGES COMPENDIUM ({SWADE_EDGES.length})
               </h4>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                 <input
@@ -2350,7 +2464,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
             }}
           >
             <h3 style={{ fontSize: '0.98rem', fontWeight: 800, color: '#c084fc', marginBottom: 6 }}>
-              ✨ ARCANE BACKGROUND & POWER POINTS
+              ARCANE BACKGROUND & POWER POINTS
             </h3>
             <p style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', marginBottom: 12 }}>
               Choose an Arcane Background to unlock Powers and Power Points. Customize each power with its own <strong>Trappings</strong> (fire, frost, necromancy, clockwork gadgets, etc.).
@@ -2429,7 +2543,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
             }}
           >
             <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#e9d5ff', marginBottom: 10 }}>
-              🔮 KNOWN POWERS & TRAPPINGS ({character.powers.length})
+              KNOWN POWERS & TRAPPINGS ({character.powers.length})
             </h4>
 
             {character.powers.length === 0 ? (
@@ -2507,7 +2621,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
               <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#c084fc' }}>
-                📖 SWADE POWERS COMPENDIUM ({SWADE_POWERS.length})
+                SWADE POWERS COMPENDIUM ({SWADE_POWERS.length})
               </h4>
               <input
                 type="text"
@@ -2650,7 +2764,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
                     color: derived.isEncumbered ? '#fca5a5' : '#4ade80'
                   }}
                 >
-                  ⚖️ {derived.totalWeight} / {derived.maxLoad} lbs{' '}
+                  Weight: {derived.totalWeight} / {derived.maxLoad} lbs{' '}
                   {derived.isEncumbered ? '(-2 Encumbered!)' : '(Unencumbered)'}
                 </div>
               </div>
@@ -2752,7 +2866,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
               }}
             >
               <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#ef4444', marginBottom: 10 }}>
-                ⚔️ CHARACTER WEAPONS ({character.weapons.length})
+                CHARACTER WEAPONS ({character.weapons.length})
               </h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
                 {character.weapons.map((w, idx) => (
@@ -2838,7 +2952,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
               }}
             >
               <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#22c55e', marginBottom: 10 }}>
-                🛡️ ARMOR & SHIELDS ({character.armor.length})
+                ARMOR & SHIELDS ({character.armor.length})
               </h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
                 {character.armor.map((a, idx) => (
@@ -2947,7 +3061,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
             }}
           >
             <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#fbbf24', marginBottom: 10 }}>
-              🎒 ADVENTURING GEAR & INVENTORY ({character.gear.length})
+              ADVENTURING GEAR & INVENTORY ({character.gear.length})
             </h4>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>

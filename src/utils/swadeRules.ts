@@ -1120,25 +1120,27 @@ export function createBlankCharacter(name: string = 'New Wild Card'): SwadeChara
     },
     backstory: '',
     notes: '',
-    avatarEmoji: '🎲',
+    avatarEmoji: '',
+    avatarImage: '',
     updatedAt: Date.now()
   };
 }
 
 export function generateRandomSwadeCharacter(): SwadeCharacter {
   const archetypes = [
-    { name: 'Kaelen Thorne', concept: 'Frontier Ranger & Scout', setting: 'Fantasy', emoji: '🏹', focusAttr: 'agility' as AttributeId },
-    { name: 'Doc Holliday Vega', concept: 'Cyber-Surgeon & Gunslinger', setting: 'Sci-Fi / Cyberpunk', emoji: '🦾', focusAttr: 'smarts' as AttributeId },
-    { name: 'Sister Evangeline', concept: 'Monster Hunter & Exorcist', setting: 'Horror / Rippers', emoji: '✝️', focusAttr: 'spirit' as AttributeId },
-    { name: 'Thorgar Ironbrow', concept: 'Tunnel Breaker & Mercenary', setting: 'Fantasy', emoji: '🪓', focusAttr: 'strength' as AttributeId },
-    { name: 'Capt. Roxanne Vance', concept: 'Airship Smuggler & Ace Pilot', setting: 'Pulp / Steampunk', emoji: '✈️', focusAttr: 'agility' as AttributeId }
+    { name: 'Kaelen Thorne', concept: 'Frontier Ranger & Scout', setting: 'Fantasy', focusAttr: 'agility' as AttributeId },
+    { name: 'Doc Holliday Vega', concept: 'Cyber-Surgeon & Gunslinger', setting: 'Sci-Fi / Cyberpunk', focusAttr: 'smarts' as AttributeId },
+    { name: 'Sister Evangeline', concept: 'Monster Hunter & Exorcist', setting: 'Horror / Rippers', focusAttr: 'spirit' as AttributeId },
+    { name: 'Thorgar Ironbrow', concept: 'Tunnel Breaker & Mercenary', setting: 'Fantasy', focusAttr: 'strength' as AttributeId },
+    { name: 'Capt. Roxanne Vance', concept: 'Airship Smuggler & Ace Pilot', setting: 'Pulp / Steampunk', focusAttr: 'agility' as AttributeId }
   ];
 
   const pick = archetypes[Math.floor(Math.random() * archetypes.length)];
   const base = createBlankCharacter(pick.name);
   base.concept = pick.concept;
   base.setting = pick.setting;
-  base.avatarEmoji = pick.emoji;
+  base.avatarEmoji = '';
+  base.avatarImage = '';
 
   const ancestries = SWADE_ANCESTRIES.filter((a) => a.id !== 'custom');
   const chosenAncestry = ancestries[Math.floor(Math.random() * ancestries.length)];

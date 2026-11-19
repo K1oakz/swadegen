@@ -193,11 +193,14 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '1.9rem',
+              fontSize: '0.85rem',
+              fontWeight: 900,
+              color: '#fff',
+              letterSpacing: '0.06em',
               boxShadow: '0 4px 16px rgba(6, 182, 212, 0.4)'
             }}
           >
-            🚀
+            SHIP
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -257,7 +260,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
               boxShadow: subTab === 'bridge' ? '0 2px 8px rgba(14, 165, 233, 0.35)' : 'none'
             }}
           >
-            🕹️ Bridge Console
+            Bridge Console
           </button>
           <button
             onClick={() => setSubTab('shipyard')}
@@ -274,7 +277,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
               boxShadow: subTab === 'shipyard' ? '0 2px 8px rgba(245, 158, 11, 0.35)' : 'none'
             }}
           >
-            🛠️ Shipyard Customizer
+            Shipyard Customizer
           </button>
           <button
             onClick={() => setSubTab('hangar')}
@@ -291,13 +294,13 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
               boxShadow: subTab === 'hangar' ? '0 2px 8px rgba(168, 85, 247, 0.35)' : 'none'
             }}
           >
-            🛸 Fleet Hangar ({starships.length})
+            Fleet Hangar ({starships.length})
           </button>
         </div>
       </section>
 
       {/* ======================================================== */}
-      {/* SUB-TAB 1: 🕹️ BRIDGE CONSOLE (PLAY & TACTICAL OPERATIONS) */}
+      {/* SUB-TAB 1: BRIDGE CONSOLE (PLAY & TACTICAL OPERATIONS) */}
       {/* ======================================================== */}
       {subTab === 'bridge' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -436,7 +439,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
                   <h3 style={{ margin: 0, fontSize: '1.05rem', color: '#f8fafc', fontWeight: 800 }}>
-                    🛡️ Hull Integrity & Wounds
+                    Hull Integrity & Wounds
                   </h3>
                   <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
                     Critical Vehicle Damage Table at max wounds ({stats.maxWounds})
@@ -529,7 +532,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
                   <h3 style={{ margin: 0, fontSize: '1.05rem', color: '#f8fafc', fontWeight: 800 }}>
-                    ⚡ Deflector Force Field (Shields)
+                    Deflector Force Field (Shields)
                   </h3>
                   <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
                     Absorbs incoming damage before penetrating hull armor
@@ -623,7 +626,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
                     fontSize: '0.78rem'
                   }}
                 >
-                  🔄 Full Recharge
+                  Full Recharge
                 </button>
               </div>
             </div>
@@ -644,7 +647,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <h3 style={{ margin: 0, fontSize: '1.1rem', color: '#f8fafc', fontWeight: 800 }}>
-                  💥 Tactical Weapons Battery
+                  Tactical Weapons Battery
                 </h3>
                 <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
                   Equipped weapon mounts with targeting arcs. Tap to roll damage with exploding dice!
@@ -758,7 +761,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
                           boxShadow: '0 2px 8px rgba(239, 68, 68, 0.4)'
                         }}
                       >
-                        🔥 Fire! ({wep.damage} AP {wep.ap})
+                        Fire! ({wep.damage} AP {wep.ap})
                       </button>
                     </div>
                   </div>
@@ -782,7 +785,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <h3 style={{ margin: 0, fontSize: '1.1rem', color: '#f8fafc', fontWeight: 800 }}>
-                  🌌 Astrogation & Hyperspace Transit
+                  Astrogation & Hyperspace Transit
                 </h3>
                 <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
                   FTL coordinates computation and Sci-Fi Companion Astrogation Mishaps table
@@ -802,7 +805,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
                   boxShadow: '0 2px 8px rgba(2, 132, 199, 0.35)'
                 }}
               >
-                ⚠️ Roll Astrogation Mishap (d20)
+                Roll Astrogation Mishap (d20)
               </button>
             </div>
 
@@ -860,7 +863,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
       )}
 
       {/* ======================================================== */}
-      {/* SUB-TAB 2: 🛠️ ORBITAL SHIPYARD (BUILDER & CUSTOMIZER)    */}
+      {/* SUB-TAB 2: ORBITAL SHIPYARD (BUILDER & CUSTOMIZER)       */}
       {/* ======================================================== */}
       {subTab === 'shipyard' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -877,7 +880,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
             }}
           >
             <h3 style={{ margin: 0, fontSize: '1.1rem', color: '#f8fafc', fontWeight: 800 }}>
-              📐 Starframe Dimensions & Specs
+              Starframe Dimensions & Specs
             </h3>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14 }}>
@@ -1125,7 +1128,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h3 style={{ margin: 0, fontSize: '1.05rem', color: '#f8fafc', fontWeight: 800 }}>
-                ⚙️ Installed Modifications ({currentShip.installedMods.length})
+                Installed Modifications ({currentShip.installedMods.length})
               </h3>
             </div>
 
@@ -1208,7 +1211,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
               <h3 style={{ margin: 0, fontSize: '1.05rem', color: '#f8fafc', fontWeight: 800 }}>
-                📦 Modifications Catalog (SWADE Sci-Fi Companion)
+                Modifications Catalog (SWADE Sci-Fi Companion)
               </h3>
               {/* Category Filter Pills */}
               <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
@@ -1228,7 +1231,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
                       cursor: 'pointer'
                     }}
                   >
-                    {cat === 'negative' ? '⚠️ Negative' : cat}
+                    {cat === 'negative' ? 'Negative' : cat}
                   </button>
                 ))}
               </div>
@@ -1327,7 +1330,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
             }}
           >
             <h3 style={{ margin: 0, fontSize: '1.05rem', color: '#f8fafc', fontWeight: 800 }}>
-              🎯 Outfitting Station: Mount Starship Weapon
+              Outfitting Station: Mount Starship Weapon
             </h3>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
@@ -1475,7 +1478,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
       )}
 
       {/* ======================================================== */}
-      {/* SUB-TAB 3: 🛸 FLEET HANGAR (SHIP LIST & FLEET MANAGEMENT) */}
+      {/* SUB-TAB 3: FLEET HANGAR (SHIP LIST & FLEET MANAGEMENT)   */}
       {/* ======================================================== */}
       {subTab === 'hangar' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -1483,7 +1486,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
             <div>
               <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#f8fafc', fontWeight: 900 }}>
-                🛸 Fleet Hangar & Drydock
+                Fleet Hangar & Drydock
               </h2>
               <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
                 Manage, commission, duplicate, or inspect your fleet of starships
@@ -1509,7 +1512,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
                   cursor: 'pointer'
                 }}
               >
-                ➕ Commission New Vessel
+                + Commission New Vessel
               </button>
 
               <button
@@ -1535,7 +1538,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
                   cursor: 'pointer'
                 }}
               >
-                📦 Import Stock Sci-Fi Vessel
+                Import Stock Sci-Fi Vessel
               </button>
             </div>
           </div>
@@ -1610,7 +1613,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
                     </div>
 
                     <div style={{ fontSize: '0.75rem', color: '#cbd5e1', marginTop: 10 }}>
-                      ⚡ Shields: {ship.shields} • 💥 Weapons: {ship.weapons.length} • ⚙️ Mods: {ship.installedMods.length} • 🌌 FTL: {shipStats.hasFTL ? 'Yes' : 'No'}
+                      Shields: {ship.shields} • Weapons: {ship.weapons.length} • Mods: {ship.installedMods.length} • FTL: {shipStats.hasFTL ? 'Yes' : 'No'}
                     </div>
                   </div>
 
@@ -1635,7 +1638,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
                         cursor: 'pointer'
                       }}
                     >
-                      {isActive ? '🕹️ Open Bridge' : '⭐ Set Active'}
+                      {isActive ? 'Open Bridge' : 'Set Active'}
                     </button>
 
                     <button
@@ -1654,7 +1657,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
                         cursor: 'pointer'
                       }}
                     >
-                      🛠️ Customizer
+                      Customizer
                     </button>
 
                     <button
@@ -1671,7 +1674,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
                         cursor: 'pointer'
                       }}
                     >
-                      📋
+                      Copy
                     </button>
 
                     {starships.length > 1 && (
@@ -1693,7 +1696,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
                           cursor: 'pointer'
                         }}
                       >
-                        🗑️
+                        Delete
                       </button>
                     )}
                   </div>

@@ -18,14 +18,14 @@ export const SWADE_SOURCE_BOOKS: SourceBook[] = [
     id: 'core',
     name: 'SWADE Core Rules',
     abbr: 'Core',
-    icon: '📕',
+    icon: 'CORE',
     description: 'Standard Savage Worlds Adventure Edition Core Rules.'
   },
   {
     id: 'scifi',
     name: 'Science Fiction Companion',
     abbr: 'Sci-Fi',
-    icon: '🚀',
+    icon: 'SF',
     description: 'Spaceships, robots, cyberware, power armor, blasters, plasma weapons, and alien ancestries.'
   }
 ];
@@ -36,35 +36,35 @@ export const ATTRIBUTE_META: Record<AttributeId, { name: string; short: string; 
   agility: {
     name: 'Agility',
     short: 'AGI',
-    icon: '⚡',
+    icon: 'AGI',
     color: '#38bdf8',
     description: 'Nimbleness, dexterity, reflexes, and overall physical coordination.'
   },
   smarts: {
     name: 'Smarts',
     short: 'SMA',
-    icon: '🧠',
+    icon: 'SMA',
     color: '#a855f7',
     description: 'Raw intelligence, perception, education, and mental acuity.'
   },
   spirit: {
     name: 'Spirit',
     short: 'SPI',
-    icon: '🔥',
+    icon: 'SPI',
     color: '#f59e0b',
     description: 'Inner wisdom, willpower, presence, and unshakeable resolve.'
   },
   strength: {
     name: 'Strength',
     short: 'STR',
-    icon: '💪',
+    icon: 'STR',
     color: '#ef4444',
     description: 'Raw muscle power, melee damage, and carrying capacity.'
   },
   vigor: {
     name: 'Vigor',
     short: 'VIG',
-    icon: '🛡️',
+    icon: 'VIG',
     color: '#22c55e',
     description: 'Endurance, resistance to disease/poison, and base Toughness.'
   }
@@ -2271,7 +2271,8 @@ export const SAMPLE_CHARACTERS: SwadeCharacter[] = [
     },
     backstory: 'Once a Knight of the Silver Spire, Valeria now wanders the borderlands seeking the cultists who framed her order.',
     notes: 'Remember to cast Smite before charging into melee!',
-    avatarEmoji: '⚔️',
+    avatarEmoji: '',
+    avatarImage: '',
     updatedAt: Date.now()
   },
   {
@@ -2474,7 +2475,8 @@ export const SAMPLE_CHARACTERS: SwadeCharacter[] = [
     },
     backstory: 'Tracks outlaws and abominations across the Weird West with a pair of silver-inlaid Peacemakers.',
     notes: 'Two-Gun Kid lets Silas fire both Peacemakers with zero Multi-Action penalty!',
-    avatarEmoji: '🤠',
+    avatarEmoji: '',
+    avatarImage: '',
     updatedAt: Date.now() - 3600000
   }
 ];

@@ -560,7 +560,7 @@ export const STOCK_ROBOT_PRESETS: StockRobotPreset[] = [
   {
     id: 'diplomat_bot',
     name: 'Diplomat Bot',
-    icon: '🤵',
+    icon: 'Protocol',
     size: 0,
     description: 'Humanoid protocol and translation unit equipped with comms and etiquette databases.',
     mods: [
@@ -572,7 +572,7 @@ export const STOCK_ROBOT_PRESETS: StockRobotPreset[] = [
   {
     id: 'engineer_bot',
     name: 'Astromech Engineer Bot',
-    icon: '🛠️',
+    icon: 'Repair',
     size: -1,
     description: 'Compact 3-foot repair droid with wheels, data jack, and cutting tools.',
     mods: [
@@ -585,7 +585,7 @@ export const STOCK_ROBOT_PRESETS: StockRobotPreset[] = [
   {
     id: 'labor_bot',
     name: 'Heavy Industrial Labor Bot',
-    icon: '🏗️',
+    icon: 'Industrial',
     size: 1,
     description: 'Reinforced bipedal chassis designed for around-the-clock heavy loading.',
     mods: [
@@ -597,7 +597,7 @@ export const STOCK_ROBOT_PRESETS: StockRobotPreset[] = [
   {
     id: 'medical_bot',
     name: 'Med-Bay Assistant Bot',
-    icon: '🩺',
+    icon: 'Medical',
     size: 0,
     description: 'Sterile surgical companion with wheeled base, scanner, and medical toolkit.',
     mods: [
@@ -609,7 +609,7 @@ export const STOCK_ROBOT_PRESETS: StockRobotPreset[] = [
   {
     id: 'security_bot',
     name: 'Combat Security Sentry',
-    icon: '🛡️',
+    icon: 'Security',
     size: 1,
     description: 'Armored patrol chassis with targeting computer, armor plating, and gyro stabilizer.',
     mods: [

@@ -210,7 +210,7 @@ export const RobotBuilderTab: React.FC<RobotBuilderTabProps> = ({
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 10 }}>
           <div>
             <h3 style={{ fontSize: '1.05rem', fontWeight: 900, color: '#38bdf8', display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span>🤖</span> ROBOT CHASSIS & MODIFICATIONS
+              ROBOT CHASSIS & MODIFICATIONS
             </h3>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: 4, maxWidth: 650 }}>
               From the <strong>SWADE Science Fiction Companion</strong>. Choose your robot frame size and customize its core, defensive, locomotion, and offensive systems. Negative qualities award extra Mod slots back!
@@ -275,7 +275,7 @@ export const RobotBuilderTab: React.FC<RobotBuilderTabProps> = ({
                   gap: 6
                 }}
               >
-                <span>{preset.icon}</span>
+                <span style={{ fontSize: '0.68rem', padding: '1px 5px', borderRadius: 4, background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', fontWeight: 900, textTransform: 'uppercase' }}>{preset.icon}</span>
                 <span>{preset.name}</span>
               </button>
             ))}
@@ -496,11 +496,11 @@ export const RobotBuilderTab: React.FC<RobotBuilderTabProps> = ({
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 14 }}>
           {[
             { id: 'all', label: 'All Mods' },
-            { id: 'negative', label: '🔻 Negative (+Slots)' },
-            { id: 'core', label: '⚙️ Core Systems' },
-            { id: 'defensive', label: '🛡️ Defensive' },
-            { id: 'locomotion', label: '🚀 Locomotion' },
-            { id: 'offensive', label: '⚔️ Offensive' }
+            { id: 'negative', label: 'Negative (+Slots)' },
+            { id: 'core', label: 'Core Systems' },
+            { id: 'defensive', label: 'Defensive' },
+            { id: 'locomotion', label: 'Locomotion' },
+            { id: 'offensive', label: 'Offensive' }
           ].map((cat) => (
             <button
               key={cat.id}

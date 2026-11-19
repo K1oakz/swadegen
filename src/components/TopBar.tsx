@@ -82,16 +82,28 @@ export const TopBar: React.FC<TopBarProps> = ({
                 width: 38,
                 height: 38,
                 borderRadius: 10,
-                background: 'linear-gradient(135deg, #f59e0b 0%, #b45309 100%)',
+                background: 'linear-gradient(135deg, #2a221b 0%, #1a1511 100%)',
+                border: '1px solid var(--border-strong)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '1.3rem',
+                fontSize: '1.05rem',
                 flexShrink: 0,
-                boxShadow: '0 2px 8px rgba(245, 158, 11, 0.35)'
+                overflow: 'hidden',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)'
               }}
             >
-              {character.avatarEmoji || '🎲'}
+              {character.avatarImage ? (
+                <img
+                  src={character.avatarImage}
+                  alt={character.name}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              ) : (
+                <span style={{ fontWeight: 800, color: 'var(--accent-gold)' }}>
+                  {character.name.trim().charAt(0).toUpperCase() || 'H'}
+                </span>
+              )}
             </div>
             <div style={{ minWidth: 0, flex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -120,7 +132,7 @@ export const TopBar: React.FC<TopBarProps> = ({
                       border: '1px solid rgba(245, 158, 11, 0.4)'
                     }}
                   >
-                    ★ WILD CARD
+                    WILD CARD
                   </span>
                 )}
               </div>
@@ -133,12 +145,12 @@ export const TopBar: React.FC<TopBarProps> = ({
                   textOverflow: 'ellipsis'
                 }}
               >
-                {derived.rank} ({character.advancesCount} Adv) • {character.concept || 'Adventurer'} • Tap to Switch ({totalCharacters})
+                {derived.rank} ({character.advancesCount} Adv) • {character.concept || 'Adventurer'} • Switch ({totalCharacters})
               </div>
             </div>
           </button>
 
-          {/* Mode Switcher (Roster, Builder, Play) + Backup + Dice Tray */}
+          {/* Mode Switcher (Roster, Builder, Play, Spaceships) + Backup + Dice Tray */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
             <div
               style={{
@@ -163,7 +175,7 @@ export const TopBar: React.FC<TopBarProps> = ({
                   color: activeMode === 'roster' ? '#081a28' : 'var(--text-secondary)'
                 }}
               >
-                👥 Roster ({totalCharacters})
+                Roster ({totalCharacters})
               </button>
               <button
                 onClick={() => onSetMode('builder')}
@@ -179,7 +191,7 @@ export const TopBar: React.FC<TopBarProps> = ({
                   color: activeMode === 'builder' ? '#120d08' : 'var(--text-secondary)'
                 }}
               >
-                🛠️ Builder
+                Builder
               </button>
               <button
                 onClick={() => onSetMode('play')}
@@ -195,7 +207,7 @@ export const TopBar: React.FC<TopBarProps> = ({
                   color: activeMode === 'play' ? '#ffffff' : 'var(--text-secondary)'
                 }}
               >
-                ⚔️ Play Sheet
+                Play Sheet
               </button>
               <button
                 onClick={() => onSetMode('starships')}
@@ -211,7 +223,7 @@ export const TopBar: React.FC<TopBarProps> = ({
                   color: activeMode === 'starships' ? '#ffffff' : 'var(--text-secondary)'
                 }}
               >
-                🚀 Spaceships
+                Spaceships
               </button>
             </div>
 
@@ -231,8 +243,7 @@ export const TopBar: React.FC<TopBarProps> = ({
                 fontWeight: 700
               }}
             >
-              <span>🎲</span>
-              <span>Dice</span>
+              <span>Dice Tray</span>
             </button>
 
             <button
@@ -251,7 +262,6 @@ export const TopBar: React.FC<TopBarProps> = ({
                 fontWeight: 600
               }}
             >
-              <span>💾</span>
               <span>Backup</span>
             </button>
           </div>
@@ -412,7 +422,7 @@ export const TopBar: React.FC<TopBarProps> = ({
               >
                 <span style={{ fontSize: '0.68rem', color: '#fbbf24', fontWeight: 700 }}>BENNIES</span>
                 <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#fbbf24' }}>
-                  🪙 {character.playState.bennies}
+                  {character.playState.bennies}
                 </span>
               </div>
 

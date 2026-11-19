@@ -73,6 +73,125 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* Character Identity & Quick Stats Header Card */}
+      <div
+        style={{
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border-subtle)',
+          borderRadius: 16,
+          padding: '14px 18px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: 14
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          {character.avatarImage ? (
+            <img
+              src={character.avatarImage}
+              alt={character.name}
+              style={{
+                width: 56,
+                height: 56,
+                borderRadius: 12,
+                objectFit: 'cover',
+                border: '2px solid var(--accent)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
+                background: '#111'
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                width: 56,
+                height: 56,
+                borderRadius: 12,
+                background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.05))',
+                border: '1px solid var(--border-subtle)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '1.4rem',
+                fontWeight: 900,
+                color: 'var(--accent)'
+              }}
+            >
+              {character.name ? character.name.charAt(0).toUpperCase() : 'H'}
+            </div>
+          )}
+
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#fff', margin: 0, lineHeight: 1.2 }}>
+                {character.name || 'Unnamed Hero'}
+              </h2>
+              <span
+                style={{
+                  fontSize: '0.72rem',
+                  padding: '2px 8px',
+                  borderRadius: 6,
+                  background: 'rgba(245, 158, 11, 0.2)',
+                  color: 'var(--accent)',
+                  fontWeight: 800,
+                  textTransform: 'uppercase'
+                }}
+              >
+                {derived.rank}
+              </span>
+            </div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: 4 }}>
+              {ancestry?.name || 'Custom Ancestry'} • {character.concept || 'Adventurer'} • {character.advancesCount || 0} Advances
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Vitals Badges */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <div
+            style={{
+              padding: '6px 12px',
+              borderRadius: 10,
+              background: 'rgba(56, 189, 248, 0.12)',
+              border: '1px solid rgba(56, 189, 248, 0.35)',
+              textAlign: 'center'
+            }}
+          >
+            <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#38bdf8', textTransform: 'uppercase' }}>Pace</div>
+            <div style={{ fontSize: '1rem', fontWeight: 900, color: '#fff' }}>{derived.pace}"</div>
+          </div>
+
+          <div
+            style={{
+              padding: '6px 12px',
+              borderRadius: 10,
+              background: 'rgba(34, 197, 94, 0.12)',
+              border: '1px solid rgba(34, 197, 94, 0.35)',
+              textAlign: 'center'
+            }}
+          >
+            <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#4ade80', textTransform: 'uppercase' }}>Parry</div>
+            <div style={{ fontSize: '1rem', fontWeight: 900, color: '#fff' }}>{derived.parry}</div>
+          </div>
+
+          <div
+            style={{
+              padding: '6px 12px',
+              borderRadius: 10,
+              background: 'rgba(239, 68, 68, 0.12)',
+              border: '1px solid rgba(239, 68, 68, 0.35)',
+              textAlign: 'center'
+            }}
+          >
+            <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#f87171', textTransform: 'uppercase' }}>Toughness</div>
+            <div style={{ fontSize: '1rem', fontWeight: 900, color: '#fff' }}>
+              {derived.toughnessTotal} {derived.armorBonus > 0 ? `(${derived.armorBonus})` : ''}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Incapacitated Warning Banner */}
       {(ps.wounds > 3 || ps.fatigue > 2) && (
         <div
@@ -90,7 +209,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
         >
           <div>
             <div style={{ fontWeight: 900, fontSize: '1.05rem', color: '#fca5a5' }}>
-              💀 CHARACTER INCAPACITATED!
+              CHARACTER INCAPACITATED!
             </div>
             <div style={{ fontSize: '0.8rem', color: '#fecaca' }}>
               {ps.wounds > 3
@@ -115,7 +234,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
               fontSize: '0.82rem'
             }}
           >
-            🎲 Roll Vigor Save
+            Roll Vigor Save
           </button>
         </div>
       )}
@@ -139,7 +258,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
             <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#fbbf24', letterSpacing: '0.04em' }}>
-              🪙 BENNIES & FORTUNE
+              BENNIES & FORTUNE
             </span>
             <button
               onClick={() => updatePlayState({ bennies: derived.startingBennies })}
@@ -205,7 +324,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                 fontWeight: 700
               }}
             >
-              🛡️ Spend & Roll Soak
+              Spend & Roll Soak
             </button>
             <button
               onClick={() => {
@@ -228,10 +347,10 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
               }}
             >
               {ps.shaken && ps.bennies > 0
-                ? '⚡ Spend to Unshake'
+                ? 'Spend to Unshake'
                 : ps.conviction
-                ? '🔥 Conviction ON (+d6)'
-                : '✨ Toggle Conviction'}
+                ? 'Conviction ON (+d6)'
+                : 'Toggle Conviction'}
             </button>
           </div>
         </div>
@@ -249,7 +368,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
           <div style={{ marginBottom: 12 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
               <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#ef4444' }}>
-                🩸 WOUNDS {ps.wounds > 0 && `(-${Math.min(3, ps.wounds)} Penalty)`}
+                WOUNDS {ps.wounds > 0 && `(-${Math.min(3, ps.wounds)} Penalty)`}
               </span>
               <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
                 {ps.wounds === 0 ? 'Healthy' : ps.wounds <= 3 ? `${ps.wounds}/3 Wounds` : 'INCAPACITATED'}
@@ -287,7 +406,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
               <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#38bdf8' }}>
-                😮‍💨 FATIGUE {ps.fatigue > 0 && `(-${Math.min(2, ps.fatigue)} Penalty)`}
+                FATIGUE {ps.fatigue > 0 && `(-${Math.min(2, ps.fatigue)} Penalty)`}
               </span>
               <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
                 {ps.fatigue === 0 ? 'Fresh' : ps.fatigue <= 2 ? `${ps.fatigue}/2 Fatigue` : 'INCAPACITATED'}
@@ -332,7 +451,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
             <span style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-              ⚡ COMBAT CONDITIONS
+              COMBAT CONDITIONS
             </span>
             {ps.shaken && (
               <button
@@ -346,7 +465,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                   fontWeight: 800
                 }}
               >
-                🎲 Roll Spirit to Unshake
+                Roll Spirit to Unshake
               </button>
             )}
           </div>
@@ -365,7 +484,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                 textAlign: 'left'
               }}
             >
-              💫 Shaken {ps.shaken ? '(ACTIVE)' : ''}
+              Shaken {ps.shaken ? '(ACTIVE)' : ''}
             </button>
 
             <button
@@ -381,7 +500,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                 textAlign: 'left'
               }}
             >
-              😵 Distracted (-2)
+              Distracted (-2)
             </button>
 
             <button
@@ -397,7 +516,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                 textAlign: 'left'
               }}
             >
-              🎯 Vulnerable (+2 vs)
+              Vulnerable (+2 vs)
             </button>
 
             <button
@@ -413,7 +532,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                 textAlign: 'left'
               }}
             >
-              ⛓️ Entangled (-2)
+              Entangled (-2)
             </button>
 
             <button
@@ -429,7 +548,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                 textAlign: 'left'
               }}
             >
-              🔭 Aiming (+2 Ranged)
+              Aiming (+2 Ranged)
             </button>
 
             <button
@@ -452,7 +571,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                 textAlign: 'left'
               }}
             >
-              🏃 Roll Run ({derived.pace}+d{derived.runningDie})
+              Roll Run ({derived.pace}+d{derived.runningDie})
             </button>
           </div>
         </div>
@@ -477,7 +596,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
             <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#fbbf24' }}>
-              🎲 ATTRIBUTES (Tap to Roll + Wild Die)
+              ATTRIBUTES (Tap to Roll + Wild Die)
             </h3>
             <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>TN 4</span>
           </div>
@@ -509,7 +628,19 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <span style={{ fontSize: '1.25rem' }}>{meta.icon}</span>
+                    <span
+                      style={{
+                        fontSize: '0.75rem',
+                        fontWeight: 900,
+                        padding: '3px 6px',
+                        borderRadius: 6,
+                        background: `${meta.color}25`,
+                        color: meta.color,
+                        letterSpacing: '0.05em'
+                      }}
+                    >
+                      {meta.short}
+                    </span>
                     <div style={{ textAlign: 'left' }}>
                       <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#fff' }}>{meta.name}</div>
                       <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{meta.description}</div>
@@ -527,7 +658,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                       flexShrink: 0
                     }}
                   >
-                    🎲 {formatDie(die, mod)}
+                    {formatDie(die, mod)}
                   </div>
                 </button>
               );
@@ -546,7 +677,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
             <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#38bdf8' }}>
-              🎯 TRAINED SKILLS ({trainedSkills.length})
+              TRAINED SKILLS ({trainedSkills.length})
             </h3>
             <button
               onClick={() =>
@@ -566,7 +697,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                 fontWeight: 700
               }}
             >
-              🎲 Unskilled (d4-2)
+              Unskilled (d4-2)
             </button>
           </div>
 
@@ -705,7 +836,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
         }}
       >
         <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#ef4444', marginBottom: 12 }}>
-          ⚔️ WEAPONS & ATTACKS
+          WEAPONS & ATTACKS
         </h3>
 
         <div
@@ -779,7 +910,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                       fontWeight: 800
                     }}
                   >
-                    🎯 Attack
+                    Attack
                   </button>
                   <button
                     onClick={() =>
@@ -799,7 +930,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                       fontWeight: 800
                     }}
                   >
-                    💥 Damage
+                    Damage
                   </button>
                   <button
                     onClick={() =>
@@ -819,7 +950,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                       fontWeight: 800
                     }}
                   >
-                    🔥 +d6 Raise
+                    +d6 Raise
                   </button>
                 </div>
               </div>
@@ -850,7 +981,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
           >
             <div>
               <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#c084fc' }}>
-                ✨ {arcaneBg?.name || 'Arcane Powers'}
+                {arcaneBg?.name || 'Arcane Powers'}
               </h3>
               <div style={{ fontSize: '0.73rem', color: 'var(--text-secondary)' }}>
                 Arcane Skill: {arcaneBg?.arcaneSkillName || 'Spellcasting'}
@@ -882,7 +1013,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                   fontSize: '0.88rem'
                 }}
               >
-                ⚡ {ps.currentPowerPoints} / {derived.maxPowerPoints} PP
+                {ps.currentPowerPoints} / {derived.maxPowerPoints} PP
               </div>
               <button
                 onClick={() =>
@@ -983,7 +1114,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                         fontWeight: 800
                       }}
                     >
-                      ✨ Cast (-{ppCost} PP)
+                      Cast (-{ppCost} PP)
                     </button>
                     {pwr.damage && (
                       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
@@ -1006,7 +1137,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                             fontWeight: 800
                           }}
                         >
-                          💥 {pwr.damage}
+                          Damage: {pwr.damage}
                         </button>
                         <button
                           onClick={() =>
@@ -1027,7 +1158,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                             fontWeight: 800
                           }}
                         >
-                          🔥 +d6 Raise
+                          +d6 Raise
                         </button>
                       </div>
                     )}
@@ -1057,7 +1188,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
           }}
         >
           <h4 style={{ fontSize: '0.86rem', fontWeight: 800, color: '#fbbf24', marginBottom: 8 }}>
-            🏅 EDGES ({character.edges.length})
+            EDGES ({character.edges.length})
           </h4>
           {character.edges.length === 0 ? (
             <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>No Edges selected yet.</div>
@@ -1091,7 +1222,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
           }}
         >
           <h4 style={{ fontSize: '0.86rem', fontWeight: 800, color: '#f87171', marginBottom: 8 }}>
-            ⚠️ HINDRANCES & ANCESTRY ({ancestry?.name})
+            HINDRANCES & ANCESTRY ({ancestry?.name})
           </h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
             {character.hindrances.map((h, idx) => (

@@ -60,7 +60,7 @@ export const CharacterListView: React.FC<CharacterListViewProps> = ({
               SAVAGE WORLDS ADVENTURE EDITION
             </div>
             <h1 style={{ fontSize: '1.65rem', fontWeight: 950, color: '#fff', marginTop: 2, marginBottom: 4 }}>
-              ⚔️ HEROES & WILD CARDS ROSTER
+              HEROES & WILD CARDS ROSTER
             </h1>
             <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', maxWidth: 640 }}>
               Manage your characters, launch interactive Play Sheets with the exploding dice roller, or build a new Wild Card from scratch.
@@ -85,7 +85,7 @@ export const CharacterListView: React.FC<CharacterListViewProps> = ({
                 boxShadow: '0 4px 14px rgba(245, 158, 11, 0.4)'
               }}
             >
-              ➕ Create New Character
+              + Create New Character
             </button>
 
             <button
@@ -103,7 +103,7 @@ export const CharacterListView: React.FC<CharacterListViewProps> = ({
                 fontSize: '0.82rem'
               }}
             >
-              📥 Backup & Sync
+              Backup & Sync
             </button>
           </div>
         </div>
@@ -175,7 +175,7 @@ export const CharacterListView: React.FC<CharacterListViewProps> = ({
                   border: tierFilter === t ? '1px solid #38bdf8' : '1px solid var(--border-subtle)'
                 }}
               >
-                {t === 'WildCard' ? '★ Wild Cards' : t === 'Extra' ? '☆ Extras' : 'All Tiers'}
+                {t === 'WildCard' ? 'Wild Cards' : t === 'Extra' ? 'Extras' : 'All Tiers'}
               </button>
             ))}
           </div>
@@ -200,7 +200,7 @@ export const CharacterListView: React.FC<CharacterListViewProps> = ({
             textAlign: 'center'
           }}
         >
-          <div style={{ fontSize: '2.5rem', marginBottom: 10 }}>🔍</div>
+          <div style={{ fontSize: '1.4rem', fontWeight: 900, color: 'var(--accent-gold)', marginBottom: 8 }}>[No Results]</div>
           <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#fff' }}>No Characters Found</h3>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: 4, marginBottom: 16 }}>
             No hero in your roster matches the current search or filters.
@@ -261,16 +261,28 @@ export const CharacterListView: React.FC<CharacterListViewProps> = ({
                         width: 48,
                         height: 48,
                         borderRadius: 14,
-                        background: 'linear-gradient(135deg, #f59e0b 0%, #b45309 100%)',
+                        background: 'linear-gradient(135deg, #2a221b 0%, #1a1511 100%)',
+                        border: '1px solid var(--border-strong)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: '1.6rem',
+                        fontSize: '1.2rem',
                         flexShrink: 0,
+                        overflow: 'hidden',
                         boxShadow: '0 4px 10px rgba(0, 0, 0, 0.35)'
                       }}
                     >
-                      {char.avatarEmoji || '🎲'}
+                      {char.avatarImage ? (
+                        <img
+                          src={char.avatarImage}
+                          alt={char.name}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                      ) : (
+                        <span style={{ fontWeight: 900, color: 'var(--accent-gold)' }}>
+                          {char.name.trim().charAt(0).toUpperCase() || 'H'}
+                        </span>
+                      )}
                     </div>
 
                     <div style={{ flex: 1, minWidth: 0 }}>
@@ -373,7 +385,7 @@ export const CharacterListView: React.FC<CharacterListViewProps> = ({
                     <div>Pace: <span style={{ color: '#fff' }}>{derived.pace}"</span></div>
                     <div>Parry: <span style={{ color: '#38bdf8' }}>{derived.parry}</span></div>
                     <div>Toughness: <span style={{ color: '#4ade80' }}>{derived.toughnessTotal} ({derived.armorBonus})</span></div>
-                    <div>Bennies: <span style={{ color: '#fbbf24' }}>🪙 {char.playState.bennies}</span></div>
+                    <div>Bennies: <span style={{ color: '#fbbf24' }}>{char.playState.bennies}</span></div>
                   </div>
                 </div>
 
@@ -405,7 +417,7 @@ export const CharacterListView: React.FC<CharacterListViewProps> = ({
                       boxShadow: '0 2px 8px rgba(239, 68, 68, 0.35)'
                     }}
                   >
-                    ⚔️ Play Sheet
+                    Play Sheet
                   </button>
 
                   <button
@@ -425,25 +437,25 @@ export const CharacterListView: React.FC<CharacterListViewProps> = ({
                       fontWeight: 800
                     }}
                   >
-                    🛠️ Edit / Build
+                    Edit / Build
                   </button>
 
                   <button
                     onClick={() => onDuplicateCharacter(char)}
                     title="Duplicate character"
                     style={{
-                      width: 34,
-                      height: 34,
+                      padding: '8px 10px',
                       borderRadius: 8,
                       background: 'rgba(255, 255, 255, 0.06)',
                       border: '1px solid var(--border-subtle)',
-                      fontSize: '0.9rem',
+                      fontSize: '0.76rem',
+                      fontWeight: 700,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
                     }}
                   >
-                    📋
+                    Copy
                   </button>
 
                   <button
@@ -454,19 +466,19 @@ export const CharacterListView: React.FC<CharacterListViewProps> = ({
                     }}
                     title="Delete character"
                     style={{
-                      width: 34,
-                      height: 34,
+                      padding: '8px 10px',
                       borderRadius: 8,
                       background: 'rgba(239, 68, 68, 0.12)',
                       border: '1px solid rgba(239, 68, 68, 0.35)',
                       color: '#fca5a5',
-                      fontSize: '0.9rem',
+                      fontSize: '0.76rem',
+                      fontWeight: 700,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
                     }}
                   >
-                    🗑️
+                    Delete
                   </button>
                 </div>
               </div>
