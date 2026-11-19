@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1f1812"/>
+      <stop offset="100%" stop-color="#0a0705"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="50%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#b91c1c"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Background Shield Rounded Rect -->
+  <rect x="24" y="24" width="464" height="464" rx="100" fill="url(#bg)" stroke="url(#gold)" stroke-width="12" filter="url(#shadow)"/>
+
+  <!-- Inner Badge Ring -->
+  <circle cx="256" cy="256" r="190" fill="none" stroke="rgba(245, 158, 11, 0.25)" stroke-width="4" stroke-dasharray="12 8"/>
+
+  <!-- Stylized D20 Die outline -->
+  <polygon points="256,90 390,165 390,325 256,400 122,325 122,165" fill="none" stroke="url(#gold)" stroke-width="14" stroke-linejoin="round"/>
+
+  <!-- Die Interior Facets -->
+  <polygon points="256,90 256,256 122,165" fill="rgba(245, 158, 11, 0.12)" stroke="url(#gold)" stroke-width="6"/>
+  <polygon points="256,90 390,165 256,256" fill="rgba(245, 158, 11, 0.22)" stroke="url(#gold)" stroke-width="6"/>
+  <polygon points="390,165 390,325 256,256" fill="rgba(245, 158, 11, 0.08)" stroke="url(#gold)" stroke-width="6"/>
+  <polygon points="390,325 256,400 256,256" fill="rgba(245, 158, 11, 0.18)" stroke="url(#gold)" stroke-width="6"/>
+  <polygon points="256,400 122,325 256,256" fill="rgba(245, 158, 11, 0.28)" stroke="url(#gold)" stroke-width="6"/>
+  <polygon points="122,325 122,165 256,256" fill="rgba(245, 158, 11, 0.15)" stroke="url(#gold)" stroke-width="6"/>
+
+  <!-- Wild Card Ace Star in Center -->
+  <path d="M256,190 L273,235 L320,240 L285,272 L295,318 L256,293 L217,318 L227,272 L192,240 L239,235 Z" fill="url(#gold)" filter="url(#shadow)"/>
+
+  <!-- Crossed Swords Behind / Banner -->
+  <circle cx="256" cy="256" r="32" fill="url(#accent)" opacity="0.35"/>
+</svg>

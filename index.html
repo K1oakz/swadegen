@@ -16,6 +16,18 @@
     <link rel="manifest" href="./manifest.json" />
 
     <title>SWADE Character Forge — Savage Worlds Adventure Edition</title>
+    <script>
+      // If served statically from repository root on GitHub Pages (where /src/main.tsx is uncompiled),
+      // redirect immediately to the compiled production build in ./dist/
+      if (
+        window.location.hostname.endsWith('github.io') &&
+        !window.location.pathname.includes('/dist') &&
+        !window.location.pathname.includes('/docs')
+      ) {
+        var base = window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname + '/';
+        window.location.replace(window.location.origin + base + 'dist/' + window.location.search + window.location.hash);
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
