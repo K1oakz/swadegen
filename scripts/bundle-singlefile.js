@@ -3,6 +3,7 @@ import path from 'path';
 
 const distDir = path.resolve('dist');
 const docsDir = path.resolve('docs');
+const rootAssetsDir = path.resolve('assets');
 const htmlPath = path.join(distDir, 'index.html');
 const outPath = path.join(distDir, 'google-sites-embed.html');
 
@@ -46,7 +47,6 @@ fs.writeFileSync(outPath, html, 'utf8');
 console.log(`Generated single-file embed: ${outPath} (${Math.round(fs.statSync(outPath).size / 1024)} KB)`);
 
 // 4. Create alias fallback files for previously cached bundle names
-// This completely cures any browser with a cached index.html requesting an old bundle name
 const legacyBundleNames = [
   'index-guDRU3Rv.js',
   'index-74QZWaV_.js',
@@ -56,10 +56,10 @@ const legacyBundleNames = [
   'index-Bsrb14uS.js'
 ];
 
-const assetsDir = path.join(distDir, 'assets');
-const currentJsFile = fs.readdirSync(assetsDir).find(f => f.startsWith('index-') && f.endsWith('.js'));
+const distAssetsDir = path.join(distDir, 'assets');
+const currentJsFile = fs.readdirSync(distAssetsDir).find(f => f.startsWith('index-') && f.endsWith('.js'));
 if (currentJsFile) {
-  const currentJsContent = fs.readFileSync(path.join(assetsDir, currentJsFile), 'utf8');
+  const currentJsContent = fs.readFileSync(path.join(distAssetsDir, currentJsFile), 'utf8');
   const cachePurgePrefix = `/* Cache Purge Self-Heal */
 if (typeof caches !== 'undefined') {
   caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))));
@@ -70,7 +70,7 @@ if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
 `;
   const aliasContent = cachePurgePrefix + currentJsContent;
   for (const legacyName of legacyBundleNames) {
-    fs.writeFileSync(path.join(assetsDir, legacyName), aliasContent, 'utf8');
+    fs.writeFileSync(path.join(distAssetsDir, legacyName), aliasContent, 'utf8');
   }
   console.log(`Created ${legacyBundleNames.length} legacy bundle aliases in dist/assets`);
 }
@@ -81,3 +81,10 @@ if (!fs.existsSync(docsDir)) {
 }
 fs.cpSync(distDir, docsDir, { recursive: true });
 console.log(`Mirrored dist/ to docs/ for GitHub Pages compatibility`);
+
+// 6. Mirror dist/assets to root assets/ so if GitHub Pages deploys from root '.' it finds assets
+if (!fs.existsSync(rootAssetsDir)) {
+  fs.mkdirSync(rootAssetsDir, { recursive: true });
+}
+fs.cpSync(distAssetsDir, rootAssetsDir, { recursive: true });
+console.log(`Mirrored dist/assets to root assets/ for direct root deployment compatibility`);
