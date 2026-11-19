@@ -45,7 +45,37 @@ html = html.replace(/<script>\s*\/\/\s*If served statically[\s\S]*?<\/script>/gi
 fs.writeFileSync(outPath, html, 'utf8');
 console.log(`Generated single-file embed: ${outPath} (${Math.round(fs.statSync(outPath).size / 1024)} KB)`);
 
-// 4. Mirror dist to docs/ so GitHub Pages works automatically with "Deploy from branch -> main -> /docs"
+// 4. Create alias fallback files for previously cached bundle names
+// This completely cures any browser with a cached index.html requesting an old bundle name
+const legacyBundleNames = [
+  'index-guDRU3Rv.js',
+  'index-74QZWaV_.js',
+  'index-17yjDxmz.js',
+  'index-3cYYXNKZ.js',
+  'index-36dPncx-.js',
+  'index-Bsrb14uS.js'
+];
+
+const assetsDir = path.join(distDir, 'assets');
+const currentJsFile = fs.readdirSync(assetsDir).find(f => f.startsWith('index-') && f.endsWith('.js'));
+if (currentJsFile) {
+  const currentJsContent = fs.readFileSync(path.join(assetsDir, currentJsFile), 'utf8');
+  const cachePurgePrefix = `/* Cache Purge Self-Heal */
+if (typeof caches !== 'undefined') {
+  caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))));
+}
+if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
+}
+`;
+  const aliasContent = cachePurgePrefix + currentJsContent;
+  for (const legacyName of legacyBundleNames) {
+    fs.writeFileSync(path.join(assetsDir, legacyName), aliasContent, 'utf8');
+  }
+  console.log(`Created ${legacyBundleNames.length} legacy bundle aliases in dist/assets`);
+}
+
+// 5. Mirror dist to docs/ so GitHub Pages works automatically with "Deploy from branch -> main -> /docs"
 if (!fs.existsSync(docsDir)) {
   fs.mkdirSync(docsDir, { recursive: true });
 }
