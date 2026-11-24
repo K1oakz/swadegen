@@ -14,6 +14,7 @@ import { CharacterListView } from './components/CharacterListView';
 import { DiceRollerModal } from './components/DiceRollerModal';
 import { RosterAndBackupModal } from './components/RosterAndBackupModal';
 import { StarshipManagerView } from './components/StarshipManagerView';
+import { HomeHubView } from './components/HomeHubView';
 import { StarshipVessel } from './types/starship';
 import { STOCK_STARSHIPS } from './data/starshipData';
 
@@ -69,7 +70,8 @@ export const App: React.FC = () => {
     return STOCK_STARSHIPS[0].id;
   });
 
-  const [activeMode, setActiveMode] = useState<'roster' | 'builder' | 'play' | 'starships'>('roster');
+  const [activeMode, setActiveMode] = useState<'home' | 'roster' | 'builder' | 'play' | 'starships'>('home');
+  const [starshipSubTab, setStarshipSubTab] = useState<'bridge' | 'shipyard' | 'hangar'>('bridge');
   const [rollHistory, setRollHistory] = useState<RollLogEntry[]>([]);
   const [isDiceTrayOpen, setIsDiceTrayOpen] = useState(false);
   const [rosterModalMode, setRosterModalMode] = useState<'roster' | 'backup' | null>(null);
@@ -276,9 +278,12 @@ export const App: React.FC = () => {
         totalCharacters={characters.length}
         activeMode={activeMode}
         onSetMode={setActiveMode}
+        onGoHome={() => setActiveMode('home')}
         onOpenRoster={() => setRosterModalMode('roster')}
         onOpenBackup={() => setRosterModalMode('backup')}
         onOpenDiceTray={() => setIsDiceTrayOpen(true)}
+        activeStarship={starships.find((s) => s.id === activeStarshipId) || starships[0]}
+        totalStarships={starships.length}
       />
 
       <main
@@ -290,7 +295,22 @@ export const App: React.FC = () => {
           padding: '14px 14px 100px'
         }}
       >
-        {activeMode === 'roster' ? (
+        {activeMode === 'home' ? (
+          <HomeHubView
+            characters={characters}
+            activeCharacter={activeCharacter}
+            starships={starships}
+            activeStarship={starships.find((s) => s.id === activeStarshipId) || starships[0]}
+            onEnterCharacters={(mode) => setActiveMode(mode || 'roster')}
+            onEnterVehicles={(subTab) => {
+              setStarshipSubTab(subTab || 'hangar');
+              setActiveMode('starships');
+            }}
+            onCreateCharacter={handleCreateBlank}
+            onOpenDiceTray={() => setIsDiceTrayOpen(true)}
+            onOpenBackup={() => setRosterModalMode('backup')}
+          />
+        ) : activeMode === 'roster' ? (
           <CharacterListView
             characters={characters}
             activeCharacterId={activeCharacterId}
@@ -320,6 +340,8 @@ export const App: React.FC = () => {
           <StarshipManagerView
             starships={starships}
             activeStarshipId={activeStarshipId}
+            initialSubTab={starshipSubTab}
+            onGoHome={() => setActiveMode('home')}
             onSelectStarship={setActiveStarshipId}
             onUpdateActiveStarship={handleUpdateActiveStarship}
             onCreateStarship={handleCreateStarship}
@@ -328,7 +350,7 @@ export const App: React.FC = () => {
             onRollDamage={(dmgFormula, label) =>
               handleRollDamage({ label, damageFormula: dmgFormula })
             }
-            onRollTrait={({ label, sides, modifier, isWildCard }) =>
+            onRollTrait={({ label, sides, modifier }) =>
               handleRollTrait({
                 label,
                 dieSides: sides as DieSides,

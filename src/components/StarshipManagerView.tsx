@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StarshipVessel,
   StarshipSizeCategory,
@@ -22,6 +22,7 @@ import {
 interface StarshipManagerViewProps {
   starships: StarshipVessel[];
   activeStarshipId: string;
+  initialSubTab?: 'bridge' | 'shipyard' | 'hangar';
   onSelectStarship: (id: string) => void;
   onUpdateActiveStarship: (updates: Partial<StarshipVessel>) => void;
   onCreateStarship: (vessel: StarshipVessel) => void;
@@ -29,25 +30,34 @@ interface StarshipManagerViewProps {
   onDuplicateStarship: (id: string) => void;
   onRollDamage?: (damageFormula: string, label: string) => void;
   onRollTrait?: (params: { label: string; sides: number; modifier: number; isWildCard: boolean }) => void;
+  onGoHome?: () => void;
 }
 
 export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
   starships,
   activeStarshipId,
+  initialSubTab,
   onSelectStarship,
   onUpdateActiveStarship,
   onCreateStarship,
   onDeleteStarship,
   onDuplicateStarship,
   onRollDamage,
-  onRollTrait
+  onRollTrait,
+  onGoHome
 }) => {
-  const [subTab, setSubTab] = useState<'bridge' | 'shipyard' | 'hangar'>('bridge');
+  const [subTab, setSubTab] = useState<'bridge' | 'shipyard' | 'hangar'>(initialSubTab || 'bridge');
   const [modFilter, setModFilter] = useState<'all' | 'negative' | 'core' | 'locomotion' | 'personnel' | 'structural'>('all');
   const [selectedWeaponDefId, setSelectedWeaponDefId] = useState<string>(STARSHIP_WEAPONS_CATALOG[0].id);
   const [selectedWeaponArc, setSelectedWeaponArc] = useState<WeaponArc>('Fixed Front');
   const [lastAstrogationResult, setLastAstrogationResult] = useState<{ roll: number; title: string; description: string } | null>(null);
   const [customWeaponName, setCustomWeaponName] = useState('');
+
+  useEffect(() => {
+    if (initialSubTab) {
+      setSubTab(initialSubTab);
+    }
+  }, [initialSubTab]);
 
   const currentShip: StarshipVessel =
     starships.find((s) => s.id === activeStarshipId) ||
@@ -235,16 +245,35 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
           </div>
         </div>
 
-        {/* Sub-Tab Navigation Pill */}
-        <div
-          style={{
-            display: 'flex',
-            background: 'rgba(0, 0, 0, 0.5)',
-            padding: 4,
-            borderRadius: 12,
-            border: '1px solid rgba(255, 255, 255, 0.08)'
-          }}
-        >
+        {/* Sub-Tab Navigation Pill & Home Return */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          {onGoHome && (
+            <button
+              onClick={onGoHome}
+              style={{
+                padding: '8px 14px',
+                borderRadius: 10,
+                fontSize: '0.82rem',
+                fontWeight: 800,
+                background: 'rgba(255, 255, 255, 0.08)',
+                color: '#f8fafc',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                cursor: 'pointer'
+              }}
+            >
+              ← Home
+            </button>
+          )}
+
+          <div
+            style={{
+              display: 'flex',
+              background: 'rgba(0, 0, 0, 0.5)',
+              padding: 4,
+              borderRadius: 12,
+              border: '1px solid rgba(255, 255, 255, 0.08)'
+            }}
+          >
           <button
             onClick={() => setSubTab('bridge')}
             style={{
@@ -296,6 +325,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
           >
             Fleet Hangar ({starships.length})
           </button>
+        </div>
         </div>
       </section>
 
