@@ -201,18 +201,31 @@ export const TopBar: React.FC<TopBarProps> = ({
                     width: 34,
                     height: 34,
                     borderRadius: 8,
-                    background: 'linear-gradient(135deg, #2e1065 0%, #1e1b4b 100%)',
-                    border: '1px solid rgba(139, 92, 246, 0.4)',
+                    background:
+                      activeStarship?.craftType === 'walker'
+                        ? 'linear-gradient(135deg, #581c87 0%, #3b0764 100%)'
+                        : activeStarship?.craftType === 'power_armor'
+                        ? 'linear-gradient(135deg, #78350f 0%, #451a03 100%)'
+                        : activeStarship?.craftType === 'vehicle'
+                        ? 'linear-gradient(135deg, #064e3b 0%, #022c22 100%)'
+                        : 'linear-gradient(135deg, #2e1065 0%, #1e1b4b 100%)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontWeight: 800,
                     fontSize: '0.85rem',
-                    color: '#c4b5fd',
+                    color: '#fff',
                     flexShrink: 0
                   }}
                 >
-                  V
+                  {activeStarship?.craftType === 'walker'
+                    ? 'W'
+                    : activeStarship?.craftType === 'power_armor'
+                    ? 'PA'
+                    : activeStarship?.craftType === 'vehicle'
+                    ? 'V'
+                    : 'S'}
                 </div>
                 <div style={{ minWidth: 0, flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -226,7 +239,7 @@ export const TopBar: React.FC<TopBarProps> = ({
                         textOverflow: 'ellipsis'
                       }}
                     >
-                      {activeStarship?.name || 'Starship Vessel'}
+                      {activeStarship?.name || 'Sci-Fi Craft'}
                     </span>
                     <span
                       style={{
@@ -234,12 +247,12 @@ export const TopBar: React.FC<TopBarProps> = ({
                         fontWeight: 800,
                         padding: '1px 6px',
                         borderRadius: 99,
-                        background: 'rgba(139, 92, 246, 0.25)',
-                        color: '#c4b5fd',
-                        border: '1px solid rgba(139, 92, 246, 0.45)'
+                        background: 'rgba(255, 255, 255, 0.12)',
+                        color: '#f8fafc',
+                        border: '1px solid rgba(255, 255, 255, 0.25)'
                       }}
                     >
-                      VEHICLES
+                      {activeStarship?.craftType ? activeStarship.craftType.toUpperCase().replace('_', ' ') : 'VEHICLES'}
                     </span>
                   </div>
                   <div
@@ -354,9 +367,13 @@ export const TopBar: React.FC<TopBarProps> = ({
                   justifyContent: 'space-between'
                 }}
               >
-                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700 }}>TOP SPEED</span>
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700 }}>
+                  {activeStarship.craftType === 'walker' || activeStarship.craftType === 'power_armor' ? 'PACE' : 'TOP SPEED'}
+                </span>
                 <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#38bdf8' }}>
-                  {shipStats.finalTopSpeed} MPH
+                  {activeStarship.craftType === 'walker' || activeStarship.craftType === 'power_armor'
+                    ? `${activeStarship.pace || 8}"`
+                    : `${activeStarship.topSpeed || shipStats.finalTopSpeed} MPH`}
                 </span>
               </div>
               <div

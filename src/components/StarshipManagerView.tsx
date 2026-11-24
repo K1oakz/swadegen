@@ -18,6 +18,10 @@ import {
   getFrameDef,
   rollAstrogationMishap
 } from '../utils/starshipRules';
+import { CraftWizardModal } from './CraftWizardModal';
+import { SciFiRulesModal } from './SciFiRulesModal';
+import { STOCK_SCIFI_CRAFT } from '../data/scifiCraftData';
+import { convertCraftToVessel, rollOutOfControl, TableResult } from '../utils/scifiCraftRules';
 
 interface StarshipManagerViewProps {
   starships: StarshipVessel[];
@@ -52,6 +56,10 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
   const [selectedWeaponArc, setSelectedWeaponArc] = useState<WeaponArc>('Fixed Front');
   const [lastAstrogationResult, setLastAstrogationResult] = useState<{ roll: number; title: string; description: string } | null>(null);
   const [customWeaponName, setCustomWeaponName] = useState('');
+  const [isWizardOpen, setIsWizardOpen] = useState(false);
+  const [isRulesOpen, setIsRulesOpen] = useState(false);
+  const [hangarFilter, setHangarFilter] = useState<'all' | 'vehicle' | 'walker' | 'power_armor' | 'starship'>('all');
+  const [lastOutOfControl, setLastOutOfControl] = useState<TableResult | null>(null);
 
   useEffect(() => {
     if (initialSubTab) {
@@ -199,18 +207,31 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
               width: 52,
               height: 52,
               borderRadius: 14,
-              background: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)',
+              background:
+                currentShip.craftType === 'walker'
+                  ? 'linear-gradient(135deg, #a855f7 0%, #7e22ce 100%)'
+                  : currentShip.craftType === 'power_armor'
+                  ? 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
+                  : currentShip.craftType === 'vehicle'
+                  ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
+                  : 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '0.85rem',
+              fontSize: '0.8rem',
               fontWeight: 900,
               color: '#fff',
               letterSpacing: '0.06em',
-              boxShadow: '0 4px 16px rgba(6, 182, 212, 0.4)'
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)'
             }}
           >
-            SHIP
+            {currentShip.craftType === 'walker'
+              ? 'MECH'
+              : currentShip.craftType === 'power_armor'
+              ? 'ARMOR'
+              : currentShip.craftType === 'vehicle'
+              ? 'VEH'
+              : 'SHIP'}
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -231,21 +252,35 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
                   fontWeight: 800,
                   padding: '2px 8px',
                   borderRadius: 6,
-                  background: 'rgba(56, 189, 248, 0.15)',
-                  color: '#38bdf8',
-                  border: '1px solid rgba(56, 189, 248, 0.3)'
+                  background:
+                    currentShip.craftType === 'walker'
+                      ? 'rgba(168, 85, 247, 0.2)'
+                      : currentShip.craftType === 'power_armor'
+                      ? 'rgba(245, 158, 11, 0.2)'
+                      : currentShip.craftType === 'vehicle'
+                      ? 'rgba(16, 185, 129, 0.2)'
+                      : 'rgba(56, 189, 248, 0.15)',
+                  color:
+                    currentShip.craftType === 'walker'
+                      ? '#c084fc'
+                      : currentShip.craftType === 'power_armor'
+                      ? '#fbbf24'
+                      : currentShip.craftType === 'vehicle'
+                      ? '#34d399'
+                      : '#38bdf8',
+                  border: '1px solid currentColor'
                 }}
               >
-                {currentShip.registry || 'FLAGSHIP'}
+                {currentShip.craftType ? currentShip.craftType.toUpperCase().replace('_', ' ') : currentShip.registry || 'FLAGSHIP'}
               </span>
             </div>
             <div style={{ fontSize: '0.82rem', color: '#94a3b8', marginTop: 3 }}>
-              {currentShip.classModel} • Size {currentShip.size} ({currentShip.sizeCategory}) • Frame: {currentFrame.lengthRange}
+              {currentShip.classModel} • Size {currentShip.size} ({currentShip.sizeCategory}) • Registry: {currentShip.registry}
             </div>
           </div>
         </div>
 
-        {/* Sub-Tab Navigation Pill & Home Return */}
+        {/* Sub-Tab Navigation Pill & Home Return & Wizards */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
           {onGoHome && (
             <button
@@ -265,6 +300,39 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
             </button>
           )}
 
+          <button
+            onClick={() => setIsWizardOpen(true)}
+            style={{
+              padding: '8px 14px',
+              borderRadius: 10,
+              fontSize: '0.82rem',
+              fontWeight: 800,
+              background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+              color: '#ffffff',
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(16, 185, 129, 0.35)'
+            }}
+          >
+            ✨ Commission Wizard
+          </button>
+
+          <button
+            onClick={() => setIsRulesOpen(true)}
+            style={{
+              padding: '8px 14px',
+              borderRadius: 10,
+              fontSize: '0.82rem',
+              fontWeight: 800,
+              background: 'rgba(245, 158, 11, 0.15)',
+              color: '#fbbf24',
+              border: '1px solid rgba(245, 158, 11, 0.4)',
+              cursor: 'pointer'
+            }}
+          >
+            📖 Sci-Fi Rules
+          </button>
+
           <div
             style={{
               display: 'flex',
@@ -274,58 +342,58 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
               border: '1px solid rgba(255, 255, 255, 0.08)'
             }}
           >
-          <button
-            onClick={() => setSubTab('bridge')}
-            style={{
-              padding: '8px 16px',
-              borderRadius: 8,
-              fontSize: '0.82rem',
-              fontWeight: 800,
-              background:
-                subTab === 'bridge'
-                  ? 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)'
-                  : 'transparent',
-              color: subTab === 'bridge' ? '#ffffff' : '#94a3b8',
-              boxShadow: subTab === 'bridge' ? '0 2px 8px rgba(14, 165, 233, 0.35)' : 'none'
-            }}
-          >
-            Bridge Console
-          </button>
-          <button
-            onClick={() => setSubTab('shipyard')}
-            style={{
-              padding: '8px 16px',
-              borderRadius: 8,
-              fontSize: '0.82rem',
-              fontWeight: 800,
-              background:
-                subTab === 'shipyard'
-                  ? 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
-                  : 'transparent',
-              color: subTab === 'shipyard' ? '#0f172a' : '#94a3b8',
-              boxShadow: subTab === 'shipyard' ? '0 2px 8px rgba(245, 158, 11, 0.35)' : 'none'
-            }}
-          >
-            Shipyard Customizer
-          </button>
-          <button
-            onClick={() => setSubTab('hangar')}
-            style={{
-              padding: '8px 16px',
-              borderRadius: 8,
-              fontSize: '0.82rem',
-              fontWeight: 800,
-              background:
-                subTab === 'hangar'
-                  ? 'linear-gradient(135deg, #a855f7 0%, #7e22ce 100%)'
-                  : 'transparent',
-              color: subTab === 'hangar' ? '#ffffff' : '#94a3b8',
-              boxShadow: subTab === 'hangar' ? '0 2px 8px rgba(168, 85, 247, 0.35)' : 'none'
-            }}
-          >
-            Fleet Hangar ({starships.length})
-          </button>
-        </div>
+            <button
+              onClick={() => setSubTab('bridge')}
+              style={{
+                padding: '8px 16px',
+                borderRadius: 8,
+                fontSize: '0.82rem',
+                fontWeight: 800,
+                background:
+                  subTab === 'bridge'
+                    ? 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)'
+                    : 'transparent',
+                color: subTab === 'bridge' ? '#ffffff' : '#94a3b8',
+                boxShadow: subTab === 'bridge' ? '0 2px 8px rgba(14, 165, 233, 0.35)' : 'none'
+              }}
+            >
+              Bridge Console
+            </button>
+            <button
+              onClick={() => setSubTab('shipyard')}
+              style={{
+                padding: '8px 16px',
+                borderRadius: 8,
+                fontSize: '0.82rem',
+                fontWeight: 800,
+                background:
+                  subTab === 'shipyard'
+                    ? 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
+                    : 'transparent',
+                color: subTab === 'shipyard' ? '#0f172a' : '#94a3b8',
+                boxShadow: subTab === 'shipyard' ? '0 2px 8px rgba(245, 158, 11, 0.35)' : 'none'
+              }}
+            >
+              Shipyard Customizer
+            </button>
+            <button
+              onClick={() => setSubTab('hangar')}
+              style={{
+                padding: '8px 16px',
+                borderRadius: 8,
+                fontSize: '0.82rem',
+                fontWeight: 800,
+                background:
+                  subTab === 'hangar'
+                    ? 'linear-gradient(135deg, #a855f7 0%, #7e22ce 100%)'
+                    : 'transparent',
+                color: subTab === 'hangar' ? '#ffffff' : '#94a3b8',
+                boxShadow: subTab === 'hangar' ? '0 2px 8px rgba(168, 85, 247, 0.35)' : 'none'
+              }}
+            >
+              Fleet Hangar ({starships.length})
+            </button>
+          </div>
         </div>
       </section>
 
@@ -342,6 +410,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
               gap: 12
             }}
           >
+            {/* 1. Toughness */}
             <div
               style={{
                 background: 'rgba(15, 23, 42, 0.75)',
@@ -355,11 +424,14 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
                 Toughness
               </div>
               <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#38bdf8' }}>
-                {stats.finalToughness} ({stats.finalArmor})
+                {currentShip.toughnessTotal || stats.finalToughness} ({currentShip.armorBonus || stats.finalArmor}) {currentShip.isHeavyArmor ? 'HA' : ''}
               </div>
-              <div style={{ fontSize: '0.7rem', color: '#64748b' }}>Base {currentShip.toughnessBase} + Armor</div>
+              <div style={{ fontSize: '0.7rem', color: '#64748b' }}>
+                Base {currentShip.toughnessBase} + Armor {currentShip.armorBonus || stats.finalArmor}
+              </div>
             </div>
 
+            {/* 2. Handling / Agility */}
             <div
               style={{
                 background: 'rgba(15, 23, 42, 0.75)',
@@ -376,14 +448,19 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
                 style={{
                   fontSize: '1.5rem',
                   fontWeight: 900,
-                  color: stats.finalHandling >= 0 ? '#4ade80' : '#f87171'
+                  color: (currentShip.handling ?? stats.finalHandling) >= 0 ? '#4ade80' : '#f87171'
                 }}
               >
-                {stats.finalHandling >= 0 ? `+${stats.finalHandling}` : stats.finalHandling}
+                {(currentShip.handling ?? stats.finalHandling) >= 0
+                  ? `+${currentShip.handling ?? stats.finalHandling}`
+                  : (currentShip.handling ?? stats.finalHandling)}
               </div>
-              <div style={{ fontSize: '0.7rem', color: '#64748b' }}>Piloting Modifier</div>
+              <div style={{ fontSize: '0.7rem', color: '#64748b' }}>
+                {currentShip.craftType === 'walker' || currentShip.craftType === 'power_armor' ? 'Mobility Mod' : 'Driving / Piloting Mod'}
+              </div>
             </div>
 
+            {/* 3. Speed or Tactical Pace */}
             <div
               style={{
                 background: 'rgba(15, 23, 42, 0.75)',
@@ -394,14 +471,21 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
               }}
             >
               <div style={{ fontSize: '0.74rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase' }}>
-                Top Speed
+                {currentShip.craftType === 'walker' || currentShip.craftType === 'power_armor' ? 'Tactical Pace' : 'Top Speed'}
               </div>
               <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#fbbf24' }}>
-                TS {stats.finalTopSpeed}
+                {currentShip.craftType === 'walker' || currentShip.craftType === 'power_armor'
+                  ? `${currentShip.pace || 8}"`
+                  : `${currentShip.topSpeed || stats.finalTopSpeed} MPH`}
               </div>
-              <div style={{ fontSize: '0.7rem', color: '#64748b' }}>Atmosphere / Sublight</div>
+              <div style={{ fontSize: '0.7rem', color: '#64748b' }}>
+                {currentShip.craftType === 'walker' || currentShip.craftType === 'power_armor'
+                  ? `Running: +d${currentShip.runningDie || 6}`
+                  : currentShip.locomotion || 'Standard Locomotion'}
+              </div>
             </div>
 
+            {/* 4. Special System: Jump Jets / Strength / FTL */}
             <div
               style={{
                 background: 'rgba(15, 23, 42, 0.75)',
@@ -412,21 +496,42 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
               }}
             >
               <div style={{ fontSize: '0.74rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase' }}>
-                FTL Hyperdrive
+                {currentShip.craftType === 'power_armor'
+                  ? 'Strength Boost'
+                  : currentShip.craftType === 'walker'
+                  ? 'Jump Jets'
+                  : currentShip.craftType === 'vehicle'
+                  ? 'Drive Type'
+                  : 'FTL Hyperdrive'}
               </div>
               <div
                 style={{
                   fontSize: '1.2rem',
                   fontWeight: 900,
-                  color: stats.hasFTL ? '#22c55e' : '#ef4444',
+                  color: '#22c55e',
                   marginTop: 4
                 }}
               >
-                {stats.hasFTL ? 'ONLINE' : 'NONE'}
+                {currentShip.craftType === 'power_armor'
+                  ? `+${currentShip.strengthBonusSteps || 2} Steps`
+                  : currentShip.craftType === 'walker'
+                  ? currentShip.hasJumpJets ? 'EQUIPPED' : 'STANDARD LEGS'
+                  : currentShip.craftType === 'vehicle'
+                  ? currentShip.locomotion || 'WHEELED'
+                  : stats.hasFTL ? 'ONLINE' : 'NONE'}
               </div>
-              <div style={{ fontSize: '0.7rem', color: '#64748b' }}>Hyperspace Transit</div>
+              <div style={{ fontSize: '0.7rem', color: '#64748b' }}>
+                {currentShip.craftType === 'power_armor'
+                  ? currentShip.minStrength ? `Min ${currentShip.minStrength}` : 'Augmented'
+                  : currentShip.craftType === 'walker'
+                  ? 'All-Terrain Leaps'
+                  : currentShip.craftType === 'vehicle'
+                  ? 'Propulsion'
+                  : 'Hyperspace Transit'}
+              </div>
             </div>
 
+            {/* 5. Capacity / Crew */}
             <div
               style={{
                 background: 'rgba(15, 23, 42, 0.75)',
@@ -437,12 +542,14 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
               }}
             >
               <div style={{ fontSize: '0.74rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase' }}>
-                Cargo Volume
+                Crew & Capacity
               </div>
               <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#e2e8f0', marginTop: 3 }}>
-                {stats.cargoCapacity.toLocaleString()} ft³
+                {currentShip.crew || 1} {currentShip.crewCapacity ? `/ ${currentShip.crewCapacity}` : ''}
               </div>
-              <div style={{ fontSize: '0.7rem', color: '#64748b' }}>Free Hold Space</div>
+              <div style={{ fontSize: '0.7rem', color: '#64748b' }}>
+                {currentShip.craftType === 'power_armor' ? 'Wearer Size 0/+1' : 'Operators'}
+              </div>
             </div>
           </div>
 
@@ -800,7 +907,106 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
             )}
           </div>
 
-          {/* Astrogation & Hyperdrive Navigation Console */}
+          {/* Tactical Maneuvers & Out of Control Mishap Console for Vehicles/Walkers/Armor */}
+          {currentShip.craftType && currentShip.craftType !== 'starship' ? (
+            <div
+              style={{
+                background: '#0f172a',
+                border: '1px solid #1e293b',
+                borderRadius: 14,
+                padding: '18px 20px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 12
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1.1rem', color: '#f8fafc', fontWeight: 800 }}>
+                    Tactical Maneuver & Out of Control Console
+                  </h3>
+                  <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                    Critical maneuver failures and collision resolution (Sci-Fi Companion rules)
+                  </div>
+                </div>
+                <button
+                  onClick={() => setLastOutOfControl(rollOutOfControl())}
+                  style={{
+                    padding: '8px 16px',
+                    borderRadius: 8,
+                    border: '1px solid #ef4444',
+                    background: 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)',
+                    color: '#ffffff',
+                    fontWeight: 800,
+                    fontSize: '0.82rem',
+                    cursor: 'pointer',
+                    boxShadow: '0 2px 8px rgba(239, 68, 68, 0.35)'
+                  }}
+                >
+                  🎲 Roll Out of Control (2d6)
+                </button>
+              </div>
+
+              {lastOutOfControl && (
+                <div
+                  style={{
+                    background: 'rgba(239, 68, 68, 0.1)',
+                    border: '1px solid rgba(239, 68, 68, 0.35)',
+                    borderRadius: 10,
+                    padding: '12px 16px',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 12
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '1.4rem',
+                      fontWeight: 900,
+                      color: '#ef4444',
+                      padding: '2px 10px',
+                      borderRadius: 8,
+                      background: 'rgba(239, 68, 68, 0.2)'
+                    }}
+                  >
+                    2d6: {lastOutOfControl.roll}
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 800, color: '#f87171', fontSize: '0.95rem' }}>
+                      {lastOutOfControl.title}
+                    </div>
+                    <div style={{ fontSize: '0.82rem', color: '#cbd5e1', marginTop: 3 }}>
+                      {lastOutOfControl.description}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 10 }}>
+                <div style={{ background: '#1e293b', borderRadius: 8, padding: '10px 14px' }}>
+                  <div style={{ fontSize: '0.74rem', color: '#94a3b8' }}>Evasive Maneuver</div>
+                  <div style={{ fontWeight: 800, color: '#e2e8f0' }}>-2 to be hit; -2 to own attacks</div>
+                </div>
+                <div style={{ background: '#1e293b', borderRadius: 8, padding: '10px 14px' }}>
+                  <div style={{ fontSize: '0.74rem', color: '#94a3b8' }}>Tactical Ramming</div>
+                  <div style={{ fontWeight: 800, color: '#e2e8f0' }}>Opposed Driving/Piloting • Damage: Size × (MPH/10)</div>
+                </div>
+                {currentShip.craftType === 'walker' && (
+                  <div style={{ background: '#1e293b', borderRadius: 8, padding: '10px 14px' }}>
+                    <div style={{ fontSize: '0.74rem', color: '#94a3b8' }}>Mech Stomp Action</div>
+                    <div style={{ fontWeight: 800, color: '#e2e8f0' }}>Str+d8 AP 4 (Heavy Weapon) • Targets vs Agility</div>
+                  </div>
+                )}
+                {currentShip.craftType === 'power_armor' && (
+                  <div style={{ background: '#1e293b', borderRadius: 8, padding: '10px 14px' }}>
+                    <div style={{ fontSize: '0.74rem', color: '#94a3b8' }}>Powered Strength Attack</div>
+                    <div style={{ fontWeight: 800, color: '#e2e8f0' }}>Boosts user Strength by +{currentShip.strengthBonusSteps || 2} steps</div>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+          /* Astrogation & Hyperdrive Navigation Console for Starships */
           <div
             style={{
               background: '#0f172a',
@@ -889,6 +1095,7 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
               </div>
             </div>
           </div>
+          )}
         </div>
       )}
 
@@ -1516,66 +1723,118 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
             <div>
               <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#f8fafc', fontWeight: 900 }}>
-                Fleet Hangar & Drydock
+                Hangar Bay & Motor Pool
               </h2>
               <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
-                Manage, commission, duplicate, or inspect your fleet of starships
+                Commission, customize, and deploy Vehicles, Walkers, Power Armor, and Starships
               </div>
             </div>
 
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               <button
-                onClick={() => {
-                  const newShip = createBlankStarship('Huge', 'New Starship');
-                  onCreateStarship(newShip);
-                  onSelectStarship(newShip.id);
-                  setSubTab('shipyard');
-                }}
+                onClick={() => setIsWizardOpen(true)}
                 style={{
-                  padding: '8px 16px',
-                  borderRadius: 8,
+                  padding: '9px 18px',
+                  borderRadius: 10,
                   border: 'none',
-                  background: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
+                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                   color: '#fff',
-                  fontWeight: 800,
-                  fontSize: '0.82rem',
-                  cursor: 'pointer'
+                  fontWeight: 900,
+                  fontSize: '0.84rem',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 14px rgba(16, 185, 129, 0.4)'
                 }}
               >
-                + Commission New Vessel
+                ✨ Commission Wizard
               </button>
 
               <button
-                onClick={() => {
-                  const stock = STOCK_STARSHIPS[Math.floor(Math.random() * STOCK_STARSHIPS.length)];
-                  const copy: StarshipVessel = {
-                    ...stock,
-                    id: 'starship_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
-                    name: stock.name + ' (Import)',
-                    updatedAt: Date.now()
-                  };
-                  onCreateStarship(copy);
-                  onSelectStarship(copy.id);
-                }}
+                onClick={() => setIsRulesOpen(true)}
                 style={{
-                  padding: '8px 16px',
-                  borderRadius: 8,
-                  border: '1px solid #334155',
-                  background: '#1e293b',
-                  color: '#e2e8f0',
+                  padding: '9px 16px',
+                  borderRadius: 10,
+                  border: '1px solid rgba(245, 158, 11, 0.45)',
+                  background: 'rgba(245, 158, 11, 0.15)',
+                  color: '#fbbf24',
                   fontWeight: 800,
-                  fontSize: '0.82rem',
+                  fontSize: '0.84rem',
                   cursor: 'pointer'
                 }}
               >
-                Import Stock Sci-Fi Vessel
+                📖 Sci-Fi Rules
               </button>
             </div>
           </div>
 
+          {/* Hangar Category Filter Pills */}
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', background: 'rgba(0,0,0,0.3)', padding: 6, borderRadius: 12 }}>
+            {[
+              { id: 'all', label: `All Hangar (${starships.length})` },
+              { id: 'vehicle', label: `Vehicles (${starships.filter(s => s.craftType === 'vehicle').length})` },
+              { id: 'walker', label: `Walkers & Mechs (${starships.filter(s => s.craftType === 'walker').length})` },
+              { id: 'power_armor', label: `Power Armor (${starships.filter(s => s.craftType === 'power_armor').length})` },
+              { id: 'starship', label: `Starships (${starships.filter(s => !s.craftType || s.craftType === 'starship').length})` }
+            ].map((f) => (
+              <button
+                key={f.id}
+                onClick={() => setHangarFilter(f.id as any)}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: 8,
+                  fontSize: '0.78rem',
+                  fontWeight: 800,
+                  background: hangarFilter === f.id ? 'rgba(56, 189, 248, 0.2)' : 'transparent',
+                  color: hangarFilter === f.id ? '#38bdf8' : '#94a3b8',
+                  border: hangarFilter === f.id ? '1px solid #38bdf8' : '1px solid transparent',
+                  cursor: 'pointer'
+                }}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Quick Stock Template Buttons */}
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', background: '#0f172a', padding: '10px 14px', borderRadius: 10, border: '1px solid #1e293b' }}>
+            <span style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 800 }}>QUICK TEMPLATES:</span>
+            {STOCK_SCIFI_CRAFT.map((stock) => (
+              <button
+                key={stock.id}
+                onClick={() => {
+                  const vessel = convertCraftToVessel({
+                    ...stock,
+                    id: `craft_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+                    name: `${stock.name} #${Math.floor(10 + Math.random() * 90)}`
+                  });
+                  onCreateStarship(vessel);
+                  onSelectStarship(vessel.id);
+                  setSubTab('bridge');
+                }}
+                style={{
+                  padding: '5px 11px',
+                  borderRadius: 6,
+                  background: '#1e293b',
+                  border: '1px solid #334155',
+                  color: '#cbd5e1',
+                  fontSize: '0.74rem',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+              >
+                + {stock.name} ({stock.craftType.replace('_', ' ')})
+              </button>
+            ))}
+          </div>
+
           {/* Ship Cards Grid */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 14 }}>
-            {starships.map((ship) => {
+            {starships
+              .filter((ship) => {
+                if (hangarFilter === 'all') return true;
+                if (hangarFilter === 'starship') return !ship.craftType || ship.craftType === 'starship';
+                return ship.craftType === hangarFilter;
+              })
+              .map((ship) => {
               const shipStats = calculateStarshipStats(ship);
               const isActive = ship.id === currentShip.id;
 
@@ -1612,11 +1871,26 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
                           fontWeight: 800,
                           padding: '2px 8px',
                           borderRadius: 6,
-                          background: 'rgba(56, 189, 248, 0.15)',
-                          color: '#38bdf8'
+                          background:
+                            ship.craftType === 'walker'
+                              ? 'rgba(168, 85, 247, 0.2)'
+                              : ship.craftType === 'power_armor'
+                              ? 'rgba(245, 158, 11, 0.2)'
+                              : ship.craftType === 'vehicle'
+                              ? 'rgba(16, 185, 129, 0.2)'
+                              : 'rgba(56, 189, 248, 0.15)',
+                          color:
+                            ship.craftType === 'walker'
+                              ? '#c084fc'
+                              : ship.craftType === 'power_armor'
+                              ? '#fbbf24'
+                              : ship.craftType === 'vehicle'
+                              ? '#34d399'
+                              : '#38bdf8',
+                          border: '1px solid currentColor'
                         }}
                       >
-                        Size {ship.size} ({ship.sizeCategory})
+                        {ship.craftType ? ship.craftType.toUpperCase().replace('_', ' ') : `Size ${ship.size} (${ship.sizeCategory})`}
                       </span>
                     </div>
 
@@ -1625,25 +1899,27 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
                       <div style={{ background: '#1e293b', borderRadius: 8, padding: '8px', textAlign: 'center' }}>
                         <div style={{ fontSize: '0.66rem', color: '#94a3b8', textTransform: 'uppercase' }}>Toughness</div>
                         <div style={{ fontWeight: 900, color: '#38bdf8', fontSize: '0.96rem' }}>
-                          {shipStats.finalToughness} ({shipStats.finalArmor})
+                          {ship.toughnessTotal || shipStats.finalToughness} ({ship.armorBonus || shipStats.finalArmor}) {ship.isHeavyArmor ? 'HA' : ''}
                         </div>
                       </div>
                       <div style={{ background: '#1e293b', borderRadius: 8, padding: '8px', textAlign: 'center' }}>
-                        <div style={{ fontSize: '0.66rem', color: '#94a3b8', textTransform: 'uppercase' }}>Handling</div>
-                        <div style={{ fontWeight: 900, color: shipStats.finalHandling >= 0 ? '#4ade80' : '#f87171', fontSize: '0.96rem' }}>
-                          {shipStats.finalHandling >= 0 ? `+${shipStats.finalHandling}` : shipStats.finalHandling}
+                        <div style={{ fontSize: '0.66rem', color: '#94a3b8', textTransform: 'uppercase' }}>
+                          {ship.craftType === 'walker' || ship.craftType === 'power_armor' ? 'Pace' : 'Top Speed'}
+                        </div>
+                        <div style={{ fontWeight: 900, color: '#fbbf24', fontSize: '0.96rem' }}>
+                          {ship.craftType === 'walker' || ship.craftType === 'power_armor' ? `${ship.pace || 8}"` : `${ship.topSpeed || shipStats.finalTopSpeed} MPH`}
                         </div>
                       </div>
                       <div style={{ background: '#1e293b', borderRadius: 8, padding: '8px', textAlign: 'center' }}>
                         <div style={{ fontSize: '0.66rem', color: '#94a3b8', textTransform: 'uppercase' }}>Wounds</div>
                         <div style={{ fontWeight: 900, color: ship.wounds > 0 ? '#ef4444' : '#22c55e', fontSize: '0.96rem' }}>
-                          {ship.wounds} / {shipStats.maxWounds}
+                          {ship.wounds} / {ship.maxWounds || shipStats.maxWounds}
                         </div>
                       </div>
                     </div>
 
                     <div style={{ fontSize: '0.75rem', color: '#cbd5e1', marginTop: 10 }}>
-                      Shields: {ship.shields} • Weapons: {ship.weapons.length} • Mods: {ship.installedMods.length} • FTL: {shipStats.hasFTL ? 'Yes' : 'No'}
+                      Shields: {ship.shields} • Weapons: {ship.weapons.length} • Mods: {ship.installedMods.length} {ship.strengthBonusSteps ? `• Wearer Str: +${ship.strengthBonusSteps}` : ''}
                     </div>
                   </div>
 
@@ -1735,6 +2011,24 @@ export const StarshipManagerView: React.FC<StarshipManagerViewProps> = ({
             })}
           </div>
         </div>
+      )}
+
+      {/* Commissioning Wizard Modal */}
+      {isWizardOpen && (
+        <CraftWizardModal
+          onClose={() => setIsWizardOpen(false)}
+          onCommission={(newCraft) => {
+            const vessel = convertCraftToVessel(newCraft);
+            onCreateStarship(vessel);
+            onSelectStarship(vessel.id);
+            setSubTab('bridge');
+          }}
+        />
+      )}
+
+      {/* Sci-Fi Companion Rules Modal */}
+      {isRulesOpen && (
+        <SciFiRulesModal onClose={() => setIsRulesOpen(false)} />
       )}
     </div>
   );

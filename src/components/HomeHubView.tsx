@@ -372,10 +372,11 @@ export const HomeHubView: React.FC<HomeHubViewProps> = ({
             </div>
 
             <h2 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#f8fafc', margin: '0 0 6px 0' }}>
-              Vehicles & Starships
+              Vehicles, Walkers & Tech
             </h2>
             <p style={{ fontSize: '0.82rem', color: '#94a3b8', margin: '0 0 16px 0', lineHeight: 1.45 }}>
-              Starship customization from Small fighters to World Ships. Install deflector shields, weapon batteries with firing arcs, hyperspace astrogation, and run bridge consoles.
+              Sci-Fi Companion engineering for Ground Vehicles, Combat Walkers & Mechs, Power Armor Battlesuits, and Starships.
+              Featuring step-by-step commissioning wizards, full rules references, and tactical bridge consoles.
             </p>
 
             {/* Quick Metrics */}

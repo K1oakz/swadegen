@@ -116,4 +116,13 @@ export interface StarshipVessel {
   notes: string;
   captainCharacterId?: string;
   updatedAt: number;
+  // Sci-Fi Companion Vehicles, Walkers & Power Armor attributes
+  craftType?: 'vehicle' | 'walker' | 'power_armor' | 'starship';
+  locomotion?: string;
+  pace?: number;
+  runningDie?: number;
+  strengthBonusSteps?: number;
+  minStrength?: string;
+  isHeavyArmor?: boolean;
+  hasJumpJets?: boolean;
 }

@@ -17,6 +17,8 @@ import { StarshipManagerView } from './components/StarshipManagerView';
 import { HomeHubView } from './components/HomeHubView';
 import { StarshipVessel } from './types/starship';
 import { STOCK_STARSHIPS } from './data/starshipData';
+import { STOCK_SCIFI_CRAFT } from './data/scifiCraftData';
+import { convertCraftToVessel } from './utils/scifiCraftRules';
 
 const STORAGE_KEY_ROSTER = 'swade_character_forge_roster_v1';
 const STORAGE_KEY_ACTIVE_ID = 'swade_character_forge_active_id_v1';
@@ -57,7 +59,10 @@ export const App: React.FC = () => {
     } catch (e) {
       console.error('Failed loading starships from localStorage:', e);
     }
-    return STOCK_STARSHIPS;
+    return [
+      ...STOCK_STARSHIPS,
+      ...STOCK_SCIFI_CRAFT.map(convertCraftToVessel)
+    ];
   });
 
   const [activeStarshipId, setActiveStarshipId] = useState<string>(() => {
