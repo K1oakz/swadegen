@@ -14,8 +14,8 @@ import { calculateStarshipStats } from '../utils/starshipRules';
 interface TopBarProps {
   character: SwadeCharacter;
   totalCharacters: number;
-  activeMode: 'home' | 'roster' | 'builder' | 'play' | 'starships';
-  onSetMode: (mode: 'home' | 'roster' | 'builder' | 'play' | 'starships') => void;
+  activeMode: 'home' | 'roster' | 'builder' | 'play' | 'starships' | 'bestiary';
+  onSetMode: (mode: 'home' | 'roster' | 'builder' | 'play' | 'starships' | 'bestiary') => void;
   onGoHome: () => void;
   onOpenRoster: () => void;
   onOpenBackup: () => void;
@@ -432,7 +432,123 @@ export const TopBar: React.FC<TopBarProps> = ({
     );
   }
 
-  // 3. CHARACTERS MODE (roster, builder, play): Focus on character stats with Home button and character-only mode switch
+  // 3. BESTIARY MODE: Standalone compendium reference header
+  if (activeMode === 'bestiary') {
+    return (
+      <header
+        style={{
+          background: 'linear-gradient(180deg, #1c1410 0%, #110c08 100%)',
+          borderBottom: '1px solid rgba(234, 88, 12, 0.4)',
+          paddingTop: 'calc(var(--safe-top) + 10px)',
+          position: 'sticky',
+          top: 0,
+          zIndex: 30,
+          boxShadow: '0 6px 24px rgba(0, 0, 0, 0.55)'
+        }}
+      >
+        <div style={{ maxWidth: 1180, margin: '0 auto', padding: '0 14px 10px' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 10,
+              flexWrap: 'wrap'
+            }}
+          >
+            {/* Back Home Button + Bestiary Title */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: '1 1 240px', minWidth: 0 }}>
+              <button
+                onClick={onGoHome}
+                title="Return to Main Categories"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '7px 12px',
+                  borderRadius: 10,
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid var(--border-subtle)',
+                  color: '#fff',
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  flexShrink: 0
+                }}
+              >
+                <span>← Home</span>
+              </button>
+
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                  padding: '5px 12px',
+                  borderRadius: 12,
+                  background: 'rgba(234, 88, 12, 0.12)',
+                  border: '1px solid rgba(234, 88, 12, 0.35)',
+                  minWidth: 0,
+                  flex: 1
+                }}
+              >
+                <div
+                  style={{
+                    width: 34,
+                    height: 34,
+                    borderRadius: 8,
+                    background: 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)',
+                    color: '#fff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 900,
+                    fontSize: '0.82rem',
+                    flexShrink: 0
+                  }}
+                >
+                  BY
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontWeight: 900, fontSize: '0.94rem', color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    SWADE Bestiary & Foes
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: '#fb923c' }}>
+                    Core Rules • Fantasy • Sci-Fi • Horror • Super Powers
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Utility Actions */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <button
+                onClick={onOpenDiceTray}
+                title="Open Dice Tray"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 5,
+                  padding: '7px 12px',
+                  borderRadius: 10,
+                  background: 'rgba(56, 189, 248, 0.14)',
+                  border: '1px solid rgba(56, 189, 248, 0.35)',
+                  color: '#38bdf8',
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+              >
+                Dice Tray
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+    );
+  }
+
+  // 4. CHARACTERS MODE (roster, builder, play): Focus on character stats with Home button and character-only mode switch
   const derived = calculateDerivedStats(character);
   const attrPts = calculateAttributePoints(character);
   const skillPts = calculateSkillPoints(character);

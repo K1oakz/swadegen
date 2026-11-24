@@ -11,6 +11,7 @@ interface HomeHubViewProps {
   activeStarship: StarshipVessel;
   onEnterCharacters: (mode?: 'roster' | 'builder' | 'play') => void;
   onEnterVehicles: (subTab?: 'bridge' | 'shipyard' | 'hangar') => void;
+  onEnterBestiary: () => void;
   onCreateCharacter: () => void;
   onOpenDiceTray: () => void;
   onOpenBackup: () => void;
@@ -23,6 +24,7 @@ export const HomeHubView: React.FC<HomeHubViewProps> = ({
   activeStarship,
   onEnterCharacters,
   onEnterVehicles,
+  onEnterBestiary,
   onCreateCharacter,
   onOpenDiceTray,
   onOpenBackup
@@ -523,6 +525,168 @@ export const HomeHubView: React.FC<HomeHubViewProps> = ({
                 Shipyard Customizer
               </button>
             </div>
+          </div>
+        </div>
+
+        {/* ========================================= */}
+        {/* CATEGORY 3: BESTIARY & FOES               */}
+        {/* ========================================= */}
+        <div
+          style={{
+            background: 'linear-gradient(180deg, #22140e 0%, #150d09 100%)',
+            border: '2px solid rgba(234, 88, 12, 0.4)',
+            borderRadius: 20,
+            padding: 22,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            boxShadow: '0 8px 30px rgba(0, 0, 0, 0.45)',
+            gap: 18
+          }}
+        >
+          <div>
+            {/* Header Badge & Title */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10, marginBottom: 12 }}>
+              <span
+                style={{
+                  fontSize: '0.68rem',
+                  fontWeight: 900,
+                  padding: '3px 8px',
+                  borderRadius: 6,
+                  background: 'rgba(234, 88, 12, 0.2)',
+                  color: '#fb923c',
+                  letterSpacing: '0.06em',
+                  textTransform: 'uppercase',
+                  border: '1px solid rgba(234, 88, 12, 0.45)'
+                }}
+              >
+                MULTI-GENRE COMPENDIUM
+              </span>
+              <span style={{ fontSize: '0.78rem', color: '#94a3b8', fontWeight: 700 }}>
+                5 Sourcebooks
+              </span>
+            </div>
+
+            <h2 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#f8fafc', margin: '0 0 6px 0' }}>
+              Bestiary & Adversaries
+            </h2>
+            <p style={{ fontSize: '0.82rem', color: '#94a3b8', margin: '0 0 16px 0', lineHeight: 1.45 }}>
+              Comprehensive creature and threat index with authentic stat blocks across Core Rules,
+              Fantasy, Sci-Fi, Horror, and Super Powers companions. Clean reference views without roller or play sheet bloat.
+            </p>
+
+            {/* Quick Metrics */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: 8,
+                marginBottom: 16
+              }}
+            >
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.35)',
+                  border: '1px solid #1e293b',
+                  borderRadius: 10,
+                  padding: '8px 12px'
+                }}
+              >
+                <div style={{ fontSize: '0.68rem', color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase' }}>
+                  Index Coverage
+                </div>
+                <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#fb923c' }}>
+                  30+ Foes
+                </div>
+              </div>
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.35)',
+                  border: '1px solid #1e293b',
+                  borderRadius: 10,
+                  padding: '8px 12px'
+                }}
+              >
+                <div style={{ fontSize: '0.68rem', color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase' }}>
+                  Subcategories
+                </div>
+                <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#fca5a5' }}>
+                  By Companion
+                </div>
+              </div>
+            </div>
+
+            {/* Bestiary Spotlight Feature */}
+            <div
+              style={{
+                background: 'rgba(0, 0, 0, 0.4)',
+                border: '1px solid #1e293b',
+                borderRadius: 14,
+                padding: '12px 14px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12
+              }}
+            >
+              <div
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 12,
+                  background: 'linear-gradient(135deg, #ea580c 0%, #9a3412 100%)',
+                  border: '1.5px solid #fb923c',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '0.78rem',
+                  fontWeight: 900,
+                  color: '#fff',
+                  letterSpacing: '0.05em',
+                  flexShrink: 0,
+                  boxShadow: '0 4px 12px rgba(234, 88, 12, 0.35)'
+                }}
+              >
+                FOE
+              </div>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ fontWeight: 900, fontSize: '0.96rem', color: '#f8fafc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    Red Dragon & Xenomorph
+                  </span>
+                  <span style={{ fontSize: '0.62rem', fontWeight: 800, padding: '1px 5px', borderRadius: 4, background: 'rgba(234, 88, 12, 0.25)', color: '#fb923c' }}>
+                    APEX
+                  </span>
+                </div>
+                <div style={{ fontSize: '0.74rem', color: '#94a3b8', marginTop: 2 }}>
+                  Dragons • Undead • Aliens • Aberrations
+                </div>
+                <div style={{ fontSize: '0.7rem', color: '#64748b', marginTop: 3 }}>
+                  Full Special Abilities, Derived Stats & Tactics
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Action Button */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <button
+              onClick={onEnterBestiary}
+              style={{
+                width: '100%',
+                padding: '11px 16px',
+                borderRadius: 12,
+                background: 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)',
+                color: '#ffffff',
+                fontWeight: 900,
+                fontSize: '0.86rem',
+                border: 'none',
+                cursor: 'pointer',
+                textAlign: 'center',
+                boxShadow: '0 4px 14px rgba(234, 88, 12, 0.35)'
+              }}
+            >
+              Browse Bestiary Compendium
+            </button>
           </div>
         </div>
       </div>

@@ -15,6 +15,7 @@ import { DiceRollerModal } from './components/DiceRollerModal';
 import { RosterAndBackupModal } from './components/RosterAndBackupModal';
 import { StarshipManagerView } from './components/StarshipManagerView';
 import { HomeHubView } from './components/HomeHubView';
+import { BestiaryView } from './components/BestiaryView';
 import { StarshipVessel } from './types/starship';
 import { STOCK_STARSHIPS } from './data/starshipData';
 import { STOCK_SCIFI_CRAFT } from './data/scifiCraftData';
@@ -75,7 +76,7 @@ export const App: React.FC = () => {
     return STOCK_STARSHIPS[0].id;
   });
 
-  const [activeMode, setActiveMode] = useState<'home' | 'roster' | 'builder' | 'play' | 'starships'>('home');
+  const [activeMode, setActiveMode] = useState<'home' | 'roster' | 'builder' | 'play' | 'starships' | 'bestiary'>('home');
   const [starshipSubTab, setStarshipSubTab] = useState<'bridge' | 'shipyard' | 'hangar'>('bridge');
   const [rollHistory, setRollHistory] = useState<RollLogEntry[]>([]);
   const [isDiceTrayOpen, setIsDiceTrayOpen] = useState(false);
@@ -311,10 +312,13 @@ export const App: React.FC = () => {
               setStarshipSubTab(subTab || 'hangar');
               setActiveMode('starships');
             }}
+            onEnterBestiary={() => setActiveMode('bestiary')}
             onCreateCharacter={handleCreateBlank}
             onOpenDiceTray={() => setIsDiceTrayOpen(true)}
             onOpenBackup={() => setRosterModalMode('backup')}
           />
+        ) : activeMode === 'bestiary' ? (
+          <BestiaryView onGoHome={() => setActiveMode('home')} />
         ) : activeMode === 'roster' ? (
           <CharacterListView
             characters={characters}
