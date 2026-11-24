@@ -1,4 +1,4 @@
-import { CraftFrameDef, CraftModDef, CraftWeaponDef, SciFiCraft, SciFiCraftType } from '../types/scifiCraft';
+import { CraftFrameDef, CraftModCategory, CraftModDef, CraftWeaponDef, SciFiCraft, SciFiCraftType } from '../types/scifiCraft';
 
 // ============================================================================
 // SCI-FI COMPANION FRAMES
@@ -344,8 +344,26 @@ export const CRAFT_FRAMES: CraftFrameDef[] = [
 // SCI-FI COMPANION MODIFICATIONS
 // ============================================================================
 
+export interface CraftModCategoryInfo {
+  id: CraftModCategory;
+  name: string;
+  description: string;
+}
+
+export const CRAFT_MOD_CATEGORIES: CraftModCategoryInfo[] = [
+  { id: 'armor', name: 'Armor & Structure', description: 'Plating, bulkheads, spall liners, and ablative defense' },
+  { id: 'defense', name: 'Shields & Countermeasures', description: 'Energy shields, jammers, chaff, and active protection' },
+  { id: 'propulsion', name: 'Propulsion & Mobility', description: 'Thrusters, superchargers, jump jets, and terrain drives' },
+  { id: 'sensor', name: 'Sensors & Electronics', description: 'Targeting HUDs, radar, thermal optics, and cyberlink jacks' },
+  { id: 'life_support', name: 'Crew & Life Support', description: 'CBRN sealing, gravity, stasis, and medical injectors' },
+  { id: 'utility', name: 'Utility & Engineering', description: 'Nanite repair, cargo racks, winches, and fabricators' },
+  { id: 'special', name: 'Tactical & Weapon Mounts', description: 'Turrets, concealed bays, autoloaders, and riot shields' }
+];
+
 export const CRAFT_MODIFICATIONS: CraftModDef[] = [
-  // Armor & Defense
+  // --------------------------------------------------------------------------
+  // 1. ARMOR & STRUCTURAL REINFORCEMENTS
+  // --------------------------------------------------------------------------
   {
     id: 'mod_extra_armor_light',
     name: 'Reinforced Armor Plating',
@@ -368,9 +386,46 @@ export const CRAFT_MODIFICATIONS: CraftModDef[] = [
     armorBonus: 4,
     toughnessBonus: 4,
     isHeavyArmor: true,
-    summary: '+4 Armor & Heavy Armor',
+    summary: '+4 Armor & Heavy Armor rating',
     effect: 'Converts vehicle or suit armor to Heavy Armor (immune to non-Heavy Weapons).'
   },
+  {
+    id: 'mod_ablative_armor',
+    name: 'Ablative Thermal Plating',
+    applicableTypes: ['vehicle', 'walker', 'power_armor', 'starship'],
+    category: 'armor',
+    modSlots: 1,
+    cost: 18000,
+    armorBonus: 2,
+    toughnessBonus: 2,
+    summary: '+2 Armor (+4 vs Lasers & Heat)',
+    effect: 'Sacrificial ceramic tiles disperse intense laser fire, plasma, and orbital re-entry heat.'
+  },
+  {
+    id: 'mod_reinforced_bulkheads',
+    name: 'Reinforced Bulkheads & Keel',
+    applicableTypes: ['vehicle', 'walker', 'starship'],
+    category: 'armor',
+    modSlots: 2,
+    cost: 40000,
+    woundsBonus: 1,
+    summary: '+1 Max Wound capacity',
+    effect: 'Internal titanium honeycomb girders allow the vessel to absorb an additional Wound before destruction.'
+  },
+  {
+    id: 'mod_spall_liner',
+    name: 'Kevlar Spall Liner & Blast Mats',
+    applicableTypes: ['vehicle', 'walker', 'power_armor'],
+    category: 'armor',
+    modSlots: 1,
+    cost: 12000,
+    summary: '+2 Toughness vs Shrapnel; Crew Safety',
+    effect: 'Interior aramid lining catches flak and fragments from penetrating hits, preventing crew casualties.'
+  },
+
+  // --------------------------------------------------------------------------
+  // 2. DEFENSIVE SYSTEMS, SHIELDS & COUNTERMEASURES
+  // --------------------------------------------------------------------------
   {
     id: 'mod_deflector_shields',
     name: 'Deflector Shield Generator',
@@ -383,27 +438,100 @@ export const CRAFT_MODIFICATIONS: CraftModDef[] = [
     effect: 'Energy barrier that absorbs incoming kinetic and energy damage before hull breaches.'
   },
   {
+    id: 'mod_heavy_deflector_shields',
+    name: 'Heavy Deflector Shield Matrix',
+    applicableTypes: ['vehicle', 'walker', 'starship'],
+    category: 'defense',
+    modSlots: 4,
+    cost: 120000,
+    shieldsBonus: 25,
+    summary: '+25 Energy Shield HP',
+    effect: 'Military-grade redundant shield projector providing immense barrier protection.'
+  },
+  {
+    id: 'mod_hard_light_barrier',
+    name: 'Hard-Light Barrier Projector',
+    applicableTypes: ['walker', 'power_armor', 'vehicle'],
+    category: 'defense',
+    modSlots: 2,
+    cost: 45000,
+    summary: 'Deployable energy barricade granting Heavy Cover',
+    effect: 'Projects a solid photonic wall directly in front of the vehicle/suit, granting Heavy Cover and +4 Toughness.'
+  },
+  {
     id: 'mod_reactive_plating',
-    name: 'Reactive Explosive Armor',
+    name: 'Reactive Explosive Armor (ERA)',
     applicableTypes: ['vehicle', 'walker', 'power_armor'],
     category: 'defense',
     modSlots: 1,
     cost: 20000,
-    summary: 'Negates AP against explosive/shaped charges',
-    effect: 'Detonates outward to disrupt HEAT missiles and shaped charges, reducing AP to 0.'
+    summary: 'Negates AP against shaped charges & missiles',
+    effect: 'Detonates outward to disrupt HEAT missiles and shaped charges, reducing explosive AP to 0.'
+  },
+  {
+    id: 'mod_em_shielding',
+    name: 'Faraday Cage & EM Hardening',
+    applicableTypes: ['vehicle', 'walker', 'power_armor', 'starship'],
+    category: 'defense',
+    modSlots: 1,
+    cost: 16000,
+    summary: 'Immunity to EMP, Ion, and electrical surge damage',
+    effect: 'Grounding conduits and fiber-optic pathways isolate core avionics from EMP pulses and ion weapons.'
+  },
+  {
+    id: 'mod_chaff_flares',
+    name: 'Chaff & Thermal Flare Dispensers',
+    applicableTypes: ['vehicle', 'walker', 'power_armor', 'starship'],
+    category: 'defense',
+    modSlots: 1,
+    cost: 15000,
+    summary: '-2 to missile locks and smart weapon attacks',
+    effect: 'Discharges burning magnesium pellets and radar-confusing dipole foils to decoy guided ordnance.'
+  },
+  {
+    id: 'mod_ecm_suite',
+    name: 'ECM Electronic Jammer Suite',
+    applicableTypes: ['vehicle', 'walker', 'starship'],
+    category: 'defense',
+    modSlots: 2,
+    cost: 35000,
+    summary: 'Jams radio, radar, and targeting within 50"',
+    effect: 'Broadband active RF jammer imposes -2 on enemy sensors, comms, and missile fire control.'
+  },
+  {
+    id: 'mod_point_defense',
+    name: 'Point Defense Laser (CIWS)',
+    applicableTypes: ['vehicle', 'walker', 'starship'],
+    category: 'defense',
+    modSlots: 2,
+    cost: 45000,
+    summary: 'Automated anti-missile / anti-torpedo interception',
+    effect: 'Autonomous high-speed pulse laser rolls Shooting d8 each round to vaporize incoming missiles.'
+  },
+  {
+    id: 'mod_stealth_coating',
+    name: 'Stealth Radar-Absorbent Coating',
+    applicableTypes: ['vehicle', 'walker', 'power_armor', 'starship'],
+    category: 'defense',
+    modSlots: 1,
+    cost: 25000,
+    summary: '-2 to be detected on active radar & sensors',
+    effect: 'Ferrite radar-absorbent paint and angled faceted panels reduce sensor signature to a fraction.'
+  },
+  {
+    id: 'mod_chameleon_skin',
+    name: 'Optical Camouflage / Chameleon Skin',
+    applicableTypes: ['power_armor', 'walker', 'vehicle', 'starship'],
+    category: 'defense',
+    modSlots: 2,
+    cost: 40000,
+    summary: '+2 to Stealth rolls; -2 to be targeted at range',
+    effect: 'Adaptive light-bending metamaterials blend the chassis into ambient surroundings.'
   },
 
-  // Mobility & Locomotion
-  {
-    id: 'mod_jump_jets',
-    name: 'Vectored Jump Jets / Thrusters',
-    applicableTypes: ['walker', 'power_armor', 'vehicle'],
-    category: 'propulsion',
-    modSlots: 2,
-    cost: 30000,
-    summary: 'Enables 12" vertical or horizontal jump',
-    effect: 'Allows leaping over terrain, onto buildings, and avoiding falling damage.'
-  },
+  // --------------------------------------------------------------------------
+  // 3. PROPULSION, LOCOMOTION & MOBILITY
+  // --------------------------------------------------------------------------
   {
     id: 'mod_turbo_thrusters',
     name: 'Afterburners / Overclocked Engine',
@@ -417,14 +545,36 @@ export const CRAFT_MODIFICATIONS: CraftModDef[] = [
     effect: 'Injects high-octane hyper-fuel for blistering straight-line speed.'
   },
   {
-    id: 'mod_amphibious',
-    name: 'Amphibious Sealed Drive',
+    id: 'mod_supercharger',
+    name: 'Twin-Turbo Supercharger',
     applicableTypes: ['vehicle', 'walker'],
     category: 'propulsion',
     modSlots: 1,
-    cost: 15000,
-    summary: 'Operate on lakes, rivers, and coastal water',
-    effect: 'Seals intake vents and adds water jet propellers (Half land Pace on water).'
+    cost: 20000,
+    speedBonus: 15,
+    summary: '+15 MPH Top Speed without handling penalty',
+    effect: 'Forced air induction delivers sustained high-output torque across all gear ratios.'
+  },
+  {
+    id: 'mod_advanced_avionics',
+    name: 'Vectored Thrust Avionics / Gyros',
+    applicableTypes: ['vehicle', 'starship'],
+    category: 'propulsion',
+    modSlots: 1,
+    cost: 30000,
+    handlingBonus: 1,
+    summary: '+1 Handling maneuverability',
+    effect: 'High-speed fly-by-wire computer with attitude thrusters delivers razor-sharp handling.'
+  },
+  {
+    id: 'mod_jump_jets',
+    name: 'Vectored Jump Jets / Thrusters',
+    applicableTypes: ['walker', 'power_armor', 'vehicle'],
+    category: 'propulsion',
+    modSlots: 2,
+    cost: 30000,
+    summary: 'Enables 12" vertical/horizontal jump; negates falling',
+    effect: 'Allows leaping over obstacles, onto buildings, and cushioning drops from any height.'
   },
   {
     id: 'mod_leg_servos',
@@ -434,53 +584,263 @@ export const CRAFT_MODIFICATIONS: CraftModDef[] = [
     modSlots: 1,
     cost: 22000,
     paceBonus: 2,
-    summary: '+2 Pace and +1 Stomp / Kick Damage',
-    effect: 'Reinforced leg hydro-servos increase tactical sprint speed.'
+    summary: '+2 Pace and +1d6 Stomp / Kick Damage',
+    effect: 'Synthetic electroactive myomer bundles supercharge ground stride and melee impact.'
+  },
+  {
+    id: 'mod_all_terrain',
+    name: 'All-Terrain Suspension & Heavy Treads',
+    applicableTypes: ['vehicle'],
+    category: 'propulsion',
+    modSlots: 1,
+    cost: 12000,
+    summary: 'Ignores Difficult Ground; +1 Off-road Handling',
+    effect: 'Articulated bogies and deep-lug continuous tracks conquer mud, rubble, snow, and sand.'
+  },
+  {
+    id: 'mod_amphibious',
+    name: 'Amphibious Sealed Drive & Hydrojets',
+    applicableTypes: ['vehicle', 'walker'],
+    category: 'propulsion',
+    modSlots: 1,
+    cost: 15000,
+    summary: 'Surface water navigation at half land Pace',
+    effect: 'Seals hull intakes and deploys dual hydrojet impellers for traversing rivers and oceans.'
+  },
+  {
+    id: 'mod_submersible',
+    name: 'Submersible Pressure Hull & Ballast',
+    applicableTypes: ['vehicle'],
+    category: 'propulsion',
+    modSlots: 2,
+    cost: 35000,
+    summary: 'Operates underwater down to 500m depth',
+    effect: 'Adds ballast tanks, air-scrubbing rebreathers, and depth-hardened viewports.'
+  },
+  {
+    id: 'mod_impulse_thrusters',
+    name: 'Sub-Light Impulse Thrusters',
+    applicableTypes: ['starship'],
+    category: 'propulsion',
+    modSlots: 2,
+    cost: 60000,
+    speedBonus: 100,
+    summary: '+100 MPH Sub-Light Cruise Speed',
+    effect: 'High-energy fusion exhaust drive for rapid interplanetary transits.'
+  },
+  {
+    id: 'mod_hyperdrive',
+    name: 'FTL Hyperdrive / Warp Nacelles',
+    applicableTypes: ['starship'],
+    category: 'propulsion',
+    modSlots: 4,
+    cost: 250000,
+    summary: 'Interstellar Faster-Than-Light travel',
+    effect: 'Tears a localized subspace wormhole, allowing point-to-point interstellar voyages.'
+  },
+  {
+    id: 'mod_reentry_shield',
+    name: 'Atmospheric Re-Entry Shield & Aerospikes',
+    applicableTypes: ['starship'],
+    category: 'propulsion',
+    modSlots: 2,
+    cost: 50000,
+    summary: 'Safe planetary atmosphere entry and exit',
+    effect: 'Thermal protection system prevents burn-up when descending from orbit to planet surface.'
+  },
+  {
+    id: 'mod_glider_wings',
+    name: 'Deployable Glider Wings & Parafoil',
+    applicableTypes: ['vehicle', 'power_armor'],
+    category: 'propulsion',
+    modSlots: 1,
+    cost: 10000,
+    summary: 'Enables high-altitude orbital drop & silent gliding',
+    effect: 'Pneumatic telescoping wings deploy for silent unpowered flight and stealth insertions.'
   },
 
-  // Sensors, HUD & Stealth
-  {
-    id: 'mod_chameleon_skin',
-    name: 'Optical Camouflage / Chameleon Skin',
-    applicableTypes: ['power_armor', 'walker', 'vehicle'],
-    category: 'sensor',
-    modSlots: 2,
-    cost: 40000,
-    summary: '+2 to Stealth rolls; -2 to be targeted at range',
-    effect: 'Adaptive light-bending metamaterials blend the chassis into ambient background.'
-  },
+  // --------------------------------------------------------------------------
+  // 4. SENSORS, OPTICS & ELECTRONICS
+  // --------------------------------------------------------------------------
   {
     id: 'mod_tactical_hud',
-    name: 'Tactical Targeting HUD & Sensor Suite',
-    applicableTypes: ['power_armor', 'walker', 'vehicle'],
+    name: 'Tactical Targeting HUD & Smartlink',
+    applicableTypes: ['power_armor', 'walker', 'vehicle', 'starship'],
     category: 'sensor',
     modSlots: 1,
     cost: 18000,
     summary: '+1 to Shooting rolls; ignores Darkness & Smoke',
-    effect: 'Thermal, infrared, and radar imaging projected directly into pilot reticle.'
+    effect: 'Thermal, infrared, and radar imaging projected directly into pilot helmet / HUD reticle.'
   },
   {
-    id: 'mod_ecm_suite',
-    name: 'ECM / Chaff & Flare Countermeasures',
+    id: 'mod_fire_control',
+    name: 'Target Lock Fire Control Computer',
     applicableTypes: ['vehicle', 'walker', 'starship'],
-    category: 'defense',
+    category: 'sensor',
     modSlots: 1,
-    cost: 20000,
-    summary: '-2 to missile locks and smart weapon attacks',
-    effect: 'Scrambles incoming radio guidance and releases thermal flares.'
+    cost: 28000,
+    summary: '+2 to hit locked targets on subsequent rounds',
+    effect: 'Predictive ballistic computer tracks target velocity vector and illuminates vulnerable weak points.'
+  },
+  {
+    id: 'mod_sensor_array',
+    name: 'Multi-Spectrum Sensor Array (Radar/LIDAR/Thermal)',
+    applicableTypes: ['vehicle', 'walker', 'power_armor', 'starship'],
+    category: 'sensor',
+    modSlots: 1,
+    cost: 25000,
+    summary: 'Detects targets up to 10 miles; +2 Notice',
+    effect: 'Comprehensive scanner dome detects electronic signatures, thermal emissions, and physical contacts.'
+  },
+  {
+    id: 'mod_night_vision',
+    name: 'Infrared & Low-Light Night Vision',
+    applicableTypes: ['vehicle', 'walker', 'power_armor', 'starship'],
+    category: 'sensor',
+    modSlots: 1,
+    cost: 8000,
+    summary: 'Eliminates penalties for Dim, Dark, and Pitch Black',
+    effect: 'Light amplification optics and thermal sensors provide crystal-clear nocturnal vision.'
+  },
+  {
+    id: 'mod_sonar_array',
+    name: 'Sub-Surface Active / Passive Sonar',
+    applicableTypes: ['vehicle'],
+    category: 'sensor',
+    modSlots: 1,
+    cost: 14000,
+    summary: 'Underwater and subterranean acoustic tracking',
+    effect: 'Hydrophones and transducer pingers detect submerged submarines and subterranean movements.'
+  },
+  {
+    id: 'mod_orbital_comms',
+    name: 'Long-Range Comms & Orbital Uplink',
+    applicableTypes: ['vehicle', 'walker', 'starship'],
+    category: 'sensor',
+    modSlots: 1,
+    cost: 15000,
+    summary: 'Interplanetary range encrypted communications',
+    effect: 'Phased-array quantum radio links directly to orbiting satellites or naval flagships.'
+  },
+  {
+    id: 'mod_neural_interface',
+    name: 'Direct Neural Cyberlink Jack',
+    applicableTypes: ['power_armor', 'walker', 'vehicle'],
+    category: 'sensor',
+    modSlots: 1,
+    cost: 35000,
+    handlingBonus: 1,
+    summary: '+2 to Piloting/Driving for cyberlinked operators',
+    effect: 'Spinal cyber-tap connects pilot nervous system directly into vehicle throttle and actuators.'
+  },
+  {
+    id: 'mod_biometric_lock',
+    name: 'Biometric Security & Anti-Theft Lock',
+    applicableTypes: ['power_armor', 'walker', 'vehicle', 'starship'],
+    category: 'sensor',
+    modSlots: 1,
+    cost: 5000,
+    summary: 'Vehicle operates only for authorized DNA/retina',
+    effect: 'Electrified ignition shocks unauthorized intruders and broadcasts silent emergency alert.'
+  },
+  {
+    id: 'mod_autopilot_ai',
+    name: 'Autonomous Co-Pilot AI Module',
+    applicableTypes: ['vehicle', 'walker', 'starship'],
+    category: 'sensor',
+    modSlots: 2,
+    cost: 75000,
+    summary: 'Onboard synthetic pilot/gunner with d8 skills',
+    effect: 'Autonomous neural-net core can pilot the craft, fire linked weapons, or execute evasive maneuvers.'
   },
 
-  // Utility & Life Support
+  // --------------------------------------------------------------------------
+  // 5. CREW, LIFE SUPPORT & COCKPIT SYSTEMS
+  // --------------------------------------------------------------------------
   {
     id: 'mod_life_support_cbrn',
     name: 'Environmental Sealing & CBRN Filter',
     applicableTypes: ['vehicle', 'walker', 'power_armor'],
-    category: 'utility',
+    category: 'life_support',
     modSlots: 1,
     cost: 12000,
     summary: 'Immune to vacuum, underwater, and toxic gases',
-    effect: 'Internal oxygen scrubber provides 24 hours of sealed breathing air.'
+    effect: 'Internal oxygen scrubber provides 24 hours of sealed breathing air with positive cabin pressure.'
   },
+  {
+    id: 'mod_extended_life_support',
+    name: 'Extended Closed-Cycle Life Support',
+    applicableTypes: ['starship', 'vehicle'],
+    category: 'life_support',
+    modSlots: 2,
+    cost: 40000,
+    summary: 'Supports crew for months in deep space or hazard zones',
+    effect: 'Algae bioreactors and water reclamation loops sustain crew indefinitely on extended patrols.'
+  },
+  {
+    id: 'mod_artificial_gravity',
+    name: 'Artificial Gravity & Inertial Dampeners',
+    applicableTypes: ['starship'],
+    category: 'life_support',
+    modSlots: 2,
+    cost: 70000,
+    summary: '1G interior gravity; negates G-force shock',
+    effect: 'Graviton plates allow crew to walk normally and prevent blackout from sudden hyper-acceleration.'
+  },
+  {
+    id: 'mod_ejection_seat',
+    name: 'Rocket Ejection Pod / Escape Capsule',
+    applicableTypes: ['vehicle', 'walker', 'starship'],
+    category: 'life_support',
+    modSlots: 1,
+    cost: 15000,
+    summary: 'Safely ejects crew upon vehicle destruction',
+    effect: 'Rocket booster clears cockpit capsule 500 feet before deploying parachutes and survival beacon.'
+  },
+  {
+    id: 'mod_medical_injector',
+    name: 'Trauma Med-Auto-Injector',
+    applicableTypes: ['power_armor'],
+    category: 'life_support',
+    modSlots: 1,
+    cost: 10000,
+    summary: 'Automatically stabilizes wearer & +2 vs Bleeding Out',
+    effect: 'Monitors vital signs and dispenses synthetic coagulants, pain blockers, and emergency stims.'
+  },
+  {
+    id: 'mod_crew_quarters',
+    name: 'Crew Bunks & Living Quarters',
+    applicableTypes: ['starship'],
+    category: 'life_support',
+    modSlots: 2,
+    cost: 20000,
+    summary: 'Sleeping berths, galley, and hygiene for 4 crew',
+    effect: 'Converts hull volume into livable quarters for long-duration deep space exploration.'
+  },
+  {
+    id: 'mod_passenger_module',
+    name: 'Passenger Seating Module (+4 Seats)',
+    applicableTypes: ['vehicle', 'starship'],
+    category: 'life_support',
+    modSlots: 1,
+    cost: 8000,
+    summary: 'Increases passenger capacity by +4',
+    effect: 'Installs reinforced jump seats with four-point crash harnesses.'
+  },
+  {
+    id: 'mod_cryo_pods',
+    name: 'Cryogenic Hibernation Pods (x4)',
+    applicableTypes: ['starship'],
+    category: 'life_support',
+    modSlots: 2,
+    cost: 35000,
+    summary: 'Puts 4 crew members into metabolic stasis',
+    effect: 'Vitrifaction pods halt aging and consumption during multi-year interstellar transit.'
+  },
+
+  // --------------------------------------------------------------------------
+  // 6. UTILITY, ENGINEERING & CARGO
+  // --------------------------------------------------------------------------
   {
     id: 'mod_auto_repair',
     name: 'Nanite Self-Repair Module',
@@ -492,16 +852,6 @@ export const CRAFT_MODIFICATIONS: CraftModDef[] = [
     effect: 'Automated micro-fabricators mend structural tears and re-seal armor breach points.'
   },
   {
-    id: 'mod_medical_injector',
-    name: 'Trauma Med-Auto-Injector',
-    applicableTypes: ['power_armor'],
-    category: 'utility',
-    modSlots: 1,
-    cost: 10000,
-    summary: 'Automatically stabilizes pilot & grants +2 vs Bleeding Out',
-    effect: 'Detects internal hemorrhaging and injects coagulant foam and stimulants.'
-  },
-  {
     id: 'mod_cargo_rack',
     name: 'Expanded Utility Pods / Cargo Racks',
     applicableTypes: ['vehicle', 'walker', 'starship'],
@@ -509,7 +859,133 @@ export const CRAFT_MODIFICATIONS: CraftModDef[] = [
     modSlots: 1,
     cost: 5000,
     summary: '+500 lbs cargo capacity',
-    effect: 'Hardened external stowage bins and rack mounts.'
+    effect: 'Hardened external stowage bins and pressurized trunk containers.'
+  },
+  {
+    id: 'mod_heavy_winch',
+    name: 'Heavy Recovery Winch & Tow Cable',
+    applicableTypes: ['vehicle', 'walker'],
+    category: 'utility',
+    modSlots: 1,
+    cost: 6000,
+    summary: '50-ton winch cable for towing and recovery',
+    effect: 'Electric drum with 100 yards of synthetic diamond braid cable capable of pulling stuck vehicles.'
+  },
+  {
+    id: 'mod_mag_clamps',
+    name: 'Magnetic Clamps & Hull Grapples',
+    applicableTypes: ['vehicle', 'walker', 'power_armor', 'starship'],
+    category: 'utility',
+    modSlots: 1,
+    cost: 8000,
+    summary: 'Secures craft to hulls, asteroids, and cliffs',
+    effect: 'Electromagnetic pads in footplates or landing gear lock vehicle securely onto metal surfaces.'
+  },
+  {
+    id: 'mod_searchlight',
+    name: 'High-Intensity Searchlight Battery',
+    applicableTypes: ['vehicle', 'walker', 'power_armor', 'starship'],
+    category: 'utility',
+    modSlots: 1,
+    cost: 3000,
+    summary: '100" illumination cone; blinds night vision',
+    effect: 'Multi-million candlepower xenon arc lamp illuminates distant terrain and dazzles enemy optics.'
+  },
+  {
+    id: 'mod_drone_bay',
+    name: 'Drone Bay & Deployment Rack',
+    applicableTypes: ['vehicle', 'walker', 'starship'],
+    category: 'utility',
+    modSlots: 2,
+    cost: 30000,
+    summary: 'Carries and launches up to 2 scout or attack drones',
+    effect: 'Automated launch chute and recharge cradle for deploying unmanned aerial or ground drones.'
+  },
+  {
+    id: 'mod_workshop',
+    name: 'Field Workshop & 3D Fabricator',
+    applicableTypes: ['vehicle', 'starship'],
+    category: 'utility',
+    modSlots: 2,
+    cost: 25000,
+    summary: 'Manufactures ammo, spare parts, and tools in field',
+    effect: 'Industrial laser sintering printer and lathe allows Repair rolls without an external facility.'
+  },
+  {
+    id: 'mod_plasma_torch',
+    name: 'Industrial Plasma Torch / Welder',
+    applicableTypes: ['walker', 'power_armor', 'vehicle'],
+    category: 'utility',
+    modSlots: 1,
+    cost: 12000,
+    summary: 'Cuts heavy bulkheads; Melee 2d10 AP 12',
+    effect: 'Superheated thermal lance designed for salvaging wrecks or cutting through blast doors.'
+  },
+  {
+    id: 'mod_tractor_beam',
+    name: 'Graviton Tractor Beam Projector',
+    applicableTypes: ['starship'],
+    category: 'utility',
+    modSlots: 3,
+    cost: 90000,
+    summary: 'Captures and tows objects within 25"',
+    effect: 'Focuses directed gravitons to halt, capture, or tow target craft or asteroids.'
+  },
+
+  // --------------------------------------------------------------------------
+  // 7. WEAPON MOUNTS & SPECIAL TACTICAL HARDWARE
+  // --------------------------------------------------------------------------
+  {
+    id: 'mod_pintle_turret',
+    name: 'Pintle / 360° Ring Turret Mount',
+    applicableTypes: ['vehicle', 'walker'],
+    category: 'special',
+    modSlots: 1,
+    cost: 10000,
+    summary: 'Converts a fixed mount into a 360° turret',
+    effect: 'Powered slip-ring mount allows an installed weapon to engage targets in all arcs.'
+  },
+  {
+    id: 'mod_concealed_weapons',
+    name: 'Concealed Retractable Weapon Bays',
+    applicableTypes: ['vehicle', 'walker', 'starship'],
+    category: 'special',
+    modSlots: 1,
+    cost: 15000,
+    summary: 'Hides weapons flush within hull; undetectable',
+    effect: 'Hydraulic doors conceal armament until deployed, allowing peaceful civilian passage through customs.'
+  },
+  {
+    id: 'mod_ammo_expansion',
+    name: 'Ammunition Autoloader & Extended Magazine',
+    applicableTypes: ['vehicle', 'walker', 'power_armor', 'starship'],
+    category: 'special',
+    modSlots: 1,
+    cost: 8000,
+    summary: 'Doubles onboard ammo capacity for ballistic weapons',
+    effect: 'Motorized conveyor feeds and expanded internal magazine wells eliminate low-ammo hazards.'
+  },
+  {
+    id: 'mod_weapon_link',
+    name: 'Fire-Linked Weapon Synchronization Unit',
+    applicableTypes: ['vehicle', 'walker', 'starship'],
+    category: 'special',
+    modSlots: 1,
+    cost: 20000,
+    summary: 'Pairs 2 matching weapons for +2 Damage',
+    effect: 'Synchronizes muzzle discharges to deliver a devastating dual impact on the same aimpoint.'
+  },
+  {
+    id: 'mod_riot_shield',
+    name: 'Heavy Armored Bulwark / Riot Shield',
+    applicableTypes: ['power_armor', 'walker'],
+    category: 'special',
+    modSlots: 1,
+    cost: 15000,
+    armorBonus: 2,
+    toughnessBonus: 2,
+    summary: '+2 Armor, Parry +2, Heavy Cover to front arc',
+    effect: 'Reinforced ballistic shield clamped to off-hand or chassis arm to deflect direct fire.'
   }
 ];
 

@@ -8,7 +8,8 @@ import {
   SciFiCraft,
   SciFiCraftType,
   VehicleLocomotion,
-  WeaponMountLocation
+  WeaponMountLocation,
+  CraftModCategory
 } from '../types/scifiCraft';
 import {
   CRAFT_FRAMES,
@@ -18,7 +19,9 @@ import {
   getVehicleSizeDef,
   getValidSizesForType,
   getCraftTypeSizeLabel,
-  VehicleSizeDef
+  VehicleSizeDef,
+  CRAFT_MOD_CATEGORIES,
+  CraftModCategoryInfo
 } from '../data/scifiCraftData';
 import { calculateCraftStats } from '../utils/scifiCraftRules';
 
@@ -98,6 +101,8 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
   // Installed Upgrades & Weapons
   const [installedMods, setInstalledMods] = useState<InstalledCraftMod[]>([]);
   const [installedWeapons, setInstalledWeapons] = useState<InstalledCraftWeapon[]>([]);
+  const [selectedModCategory, setSelectedModCategory] = useState<string>('all');
+  const [modSearchQuery, setModSearchQuery] = useState<string>('');
 
   // Weapon adding state
   const [selectedWeaponDefId, setSelectedWeaponDefId] = useState<string>(CRAFT_WEAPONS[0].id);
@@ -117,6 +122,8 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
   const handleSelectCraftType = (type: SciFiCraftType) => {
     setCraftType(type);
     setSelectedLocomotion(defaultLocomotionForType(type));
+    setSelectedModCategory('all');
+    setModSearchQuery('');
     const sizesForType = getValidSizesForType(type);
     let newSize = selectedSize;
     if (!sizesForType.includes(selectedSize)) {
@@ -943,63 +950,385 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
           )}
 
           {/* STEP 4: MODS & UPGRADES */}
-          {step === 4 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase' }}>
-                Select Systems & Modifications (Available Slots: {stats.remainingModSlots})
-              </div>
+          {step === 4 && (() => {
+            const queryLower = modSearchQuery.trim().toLowerCase();
+            const searchFilter = (m: any) => {
+              if (!queryLower) return true;
+              return (
+                m.name.toLowerCase().includes(queryLower) ||
+                m.summary.toLowerCase().includes(queryLower) ||
+                m.effect.toLowerCase().includes(queryLower)
+              );
+            };
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 10 }}>
-                {applicableMods.map((mod) => {
-                  const isInstalled = installedMods.some((m) => m.modDefId === mod.id);
-                  return (
-                    <div
-                      key={mod.id}
-                      onClick={() => handleToggleMod(mod)}
+            const displayedMods = applicableMods.filter(searchFilter);
+
+            const renderModCard = (mod: any) => {
+              const isInstalled = installedMods.some((m) => m.modDefId === mod.id);
+              const canInstall = isInstalled || stats.remainingModSlots >= mod.modSlots;
+
+              return (
+                <div
+                  key={mod.id}
+                  onClick={() => handleToggleMod(mod)}
+                  style={{
+                    padding: '14px 16px',
+                    borderRadius: 14,
+                    background: isInstalled
+                      ? 'linear-gradient(135deg, rgba(56, 189, 248, 0.16) 0%, rgba(14, 165, 233, 0.08) 100%)'
+                      : '#0f172a',
+                    border: isInstalled ? '2px solid #38bdf8' : '1px solid #1e293b',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    gap: 10,
+                    boxShadow: isInstalled ? '0 4px 14px rgba(56, 189, 248, 0.18)' : 'none',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 6 }}>
+                      <div style={{ fontWeight: 950, fontSize: '0.94rem', color: isInstalled ? '#38bdf8' : '#f8fafc' }}>
+                        {mod.name}
+                      </div>
+                      <span
+                        style={{
+                          fontSize: '0.68rem',
+                          fontWeight: 800,
+                          padding: '2px 7px',
+                          borderRadius: 6,
+                          background: isInstalled ? '#38bdf8' : '#1e293b',
+                          color: isInstalled ? '#081a28' : '#94a3b8',
+                          flexShrink: 0
+                        }}
+                      >
+                        {mod.modSlots} {mod.modSlots === 1 ? 'Slot' : 'Slots'}
+                      </span>
+                    </div>
+
+                    <div style={{ fontSize: '0.78rem', color: '#cbd5e1', fontWeight: 700, marginBottom: 4 }}>
+                      {mod.summary}
+                    </div>
+
+                    <div style={{ fontSize: '0.71rem', color: '#94a3b8', lineHeight: 1.35 }}>
+                      {mod.effect}
+                    </div>
+
+                    {/* Stat Badges */}
+                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 8 }}>
+                      {mod.armorBonus ? (
+                        <span style={{ fontSize: '0.66rem', fontWeight: 800, padding: '2px 6px', borderRadius: 4, background: 'rgba(34, 197, 94, 0.2)', color: '#4ade80' }}>
+                          +{mod.armorBonus} Armor
+                        </span>
+                      ) : null}
+                      {mod.toughnessBonus ? (
+                        <span style={{ fontSize: '0.66rem', fontWeight: 800, padding: '2px 6px', borderRadius: 4, background: 'rgba(34, 197, 94, 0.2)', color: '#4ade80' }}>
+                          +{mod.toughnessBonus} Toughness
+                        </span>
+                      ) : null}
+                      {mod.shieldsBonus ? (
+                        <span style={{ fontSize: '0.66rem', fontWeight: 800, padding: '2px 6px', borderRadius: 4, background: 'rgba(168, 85, 247, 0.2)', color: '#c084fc' }}>
+                          +{mod.shieldsBonus} Shields
+                        </span>
+                      ) : null}
+                      {mod.speedBonus ? (
+                        <span style={{ fontSize: '0.66rem', fontWeight: 800, padding: '2px 6px', borderRadius: 4, background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8' }}>
+                          +{mod.speedBonus} MPH Speed
+                        </span>
+                      ) : null}
+                      {mod.handlingBonus ? (
+                        <span style={{ fontSize: '0.66rem', fontWeight: 800, padding: '2px 6px', borderRadius: 4, background: mod.handlingBonus > 0 ? 'rgba(56, 189, 248, 0.2)' : 'rgba(239, 68, 68, 0.2)', color: mod.handlingBonus > 0 ? '#38bdf8' : '#f87171' }}>
+                          {mod.handlingBonus > 0 ? `+${mod.handlingBonus}` : mod.handlingBonus} Handling
+                        </span>
+                      ) : null}
+                      {mod.paceBonus ? (
+                        <span style={{ fontSize: '0.66rem', fontWeight: 800, padding: '2px 6px', borderRadius: 4, background: 'rgba(245, 158, 11, 0.2)', color: '#fbbf24' }}>
+                          +{mod.paceBonus} Pace
+                        </span>
+                      ) : null}
+                      {mod.woundsBonus ? (
+                        <span style={{ fontSize: '0.66rem', fontWeight: 800, padding: '2px 6px', borderRadius: 4, background: 'rgba(239, 68, 68, 0.2)', color: '#f87171' }}>
+                          +{mod.woundsBonus} Max Wound
+                        </span>
+                      ) : null}
+                      {mod.isHeavyArmor ? (
+                        <span style={{ fontSize: '0.66rem', fontWeight: 800, padding: '2px 6px', borderRadius: 4, background: 'rgba(56, 189, 248, 0.25)', color: '#7dd3fc' }}>
+                          Heavy Armor
+                        </span>
+                      ) : null}
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 8, borderTop: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                    <span style={{ fontSize: '0.84rem', fontWeight: 900, color: '#e2e8f0' }}>
+                      ${mod.cost.toLocaleString()}
+                    </span>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleToggleMod(mod);
+                      }}
+                      disabled={!canInstall}
                       style={{
-                        padding: '12px 14px',
-                        borderRadius: 12,
-                        background: isInstalled ? 'rgba(56, 189, 248, 0.14)' : '#0f172a',
-                        border: isInstalled ? '1.5px solid #38bdf8' : '1px solid #1e293b',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                        gap: 8
+                        padding: '5px 12px',
+                        borderRadius: 8,
+                        fontSize: '0.74rem',
+                        fontWeight: 800,
+                        background: isInstalled ? '#ef4444' : !canInstall ? '#1e293b' : '#0284c7',
+                        color: !canInstall && !isInstalled ? '#64748b' : '#fff',
+                        border: 'none',
+                        cursor: !canInstall && !isInstalled ? 'not-allowed' : 'pointer'
                       }}
                     >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <div>
-                          <div style={{ fontWeight: 900, fontSize: '0.88rem', color: isInstalled ? '#38bdf8' : '#fff' }}>
-                            {mod.name}
-                          </div>
-                          <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: 3 }}>
-                            {mod.summary}
-                          </div>
-                        </div>
-                        <span
-                          style={{
-                            fontSize: '0.68rem',
-                            fontWeight: 800,
-                            padding: '2px 6px',
-                            borderRadius: 6,
-                            background: isInstalled ? '#38bdf8' : '#1e293b',
-                            color: isInstalled ? '#081a28' : '#94a3b8',
-                            flexShrink: 0
-                          }}
-                        >
-                          {mod.modSlots} {mod.modSlots === 1 ? 'Slot' : 'Slots'}
-                        </span>
+                      {isInstalled ? 'Remove' : !canInstall ? 'No Slots' : '+ Install'}
+                    </button>
+                  </div>
+                </div>
+              );
+            };
+
+            const categoriesWithMods = CRAFT_MOD_CATEGORIES.map((cat) => ({
+              ...cat,
+              mods: displayedMods.filter((m) => m.category === cat.id)
+            })).filter((group) => group.mods.length > 0);
+
+            return (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                {/* Header / Stats Summary Bar */}
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    background: '#0f172a',
+                    padding: '14px 18px',
+                    borderRadius: 14,
+                    border: '1px solid #1e293b',
+                    flexWrap: 'wrap',
+                    gap: 12
+                  }}
+                >
+                  <div>
+                    <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      {craftType.replace('_', ' ').toUpperCase()} SYSTEMS & MODIFICATIONS
+                    </div>
+                    <div style={{ fontSize: '1.05rem', fontWeight: 950, color: '#f8fafc', marginTop: 2 }}>
+                      {installedMods.length} Systems Selected • {applicableMods.length} Applicable Upgrades
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontSize: '0.66rem', color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase' }}>
+                        MOD SLOTS REMAINING
                       </div>
-                      <div style={{ fontSize: '0.7rem', color: '#64748b' }}>
-                        Cost: ${mod.cost.toLocaleString()}
+                      <div
+                        style={{
+                          fontSize: '1.18rem',
+                          fontWeight: 950,
+                          color: stats.remainingModSlots > 0 ? '#22c55e' : stats.remainingModSlots === 0 ? '#fbbf24' : '#f87171'
+                        }}
+                      >
+                        {stats.remainingModSlots} / {stats.totalModSlots} Slots
                       </div>
                     </div>
-                  );
-                })}
+
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontSize: '0.66rem', color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase' }}>
+                        TOTAL CRAFT COST
+                      </div>
+                      <div style={{ fontSize: '1.18rem', fontWeight: 950, color: '#38bdf8' }}>
+                        ${stats.totalCost.toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Search Bar */}
+                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+                  <input
+                    type="text"
+                    placeholder="Search systems by name, keyword or effect (e.g. shield, jump, armor, radar)..."
+                    value={modSearchQuery}
+                    onChange={(e) => setModSearchQuery(e.target.value)}
+                    style={{
+                      flex: 1,
+                      minWidth: 240,
+                      padding: '10px 14px',
+                      borderRadius: 10,
+                      background: '#0f172a',
+                      border: '1px solid #334155',
+                      color: '#fff',
+                      fontSize: '0.85rem'
+                    }}
+                  />
+                  {modSearchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setModSearchQuery('')}
+                      style={{
+                        padding: '9px 14px',
+                        borderRadius: 10,
+                        background: '#1e293b',
+                        border: '1px solid #334155',
+                        color: '#94a3b8',
+                        fontSize: '0.78rem',
+                        fontWeight: 800,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Clear Search
+                    </button>
+                  )}
+                </div>
+
+                {/* Category Navigation Pills */}
+                <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 6 }}>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedModCategory('all')}
+                    style={{
+                      padding: '8px 14px',
+                      borderRadius: 10,
+                      fontSize: '0.78rem',
+                      fontWeight: 800,
+                      background: selectedModCategory === 'all' ? 'rgba(56, 189, 248, 0.22)' : '#0f172a',
+                      color: selectedModCategory === 'all' ? '#38bdf8' : '#94a3b8',
+                      border: selectedModCategory === 'all' ? '1.5px solid #38bdf8' : '1px solid #1e293b',
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6
+                    }}
+                  >
+                    <span>All Applicable ({applicableMods.length})</span>
+                    {installedMods.length > 0 && (
+                      <span
+                        style={{
+                          padding: '1px 5px',
+                          borderRadius: 6,
+                          background: '#38bdf8',
+                          color: '#081a28',
+                          fontSize: '0.66rem',
+                          fontWeight: 900
+                        }}
+                      >
+                        {installedMods.length}
+                      </span>
+                    )}
+                  </button>
+
+                  {CRAFT_MOD_CATEGORIES.map((cat) => {
+                    const count = applicableMods.filter((m) => m.category === cat.id).length;
+                    if (count === 0) return null;
+                    const installedInCat = installedMods.filter((m) => m.category === cat.id).length;
+                    const isSelected = selectedModCategory === cat.id;
+
+                    return (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() => setSelectedModCategory(cat.id)}
+                        style={{
+                          padding: '8px 14px',
+                          borderRadius: 10,
+                          fontSize: '0.78rem',
+                          fontWeight: 800,
+                          background: isSelected ? 'rgba(56, 189, 248, 0.22)' : '#0f172a',
+                          color: isSelected ? '#38bdf8' : '#94a3b8',
+                          border: isSelected ? '1.5px solid #38bdf8' : '1px solid #1e293b',
+                          cursor: 'pointer',
+                          whiteSpace: 'nowrap',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 6
+                        }}
+                      >
+                        <span>{cat.name} ({count})</span>
+                        {installedInCat > 0 && (
+                          <span
+                            style={{
+                              padding: '1px 5px',
+                              borderRadius: 6,
+                              background: '#22c55e',
+                              color: '#052e16',
+                              fontSize: '0.66rem',
+                              fontWeight: 900
+                            }}
+                          >
+                            {installedInCat}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Mod Cards List / Groups */}
+                {displayedMods.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '40px 20px', color: '#64748b' }}>
+                    <div style={{ fontSize: '1rem', fontWeight: 800, color: '#94a3b8' }}>No systems found</div>
+                    <div style={{ fontSize: '0.8rem', marginTop: 4 }}>No systems or modifications match "{modSearchQuery}".</div>
+                  </div>
+                ) : selectedModCategory === 'all' ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                    {categoriesWithMods.map((cat) => (
+                      <div key={cat.id} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'baseline',
+                            borderBottom: '1px solid #1e293b',
+                            paddingBottom: 6
+                          }}
+                        >
+                          <div>
+                            <span style={{ fontSize: '0.94rem', fontWeight: 950, color: '#f8fafc' }}>
+                              {cat.name}
+                            </span>
+                            <span style={{ fontSize: '0.74rem', color: '#64748b', marginLeft: 10 }}>
+                              {cat.description}
+                            </span>
+                          </div>
+                          <span style={{ fontSize: '0.72rem', color: '#38bdf8', fontWeight: 800 }}>
+                            {cat.mods.length} systems
+                          </span>
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 10 }}>
+                          {cat.mods.map(renderModCard)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {(() => {
+                      const catInfo = CRAFT_MOD_CATEGORIES.find((c) => c.id === selectedModCategory);
+                      const catMods = displayedMods.filter((m) => m.category === selectedModCategory);
+                      return (
+                        <>
+                          {catInfo && (
+                            <div style={{ fontSize: '0.78rem', color: '#94a3b8', fontStyle: 'italic', marginBottom: 4 }}>
+                              {catInfo.description}
+                            </div>
+                          )}
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 10 }}>
+                            {catMods.map(renderModCard)}
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                )}
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* STEP 5: REVIEW & COMMISSION */}
           {step === 5 && (
@@ -1102,15 +1431,18 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
 
                   <div>
                     <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', marginBottom: 6 }}>
-                      Upgrades ({installedMods.length})
+                      Systems & Modifications ({installedMods.length})
                     </div>
                     {installedMods.length === 0 ? (
                       <span style={{ fontSize: '0.78rem', color: '#64748b' }}>None</span>
                     ) : (
-                      <ul style={{ margin: 0, paddingLeft: 18, fontSize: '0.78rem', color: '#cbd5e1' }}>
+                      <ul style={{ margin: 0, paddingLeft: 18, fontSize: '0.78rem', color: '#cbd5e1', display: 'flex', flexDirection: 'column', gap: 4 }}>
                         {installedMods.map((m) => (
                           <li key={m.id}>
-                            <strong>{m.name}</strong>
+                            <strong>{m.name}</strong>{' '}
+                            <span style={{ color: '#94a3b8', fontSize: '0.72rem' }}>
+                              ({m.slots} {m.slots === 1 ? 'slot' : 'slots'} • ${m.cost.toLocaleString()})
+                            </span>
                           </li>
                         ))}
                       </ul>

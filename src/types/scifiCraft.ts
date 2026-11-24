@@ -39,11 +39,21 @@ export interface CraftFrameDef {
   locomotion: VehicleLocomotion;
 }
 
+export type CraftModCategory =
+  | 'armor'
+  | 'defense'
+  | 'propulsion'
+  | 'sensor'
+  | 'life_support'
+  | 'utility'
+  | 'weapon'
+  | 'special';
+
 export interface CraftModDef {
   id: string;
   name: string;
   applicableTypes: SciFiCraftType[];
-  category: 'armor' | 'defense' | 'propulsion' | 'sensor' | 'utility' | 'weapon';
+  category: CraftModCategory;
   modSlots: number;
   cost: number;
   toughnessBonus?: number;
@@ -104,7 +114,7 @@ export interface InstalledCraftMod {
   id: string;
   modDefId: string;
   name: string;
-  category: 'armor' | 'defense' | 'propulsion' | 'sensor' | 'utility' | 'weapon';
+  category: CraftModCategory;
   slots: number;
   cost: number;
   count: number;

@@ -23,6 +23,8 @@ export interface CalculatedCraftStats {
   hasHUD: boolean;
   hasAutoRepair: boolean;
   hasECM: boolean;
+  hasFTL: boolean;
+  hasAI: boolean;
 }
 
 export function getCraftFrameDef(frameId: string, craftType?: SciFiCraftType): CraftFrameDef {
@@ -64,6 +66,8 @@ export function calculateCraftStats(craft: SciFiCraft): CalculatedCraftStats {
   let hasHUD = false;
   let hasAutoRepair = false;
   let hasECM = false;
+  let hasFTL = Boolean(craft.hasFTL);
+  let hasAI = Boolean(craft.hasAI);
 
   // Mods
   for (const mod of craft.installedMods) {
@@ -82,11 +86,13 @@ export function calculateCraftStats(craft: SciFiCraft): CalculatedCraftStats {
 
     if (mod.modDefId === 'mod_extra_armor_heavy') isHeavyArmor = true;
     if (mod.modDefId === 'mod_jump_jets') hasJumpJets = true;
-    if (mod.modDefId === 'mod_life_support_cbrn') hasCBRN = true;
-    if (mod.modDefId === 'mod_chameleon_skin') hasStealth = true;
+    if (mod.modDefId === 'mod_life_support_cbrn' || mod.modDefId === 'mod_extended_life_support') hasCBRN = true;
+    if (mod.modDefId === 'mod_chameleon_skin' || mod.modDefId === 'mod_stealth_coating') hasStealth = true;
     if (mod.modDefId === 'mod_tactical_hud') hasHUD = true;
     if (mod.modDefId === 'mod_auto_repair') hasAutoRepair = true;
-    if (mod.modDefId === 'mod_ecm_suite') hasECM = true;
+    if (mod.modDefId === 'mod_ecm_suite' || mod.modDefId === 'mod_chaff_flares') hasECM = true;
+    if (mod.modDefId === 'mod_hyperdrive') hasFTL = true;
+    if (mod.modDefId === 'mod_autopilot_ai') hasAI = true;
   }
 
   // Weapons cost and slots
@@ -125,7 +131,9 @@ export function calculateCraftStats(craft: SciFiCraft): CalculatedCraftStats {
     hasStealth,
     hasHUD,
     hasAutoRepair,
-    hasECM
+    hasECM,
+    hasFTL,
+    hasAI
   };
 }
 
