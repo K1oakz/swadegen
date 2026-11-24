@@ -7,9 +7,17 @@ import {
   InstalledCraftWeapon,
   SciFiCraft,
   SciFiCraftType,
+  VehicleLocomotion,
   WeaponMountLocation
 } from '../types/scifiCraft';
-import { CRAFT_FRAMES, CRAFT_MODIFICATIONS, CRAFT_WEAPONS } from '../data/scifiCraftData';
+import {
+  CRAFT_FRAMES,
+  CRAFT_MODIFICATIONS,
+  CRAFT_WEAPONS,
+  SWADE_VEHICLE_SIZES,
+  getVehicleSizeDef,
+  VehicleSizeDef
+} from '../data/scifiCraftData';
 import { calculateCraftStats } from '../utils/scifiCraftRules';
 
 interface CraftWizardModalProps {
@@ -26,14 +34,37 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
   const [step, setStep] = useState<number>(1);
   const [craftType, setCraftType] = useState<SciFiCraftType>(initialType);
 
-  const availableFrames = CRAFT_FRAMES.filter((f) => f.craftType === craftType);
-  const [selectedFrame, setSelectedFrame] = useState<CraftFrameDef>(availableFrames[0] || CRAFT_FRAMES[0]);
+  // First Prompt: Vehicle Size (default based on category)
+  const defaultInitialSize = initialType === 'power_armor' ? 1 : initialType === 'walker' ? 4 : initialType === 'starship' ? 4 : 3;
+  const [selectedSize, setSelectedSize] = useState<number>(defaultInitialSize);
+  const selectedSizeDef = getVehicleSizeDef(selectedSize);
+
+  // Locomotion & Chassis Architecture
+  const defaultLocomotionForType = (type: SciFiCraftType): VehicleLocomotion => {
+    switch (type) {
+      case 'walker':
+        return 'Bipedal Walker';
+      case 'power_armor':
+        return 'Powered Exosuit';
+      case 'starship':
+        return 'Spaceflight';
+      default:
+        return 'Hover / Grav';
+    }
+  };
+
+  const [selectedLocomotion, setSelectedLocomotion] = useState<VehicleLocomotion>(defaultLocomotionForType(initialType));
+  const [selectedHeavyArmor, setSelectedHeavyArmor] = useState<boolean>(selectedSizeDef.isHeavyArmor);
+  const [selectedJumpJets, setSelectedJumpJets] = useState<boolean>(initialType === 'walker');
+  const [selectedStrengthSteps, setSelectedStrengthSteps] = useState<number>(
+    selectedSize <= 0 ? 1 : selectedSize === 1 ? 2 : selectedSize === 2 ? 3 : 4
+  );
 
   const [craftName, setCraftName] = useState('');
   const [registry, setRegistry] = useState(`REG-${Math.floor(100 + Math.random() * 900)}`);
   const [roleConcept, setRoleConcept] = useState('');
 
-  // Installed Upgrades
+  // Installed Upgrades & Weapons
   const [installedMods, setInstalledMods] = useState<InstalledCraftMod[]>([]);
   const [installedWeapons, setInstalledWeapons] = useState<InstalledCraftWeapon[]>([]);
 
@@ -41,12 +72,28 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
   const [selectedWeaponDefId, setSelectedWeaponDefId] = useState<string>(CRAFT_WEAPONS[0].id);
   const [selectedMount, setSelectedMount] = useState<WeaponMountLocation>('Fixed Front');
 
-  // Sync frame when craftType changes
+  // Handle Size change
+  const handleSelectSize = (sz: number) => {
+    setSelectedSize(sz);
+    const newDef = getVehicleSizeDef(sz);
+    setSelectedHeavyArmor(newDef.isHeavyArmor);
+    if (craftType === 'power_armor') {
+      setSelectedStrengthSteps(sz <= 0 ? 1 : sz === 1 ? 2 : sz === 2 ? 3 : 4);
+    }
+  };
+
+  // Sync category
   const handleSelectCraftType = (type: SciFiCraftType) => {
     setCraftType(type);
-    const newFrames = CRAFT_FRAMES.filter((f) => f.craftType === type);
-    if (newFrames.length > 0) {
-      setSelectedFrame(newFrames[0]);
+    setSelectedLocomotion(defaultLocomotionForType(type));
+    if (type === 'walker') {
+      setSelectedJumpJets(true);
+      if (selectedSize < 2) setSelectedSize(4);
+    } else if (type === 'power_armor') {
+      setSelectedJumpJets(false);
+      if (selectedSize < 0 || selectedSize > 2) setSelectedSize(1);
+    } else if (type === 'starship') {
+      if (selectedSize < 3) setSelectedSize(4);
     }
     setInstalledMods([]);
     setInstalledWeapons([]);
@@ -55,38 +102,52 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
   // Draft craft for live calculations
   const draftCraft: SciFiCraft = {
     id: 'draft',
-    name: craftName.trim() || selectedFrame.name,
+    name: craftName.trim() || `${selectedSizeDef.sizeCategory} ${craftType.replace('_', ' ')}`,
     craftType,
-    classification: selectedFrame.name,
-    frameDefId: selectedFrame.id,
+    classification: `${selectedSizeDef.sizeCategory} ${selectedLocomotion}`,
+    frameDefId: 'custom',
     registry: registry.trim() || 'REG-001',
-    size: selectedFrame.size,
-    sizeCategory: selectedFrame.sizeCategory,
-    locomotion: selectedFrame.locomotion,
-    pace: selectedFrame.defaultPace || 6,
-    runningDie: selectedFrame.runningDie || 6,
-    handling: selectedFrame.handling,
-    topSpeed: selectedFrame.topSpeed,
-    toughnessBase: selectedFrame.baseToughness,
-    armor: selectedFrame.baseArmor,
-    toughnessTotal: selectedFrame.baseToughness + selectedFrame.baseArmor,
-    isHeavyArmor: Boolean(selectedFrame.isHeavyArmor),
+    size: selectedSizeDef.size,
+    sizeCategory: selectedSizeDef.sizeCategory,
+    locomotion: selectedLocomotion,
+    pace: selectedSizeDef.defaultPace || 8,
+    runningDie: selectedSizeDef.runningDie || 6,
+    handling: selectedSizeDef.defaultHandling,
+    topSpeed: selectedSizeDef.topSpeed,
+    toughnessBase: selectedSizeDef.baseToughness,
+    armor: selectedSizeDef.baseArmor,
+    toughnessTotal: selectedSizeDef.baseToughness + selectedSizeDef.baseArmor,
+    isHeavyArmor: selectedHeavyArmor,
     wounds: 0,
-    maxWounds: selectedFrame.wounds,
+    maxWounds: selectedSizeDef.wounds,
     shields: 0,
     maxShields: 0,
-    crew: selectedFrame.crew,
-    passengers: selectedFrame.passengers,
-    energy: selectedFrame.energy,
-    maxEnergy: selectedFrame.energy,
-    cargo: roleConcept || selectedFrame.notes,
+    crew: selectedSizeDef.crew,
+    passengers: selectedSizeDef.passengers,
+    energy: Math.max(2, selectedSizeDef.size * 2),
+    maxEnergy: Math.max(2, selectedSizeDef.size * 2),
+    cargo: roleConcept || selectedSizeDef.typicalExamples,
     installedMods,
     weapons: installedWeapons,
-    strengthBonusSteps: selectedFrame.strengthBonusSteps,
-    minStrength: selectedFrame.minStrength,
-    notes: roleConcept || selectedFrame.notes,
+    strengthBonusSteps: craftType === 'power_armor' ? selectedStrengthSteps : undefined,
+    minStrength:
+      craftType === 'power_armor'
+        ? selectedStrengthSteps === 1
+          ? 'd8'
+          : selectedStrengthSteps === 2
+          ? 'd10'
+          : selectedStrengthSteps === 3
+          ? 'd12+1'
+          : 'd12+3'
+        : undefined,
+    hasJumpJets: selectedJumpJets,
+    notes: roleConcept || `Built on Size ${selectedSize} (${selectedSizeDef.sizeCategory}) chassis.`,
     updatedAt: Date.now()
   };
+
+  // Attach dynamic totalModSlots and baseCost for calculateCraftStats
+  (draftCraft as any).totalModSlots = selectedSizeDef.modSlots;
+  (draftCraft as any).baseCost = selectedSizeDef.cost;
 
   const stats = calculateCraftStats(draftCraft);
 
@@ -156,7 +217,7 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
     const finalCraft: SciFiCraft = {
       ...draftCraft,
       id: `craft_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
-      name: craftName.trim() || `${selectedFrame.name} #${Math.floor(10 + Math.random() * 90)}`,
+      name: craftName.trim() || `${selectedSizeDef.sizeCategory} ${craftType.replace('_', ' ')} #${Math.floor(10 + Math.random() * 90)}`,
       armor: stats.finalArmor,
       toughnessTotal: stats.finalToughness,
       handling: stats.finalHandling,
@@ -166,8 +227,8 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
       maxShields: stats.maxShields,
       shields: stats.maxShields,
       isHeavyArmor: stats.isHeavyArmor,
-      strengthBonusSteps: stats.strengthBonusSteps,
-      hasJumpJets: stats.hasJumpJets,
+      strengthBonusSteps: craftType === 'power_armor' ? selectedStrengthSteps : undefined,
+      hasJumpJets: selectedJumpJets || stats.hasJumpJets,
       updatedAt: Date.now()
     };
     onCommission(finalCraft);
@@ -195,7 +256,7 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
       <div
         style={{
           width: '100%',
-          maxWidth: 960,
+          maxWidth: 980,
           maxHeight: '94vh',
           background: 'linear-gradient(180deg, #161a23 0%, #0c0f17 100%)',
           border: '1.5px solid rgba(56, 189, 248, 0.45)',
@@ -222,7 +283,7 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
               SAVAGE WORLDS SCI-FI COMPANION
             </div>
             <h2 style={{ fontSize: '1.4rem', fontWeight: 950, color: '#fff', margin: '2px 0 0' }}>
-              Commissioning Wizard
+              Vehicle & Craft Creation Wizard
             </h2>
           </div>
           <button
@@ -253,7 +314,7 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
           }}
         >
           {[
-            { num: 1, label: '1. Category & Frame' },
+            { num: 1, label: '1. Size & Locomotion' },
             { num: 2, label: '2. Name & Identity' },
             { num: 3, label: '3. Weapons & Hardpoints' },
             { num: 4, label: '4. Mods & Upgrades' },
@@ -281,27 +342,181 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
 
         {/* Main Content Area */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
-          {/* STEP 1: CATEGORY & FRAME SELECTION */}
+          {/* STEP 1: VEHICLE SIZE & LOCOMOTION ARCHITECTURE */}
           {step === 1 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              {/* Category Selector */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+              {/* PROMPT 1: CHOOSE VEHICLE SIZE */}
               <div>
-                <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', display: 'block', marginBottom: 8 }}>
-                  Select Sci-Fi Craft Category
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, flexWrap: 'wrap', gap: 8 }}>
+                  <div>
+                    <div style={{ fontSize: '0.72rem', fontWeight: 900, color: '#38bdf8', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                      STEP 1 — PRIMARY SPECIFICATION
+                    </div>
+                    <label style={{ fontSize: '1.1rem', fontWeight: 950, color: '#f8fafc', display: 'block', margin: '2px 0 0' }}>
+                      Select Vehicle Size ({selectedSizeDef.sizeCategory} • Size {selectedSize})
+                    </label>
+                  </div>
+
+                  {/* Size Stepper Button */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#0f172a', padding: '4px 8px', borderRadius: 10, border: '1px solid #1e293b' }}>
+                    <button
+                      onClick={() => handleSelectSize(Math.max(-2, selectedSize - 1))}
+                      disabled={selectedSize <= -2}
+                      style={{
+                        padding: '4px 10px',
+                        borderRadius: 6,
+                        background: '#1e293b',
+                        border: '1px solid #334155',
+                        color: selectedSize <= -2 ? '#475569' : '#fff',
+                        fontWeight: 900,
+                        cursor: selectedSize <= -2 ? 'not-allowed' : 'pointer'
+                      }}
+                    >
+                      -
+                    </button>
+                    <span style={{ fontWeight: 900, fontSize: '0.88rem', color: '#38bdf8', minWidth: 65, textAlign: 'center' }}>
+                      Size {selectedSize}
+                    </span>
+                    <button
+                      onClick={() => handleSelectSize(Math.min(9, selectedSize + 1))}
+                      disabled={selectedSize >= 9}
+                      style={{
+                        padding: '4px 10px',
+                        borderRadius: 6,
+                        background: '#1e293b',
+                        border: '1px solid #334155',
+                        color: selectedSize >= 9 ? '#475569' : '#fff',
+                        fontWeight: 900,
+                        cursor: selectedSize >= 9 ? 'not-allowed' : 'pointer'
+                      }}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                {/* Clickable Size Grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 8, marginBottom: 14 }}>
+                  {SWADE_VEHICLE_SIZES.map((sz) => {
+                    const isSelected = selectedSize === sz.size;
+                    return (
+                      <button
+                        key={sz.size}
+                        onClick={() => handleSelectSize(sz.size)}
+                        style={{
+                          padding: '10px 8px',
+                          borderRadius: 12,
+                          textAlign: 'center',
+                          background: isSelected
+                            ? 'linear-gradient(135deg, rgba(56, 189, 248, 0.22) 0%, rgba(14, 165, 233, 0.1) 100%)'
+                            : 'rgba(0, 0, 0, 0.35)',
+                          border: isSelected ? '2px solid #38bdf8' : '1px solid #1e293b',
+                          cursor: 'pointer',
+                          boxShadow: isSelected ? '0 4px 14px rgba(56, 189, 248, 0.25)' : 'none'
+                        }}
+                      >
+                        <div style={{ fontWeight: 950, fontSize: '1rem', color: isSelected ? '#38bdf8' : '#f8fafc' }}>
+                          Size {sz.size}
+                        </div>
+                        <div style={{ fontSize: '0.72rem', fontWeight: 800, color: isSelected ? '#7dd3fc' : '#94a3b8', marginTop: 2 }}>
+                          {sz.sizeCategory}
+                        </div>
+                        <div style={{ fontSize: '0.66rem', color: '#64748b', marginTop: 3 }}>
+                          Tough {sz.baseToughness} ({sz.baseArmor})
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Live Size Metrics Card */}
+                <div
+                  style={{
+                    background: 'rgba(14, 165, 233, 0.08)',
+                    border: '1.5px solid rgba(56, 189, 248, 0.35)',
+                    borderRadius: 14,
+                    padding: '14px 18px',
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+                    gap: 12
+                  }}
+                >
+                  <div>
+                    <div style={{ fontSize: '0.66rem', color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase' }}>
+                      BASE TOUGHNESS
+                    </div>
+                    <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#22c55e' }}>
+                      {selectedSizeDef.baseToughness} ({selectedSizeDef.baseArmor})
+                    </div>
+                    <div style={{ fontSize: '0.66rem', color: '#64748b' }}>Max Armor {selectedSizeDef.maxArmor}</div>
+                  </div>
+
+                  <div>
+                    <div style={{ fontSize: '0.66rem', color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase' }}>
+                      MAX WOUNDS
+                    </div>
+                    <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#f87171' }}>
+                      {selectedSizeDef.wounds} Wounds
+                    </div>
+                    <div style={{ fontSize: '0.66rem', color: '#64748b' }}>Structure</div>
+                  </div>
+
+                  <div>
+                    <div style={{ fontSize: '0.66rem', color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase' }}>
+                      MOD SLOTS
+                    </div>
+                    <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#fbbf24' }}>
+                      {selectedSizeDef.modSlots} Slots
+                    </div>
+                    <div style={{ fontSize: '0.66rem', color: '#64748b' }}>Customization</div>
+                  </div>
+
+                  <div>
+                    <div style={{ fontSize: '0.66rem', color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase' }}>
+                      CREW / PASSENGERS
+                    </div>
+                    <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#38bdf8' }}>
+                      {selectedSizeDef.crew} / {selectedSizeDef.passengers}
+                    </div>
+                    <div style={{ fontSize: '0.66rem', color: '#64748b' }}>Capacity</div>
+                  </div>
+
+                  <div>
+                    <div style={{ fontSize: '0.66rem', color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase' }}>
+                      BASE HULL COST
+                    </div>
+                    <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#e2e8f0' }}>
+                      ${selectedSizeDef.cost.toLocaleString()}
+                    </div>
+                    <div style={{ fontSize: '0.66rem', color: '#64748b' }}>Credits</div>
+                  </div>
+                </div>
+
+                <div style={{ fontSize: '0.76rem', color: '#94a3b8', marginTop: 8, fontStyle: 'italic' }}>
+                  Typical {selectedSizeDef.sizeCategory} craft in Sci-Fi Companion: <strong>{selectedSizeDef.typicalExamples}</strong>
+                </div>
+              </div>
+
+              {/* PROMPT 2: CRAFT TYPE & LOCOMOTION */}
+              <div>
+                <label style={{ fontSize: '0.8rem', fontWeight: 900, color: '#38bdf8', textTransform: 'uppercase', display: 'block', marginBottom: 10, letterSpacing: '0.05em' }}>
+                  PROMPT 2: SELECT CRAFT CATEGORY & LOCOMOTION
                 </label>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10 }}>
+
+                {/* Craft Categories */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10, marginBottom: 14 }}>
                   {[
-                    { id: 'vehicle', title: 'Vehicles', desc: 'Ground, Hover, APCs, Tanks & VTOLs' },
-                    { id: 'walker', title: 'Walkers (Mechs)', desc: 'Bipedal & Quadrupedal Combat Mechs' },
+                    { id: 'vehicle', title: 'Vehicle', desc: 'Ground, Hover, APCs, Tanks & VTOLs' },
+                    { id: 'walker', title: 'Walker (Mech)', desc: 'Bipedal & Quadruped Combat Mechs' },
                     { id: 'power_armor', title: 'Power Armor', desc: 'Exosuits & Heavy Battlesuits' },
-                    { id: 'starship', title: 'Starships', desc: 'Corvettes, Shuttles & Interceptors' }
+                    { id: 'starship', title: 'Starship', desc: 'Corvettes, Shuttles & Interceptors' }
                   ].map((c) => (
                     <button
                       key={c.id}
                       onClick={() => handleSelectCraftType(c.id as SciFiCraftType)}
                       style={{
-                        padding: '14px 16px',
-                        borderRadius: 14,
+                        padding: '12px 14px',
+                        borderRadius: 12,
                         textAlign: 'left',
                         background:
                           craftType === c.id
@@ -311,87 +526,131 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
                         cursor: 'pointer'
                       }}
                     >
-                      <div style={{ fontWeight: 900, fontSize: '0.96rem', color: craftType === c.id ? '#38bdf8' : '#f8fafc' }}>
+                      <div style={{ fontWeight: 900, fontSize: '0.94rem', color: craftType === c.id ? '#38bdf8' : '#f8fafc' }}>
                         {c.title}
                       </div>
-                      <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: 4 }}>
+                      <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: 3 }}>
                         {c.desc}
                       </div>
                     </button>
                   ))}
                 </div>
-              </div>
 
-              {/* Frame Selection */}
-              <div>
-                <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', display: 'block', marginBottom: 8 }}>
-                  Choose Chassis Frame ({craftType.replace('_', ' ')})
-                </label>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 12 }}>
-                  {availableFrames.map((frame) => (
-                    <div
-                      key={frame.id}
-                      onClick={() => setSelectedFrame(frame)}
-                      style={{
-                        padding: 16,
-                        borderRadius: 14,
-                        background:
-                          selectedFrame.id === frame.id
-                            ? 'linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(14, 165, 233, 0.05) 100%)'
-                            : 'rgba(0, 0, 0, 0.3)',
-                        border: selectedFrame.id === frame.id ? '2px solid #38bdf8' : '1px solid #1e293b',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                        gap: 12
-                      }}
-                    >
-                      <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <span style={{ fontWeight: 900, fontSize: '1.02rem', color: '#fff' }}>
-                            {frame.name}
-                          </span>
-                          <span style={{ fontSize: '0.66rem', fontWeight: 800, padding: '2px 6px', borderRadius: 4, background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8' }}>
-                            {frame.sizeCategory}
-                          </span>
-                        </div>
-                        <p style={{ fontSize: '0.74rem', color: '#94a3b8', margin: '6px 0 10px', lineHeight: 1.4 }}>
-                          {frame.notes}
-                        </p>
+                {/* Locomotion Options */}
+                <div style={{ background: '#0f172a', padding: 16, borderRadius: 14, border: '1px solid #1e293b' }}>
+                  <div style={{ fontSize: '0.76rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', marginBottom: 8 }}>
+                    Locomotion / Drive Architecture
+                  </div>
+
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    {craftType === 'vehicle' ? (
+                      <>
+                        {['Hover / Grav', 'Wheeled', 'Tracked', 'VTOL / Rotor', 'Fixed-Wing Supersonic', 'Submersible / Naval'].map((loco) => (
+                          <button
+                            key={loco}
+                            onClick={() => setSelectedLocomotion(loco as VehicleLocomotion)}
+                            style={{
+                              padding: '8px 14px',
+                              borderRadius: 8,
+                              fontSize: '0.78rem',
+                              fontWeight: 800,
+                              background: selectedLocomotion === loco ? 'rgba(56, 189, 248, 0.25)' : '#1e293b',
+                              color: selectedLocomotion === loco ? '#38bdf8' : '#cbd5e1',
+                              border: selectedLocomotion === loco ? '1px solid #38bdf8' : '1px solid #334155',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            {loco}
+                          </button>
+                        ))}
+                      </>
+                    ) : craftType === 'walker' ? (
+                      <>
+                        {['Bipedal Walker', 'Quadruped Walker'].map((loco) => (
+                          <button
+                            key={loco}
+                            onClick={() => setSelectedLocomotion(loco as VehicleLocomotion)}
+                            style={{
+                              padding: '8px 14px',
+                              borderRadius: 8,
+                              fontSize: '0.78rem',
+                              fontWeight: 800,
+                              background: selectedLocomotion === loco ? 'rgba(168, 85, 247, 0.25)' : '#1e293b',
+                              color: selectedLocomotion === loco ? '#c084fc' : '#cbd5e1',
+                              border: selectedLocomotion === loco ? '1px solid #a855f7' : '1px solid #334155',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            {loco}
+                          </button>
+                        ))}
+                      </>
+                    ) : craftType === 'power_armor' ? (
+                      <div style={{ padding: '8px 12px', background: 'rgba(245, 158, 11, 0.12)', borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.3)', fontSize: '0.8rem', color: '#fbbf24' }}>
+                        Powered Exoskeleton Harness with Motorized Myomer Servos
                       </div>
-
-                      {/* Frame Stats */}
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, fontSize: '0.72rem' }}>
-                        <div style={{ background: '#0f172a', padding: '6px 8px', borderRadius: 6 }}>
-                          <div style={{ color: '#64748b', fontWeight: 700 }}>TOUGHNESS</div>
-                          <div style={{ color: '#22c55e', fontWeight: 900 }}>
-                            {frame.baseToughness + frame.baseArmor} ({frame.baseArmor})
-                          </div>
-                        </div>
-                        <div style={{ background: '#0f172a', padding: '6px 8px', borderRadius: 6 }}>
-                          <div style={{ color: '#64748b', fontWeight: 700 }}>
-                            {craftType === 'walker' || craftType === 'power_armor' ? 'PACE' : 'SPEED'}
-                          </div>
-                          <div style={{ color: '#38bdf8', fontWeight: 900 }}>
-                            {craftType === 'walker' || craftType === 'power_armor' ? `${frame.defaultPace || 6}" (d${frame.runningDie || 6})` : `${frame.topSpeed} MPH`}
-                          </div>
-                        </div>
-                        <div style={{ background: '#0f172a', padding: '6px 8px', borderRadius: 6 }}>
-                          <div style={{ color: '#64748b', fontWeight: 700 }}>MOD SLOTS</div>
-                          <div style={{ color: '#fbbf24', fontWeight: 900 }}>
-                            {frame.modSlots} Slots
-                          </div>
-                        </div>
+                    ) : (
+                      <div style={{ padding: '8px 12px', background: 'rgba(56, 189, 248, 0.12)', borderRadius: 8, border: '1px solid rgba(56, 189, 248, 0.3)', fontSize: '0.8rem', color: '#38bdf8' }}>
+                        Sublight Impulse Thrusters & Atmospheric Lift
                       </div>
+                    )}
+                  </div>
 
-                      {frame.strengthBonusSteps && (
-                        <div style={{ fontSize: '0.72rem', color: '#a78bfa', fontWeight: 800 }}>
-                          Wearer Boost: +{frame.strengthBonusSteps} Strength die steps ({frame.minStrength ? `Min ${frame.minStrength}` : ''})
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                  {/* Special Features based on Category */}
+                  <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginTop: 14, alignItems: 'center' }}>
+                    {/* Heavy Armor Toggle */}
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.82rem', color: '#f8fafc', cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={selectedHeavyArmor}
+                        onChange={(e) => setSelectedHeavyArmor(e.target.checked)}
+                        style={{ width: 16, height: 16, accentColor: '#38bdf8' }}
+                      />
+                      <span>
+                        Heavy Armor Rating (Immune to non-Heavy Weapons)
+                      </span>
+                    </label>
+
+                    {/* Walker Jump Jets */}
+                    {craftType === 'walker' && (
+                      <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.82rem', color: '#f8fafc', cursor: 'pointer' }}>
+                        <input
+                          type="checkbox"
+                          checked={selectedJumpJets}
+                          onChange={(e) => setSelectedJumpJets(e.target.checked)}
+                          style={{ width: 16, height: 16, accentColor: '#a855f7' }}
+                        />
+                        <span>
+                          Vectored Jump Jets (12" Leaps & Stomp attack)
+                        </span>
+                      </label>
+                    )}
+
+                    {/* Power Armor Strength Steps */}
+                    {craftType === 'power_armor' && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span style={{ fontSize: '0.78rem', color: '#94a3b8', fontWeight: 800 }}>WEARER STRENGTH BOOST:</span>
+                        {[1, 2, 3, 4].map((stepCount) => (
+                          <button
+                            key={stepCount}
+                            onClick={() => setSelectedStrengthSteps(stepCount)}
+                            style={{
+                              padding: '4px 10px',
+                              borderRadius: 6,
+                              fontSize: '0.75rem',
+                              fontWeight: 800,
+                              background: selectedStrengthSteps === stepCount ? 'rgba(245, 158, 11, 0.25)' : '#1e293b',
+                              color: selectedStrengthSteps === stepCount ? '#fbbf24' : '#94a3b8',
+                              border: selectedStrengthSteps === stepCount ? '1px solid #fbbf24' : '1px solid #334155',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            +{stepCount} Steps ({stepCount === 1 ? 'd8' : stepCount === 2 ? 'd10' : stepCount === 3 ? 'd12+1' : 'd12+3'})
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -406,7 +665,7 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
                 </label>
                 <input
                   type="text"
-                  placeholder={`e.g. ${selectedFrame.name} Beta-9`}
+                  placeholder={`e.g. ${selectedSizeDef.sizeCategory} ${craftType.replace('_', ' ')}`}
                   value={craftName}
                   onChange={(e) => setCraftName(e.target.value)}
                   style={{
@@ -449,7 +708,7 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
                 </label>
                 <textarea
                   rows={3}
-                  placeholder="e.g. Specialized in urban riot suppression and night reconnaissance."
+                  placeholder="e.g. Specialized in urban combat, reconnaissance, or heavy planetary drops."
                   value={roleConcept}
                   onChange={(e) => setRoleConcept(e.target.value)}
                   style={{
@@ -702,10 +961,10 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
                       {craftType.replace('_', ' ').toUpperCase()} SPECIFICATION
                     </span>
                     <h3 style={{ fontSize: '1.5rem', fontWeight: 950, color: '#fff', margin: '2px 0 0' }}>
-                      {craftName.trim() || selectedFrame.name}
+                      {craftName.trim() || `${selectedSizeDef.sizeCategory} ${craftType.replace('_', ' ')}`}
                     </h3>
                     <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
-                      Registry: {registry} • Chassis: {selectedFrame.name}
+                      Registry: {registry} • Size {selectedSizeDef.size} ({selectedSizeDef.sizeCategory}) • {selectedLocomotion}
                     </div>
                   </div>
 
@@ -722,7 +981,7 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
                   <div style={{ background: '#0f172a', padding: '8px 10px', borderRadius: 8 }}>
                     <div style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 800 }}>TOUGHNESS</div>
                     <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#22c55e' }}>
-                      {stats.finalToughness} ({stats.finalArmor}) {stats.isHeavyArmor ? 'HA' : ''}
+                      {stats.finalToughness} ({stats.finalArmor}) {selectedHeavyArmor ? 'HA' : ''}
                     </div>
                   </div>
                   <div style={{ background: '#0f172a', padding: '8px 10px', borderRadius: 8 }}>
@@ -759,9 +1018,9 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
                   </div>
                 </div>
 
-                {stats.strengthBonusSteps > 0 && (
+                {craftType === 'power_armor' && (
                   <div style={{ padding: '8px 12px', background: 'rgba(167, 139, 250, 0.12)', borderRadius: 8, border: '1px solid rgba(167, 139, 250, 0.3)', marginBottom: 12, fontSize: '0.8rem', color: '#c4b5fd' }}>
-                    <strong>Power Armor Wearer Enhancement:</strong> +{stats.strengthBonusSteps} Strength die steps {stats.minStrength ? `(Minimum ${stats.minStrength})` : ''}
+                    <strong>Power Armor Wearer Enhancement:</strong> +{selectedStrengthSteps} Strength die steps {selectedStrengthSteps === 1 ? '(Min d8)' : selectedStrengthSteps === 2 ? '(Min d10)' : selectedStrengthSteps === 3 ? '(Min d12+1)' : '(Min d12+3)'}
                   </div>
                 )}
 

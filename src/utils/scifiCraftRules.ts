@@ -38,7 +38,14 @@ export function getCraftFrameDef(frameId: string, craftType?: SciFiCraftType): C
 
 export function calculateCraftStats(craft: SciFiCraft): CalculatedCraftStats {
   const frame = getCraftFrameDef(craft.frameDefId, craft.craftType);
-  const totalModSlots = frame.modSlots || 8;
+  const totalModSlots = (craft as any).totalModSlots || frame.modSlots || 8;
+  const baseToughness = craft.toughnessBase || frame.baseToughness;
+  const baseArmor = craft.armor || frame.baseArmor;
+  const baseCost = (craft as any).baseCost || frame.cost;
+  const baseHandling = craft.handling ?? frame.handling;
+  const baseSpeed = craft.topSpeed || frame.topSpeed;
+  const basePace = craft.pace || frame.defaultPace || 6;
+  const baseWounds = craft.maxWounds || frame.wounds || 3;
 
   let spentModSlots = 0;
   let modsCost = 0;
@@ -49,8 +56,8 @@ export function calculateCraftStats(craft: SciFiCraft): CalculatedCraftStats {
   let bonusPace = 0;
   let bonusWounds = 0;
   let bonusShields = 0;
-  let bonusStrengthSteps = frame.strengthBonusSteps || 0;
-  let isHeavyArmor = Boolean(frame.isHeavyArmor);
+  let bonusStrengthSteps = craft.strengthBonusSteps ?? (frame.strengthBonusSteps || 0);
+  let isHeavyArmor = Boolean(craft.isHeavyArmor ?? frame.isHeavyArmor);
   let hasJumpJets = Boolean(craft.hasJumpJets);
   let hasCBRN = false;
   let hasStealth = false;
@@ -89,14 +96,14 @@ export function calculateCraftStats(craft: SciFiCraft): CalculatedCraftStats {
     weaponsCost += wpn.cost || 0;
   }
 
-  const finalArmor = frame.baseArmor + bonusArmor;
-  const finalToughness = frame.baseToughness + finalArmor;
-  const finalHandling = frame.handling + bonusHandling;
-  const finalTopSpeed = Math.max(5, frame.topSpeed + bonusSpeed);
-  const finalPace = Math.max(2, (frame.defaultPace || 6) + bonusPace);
-  const maxWounds = frame.wounds + bonusWounds;
+  const finalArmor = baseArmor + bonusArmor;
+  const finalToughness = baseToughness + finalArmor;
+  const finalHandling = baseHandling + bonusHandling;
+  const finalTopSpeed = Math.max(5, baseSpeed + bonusSpeed);
+  const finalPace = Math.max(2, basePace + bonusPace);
+  const maxWounds = baseWounds + bonusWounds;
   const maxShields = bonusShields;
-  const totalCost = frame.cost + modsCost + weaponsCost;
+  const totalCost = baseCost + modsCost + weaponsCost;
 
   return {
     totalModSlots,

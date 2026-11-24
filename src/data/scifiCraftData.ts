@@ -964,3 +964,266 @@ export const STOCK_SCIFI_CRAFT: SciFiCraft[] = [
     updatedAt: Date.now()
   }
 ];
+
+// ============================================================================
+// SCI-FI COMPANION VEHICLE SIZES TABLE
+// ============================================================================
+
+export interface VehicleSizeDef {
+  size: number;
+  sizeCategory: string;
+  scaleMod: number;
+  baseToughness: number;
+  baseArmor: number;
+  maxArmor: number;
+  wounds: number;
+  modSlots: number;
+  cost: number;
+  defaultHandling: number;
+  topSpeed: number;
+  defaultPace: number;
+  runningDie: number;
+  crew: number;
+  passengers: number;
+  isHeavyArmor: boolean;
+  typicalExamples: string;
+}
+
+export const SWADE_VEHICLE_SIZES: VehicleSizeDef[] = [
+  {
+    size: -2,
+    sizeCategory: 'Tiny',
+    scaleMod: -2,
+    baseToughness: 4,
+    baseArmor: 2,
+    maxArmor: 4,
+    wounds: 1,
+    modSlots: 3,
+    cost: 8000,
+    defaultHandling: 2,
+    topSpeed: 90,
+    defaultPace: 6,
+    runningDie: 6,
+    crew: 1,
+    passengers: 0,
+    isHeavyArmor: false,
+    typicalExamples: 'Mini-Drones, Ultralights'
+  },
+  {
+    size: -1,
+    sizeCategory: 'Very Small',
+    scaleMod: -1,
+    baseToughness: 6,
+    baseArmor: 2,
+    maxArmor: 4,
+    wounds: 2,
+    modSlots: 4,
+    cost: 15000,
+    defaultHandling: 2,
+    topSpeed: 120,
+    defaultPace: 8,
+    runningDie: 8,
+    crew: 1,
+    passengers: 1,
+    isHeavyArmor: false,
+    typicalExamples: 'Hoverbikes, Jetpacks, Motorcycles'
+  },
+  {
+    size: 0,
+    sizeCategory: 'Human Size',
+    scaleMod: 0,
+    baseToughness: 7,
+    baseArmor: 4,
+    maxArmor: 6,
+    wounds: 3,
+    modSlots: 6,
+    cost: 35000,
+    defaultHandling: 1,
+    topSpeed: 20,
+    defaultPace: 8,
+    runningDie: 8,
+    crew: 1,
+    passengers: 0,
+    isHeavyArmor: false,
+    typicalExamples: 'Scout Exosuits, Infiltration Armor'
+  },
+  {
+    size: 1,
+    sizeCategory: 'Small',
+    scaleMod: 0,
+    baseToughness: 9,
+    baseArmor: 4,
+    maxArmor: 8,
+    wounds: 3,
+    modSlots: 6,
+    cost: 35000,
+    defaultHandling: 1,
+    topSpeed: 100,
+    defaultPace: 8,
+    runningDie: 8,
+    crew: 1,
+    passengers: 3,
+    isHeavyArmor: false,
+    typicalExamples: 'Recon Buggies, ATVs, Combat Armor'
+  },
+  {
+    size: 2,
+    sizeCategory: 'Small',
+    scaleMod: 0,
+    baseToughness: 11,
+    baseArmor: 4,
+    maxArmor: 10,
+    wounds: 3,
+    modSlots: 8,
+    cost: 60000,
+    defaultHandling: 1,
+    topSpeed: 90,
+    defaultPace: 10,
+    runningDie: 8,
+    crew: 1,
+    passengers: 4,
+    isHeavyArmor: false,
+    typicalExamples: 'Light Scout Walkers, Sedans, Heavy Battlesuits'
+  },
+  {
+    size: 3,
+    sizeCategory: 'Normal',
+    scaleMod: 0,
+    baseToughness: 13,
+    baseArmor: 6,
+    maxArmor: 12,
+    wounds: 3,
+    modSlots: 10,
+    cost: 110000,
+    defaultHandling: 0,
+    topSpeed: 80,
+    defaultPace: 8,
+    runningDie: 6,
+    crew: 2,
+    passengers: 6,
+    isHeavyArmor: false,
+    typicalExamples: 'Light APCs, Armored SUVs, VTOL Gunships'
+  },
+  {
+    size: 4,
+    sizeCategory: 'Normal',
+    scaleMod: 0,
+    baseToughness: 16,
+    baseArmor: 8,
+    maxArmor: 16,
+    wounds: 4,
+    modSlots: 12,
+    cost: 200000,
+    defaultHandling: 0,
+    topSpeed: 70,
+    defaultPace: 8,
+    runningDie: 6,
+    crew: 2,
+    passengers: 8,
+    isHeavyArmor: true,
+    typicalExamples: 'Standard APCs, Combat Walkers, Light Tanks'
+  },
+  {
+    size: 5,
+    sizeCategory: 'Large',
+    scaleMod: 2,
+    baseToughness: 19,
+    baseArmor: 10,
+    maxArmor: 18,
+    wounds: 4,
+    modSlots: 14,
+    cost: 380000,
+    defaultHandling: -1,
+    topSpeed: 65,
+    defaultPace: 6,
+    runningDie: 6,
+    crew: 3,
+    passengers: 10,
+    isHeavyArmor: true,
+    typicalExamples: 'Medium Tanks, Heavy Hovertanks, Dropships'
+  },
+  {
+    size: 6,
+    sizeCategory: 'Large',
+    scaleMod: 2,
+    baseToughness: 22,
+    baseArmor: 12,
+    maxArmor: 20,
+    wounds: 4,
+    modSlots: 16,
+    cost: 650000,
+    defaultHandling: -1,
+    topSpeed: 60,
+    defaultPace: 6,
+    runningDie: 6,
+    crew: 3,
+    passengers: 12,
+    isHeavyArmor: true,
+    typicalExamples: 'Main Battle Tanks, Heavy Assault Walkers'
+  },
+  {
+    size: 7,
+    sizeCategory: 'Huge',
+    scaleMod: 4,
+    baseToughness: 25,
+    baseArmor: 14,
+    maxArmor: 22,
+    wounds: 5,
+    modSlots: 20,
+    cost: 950000,
+    defaultHandling: -1,
+    topSpeed: 50,
+    defaultPace: 6,
+    runningDie: 6,
+    crew: 4,
+    passengers: 16,
+    isHeavyArmor: true,
+    typicalExamples: 'Heavy Artillery Crawlers, Assault Mechs'
+  },
+  {
+    size: 8,
+    sizeCategory: 'Huge',
+    scaleMod: 4,
+    baseToughness: 28,
+    baseArmor: 16,
+    maxArmor: 26,
+    wounds: 5,
+    modSlots: 24,
+    cost: 1400000,
+    defaultHandling: -2,
+    topSpeed: 40,
+    defaultPace: 5,
+    runningDie: 4,
+    crew: 4,
+    passengers: 20,
+    isHeavyArmor: true,
+    typicalExamples: 'Super-Heavy Tanks, Colossal Titans, Dropships'
+  },
+  {
+    size: 9,
+    sizeCategory: 'Gargantuan',
+    scaleMod: 6,
+    baseToughness: 32,
+    baseArmor: 18,
+    maxArmor: 30,
+    wounds: 6,
+    modSlots: 28,
+    cost: 2200000,
+    defaultHandling: -2,
+    topSpeed: 30,
+    defaultPace: 4,
+    runningDie: 4,
+    crew: 6,
+    passengers: 30,
+    isHeavyArmor: true,
+    typicalExamples: 'Land Fortresses, Siege Titans, World Crawlers'
+  }
+];
+
+export function getVehicleSizeDef(size: number): VehicleSizeDef {
+  const match = SWADE_VEHICLE_SIZES.find((s) => s.size === size);
+  if (match) return match;
+  if (size < -2) return SWADE_VEHICLE_SIZES[0];
+  return SWADE_VEHICLE_SIZES[SWADE_VEHICLE_SIZES.length - 1];
+}
+
