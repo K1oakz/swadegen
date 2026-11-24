@@ -16,6 +16,8 @@ import {
   CRAFT_WEAPONS,
   SWADE_VEHICLE_SIZES,
   getVehicleSizeDef,
+  getValidSizesForType,
+  getCraftTypeSizeLabel,
   VehicleSizeDef
 } from '../data/scifiCraftData';
 import { calculateCraftStats } from '../utils/scifiCraftRules';
@@ -34,10 +36,39 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
   const [step, setStep] = useState<number>(1);
   const [craftType, setCraftType] = useState<SciFiCraftType>(initialType);
 
-  // First Prompt: Vehicle Size (default based on category)
-  const defaultInitialSize = initialType === 'power_armor' ? 1 : initialType === 'walker' ? 4 : initialType === 'starship' ? 4 : 3;
-  const [selectedSize, setSelectedSize] = useState<number>(defaultInitialSize);
+  const getDefaultSizeForType = (type: SciFiCraftType): number => {
+    switch (type) {
+      case 'power_armor':
+        return 1;
+      case 'walker':
+        return 4;
+      case 'starship':
+        return 4;
+      case 'vehicle':
+      default:
+        return 3;
+    }
+  };
+
+  const [selectedSize, setSelectedSize] = useState<number>(getDefaultSizeForType(initialType));
   const selectedSizeDef = getVehicleSizeDef(selectedSize);
+
+  const validSizes = getValidSizesForType(craftType);
+  const currentSizeIndex = validSizes.indexOf(selectedSize);
+  const canStepDown = currentSizeIndex > 0;
+  const canStepUp = currentSizeIndex !== -1 && currentSizeIndex < validSizes.length - 1;
+
+  const handleStepDown = () => {
+    if (canStepDown) {
+      handleSelectSize(validSizes[currentSizeIndex - 1]);
+    }
+  };
+
+  const handleStepUp = () => {
+    if (canStepUp) {
+      handleSelectSize(validSizes[currentSizeIndex + 1]);
+    }
+  };
 
   // Locomotion & Chassis Architecture
   const defaultLocomotionForType = (type: SciFiCraftType): VehicleLocomotion => {
@@ -86,14 +117,19 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
   const handleSelectCraftType = (type: SciFiCraftType) => {
     setCraftType(type);
     setSelectedLocomotion(defaultLocomotionForType(type));
+    const sizesForType = getValidSizesForType(type);
+    let newSize = selectedSize;
+    if (!sizesForType.includes(selectedSize)) {
+      newSize = getDefaultSizeForType(type);
+      setSelectedSize(newSize);
+    }
+    const newDef = getVehicleSizeDef(newSize);
+    setSelectedHeavyArmor(newDef.isHeavyArmor);
     if (type === 'walker') {
       setSelectedJumpJets(true);
-      if (selectedSize < 2) setSelectedSize(4);
     } else if (type === 'power_armor') {
       setSelectedJumpJets(false);
-      if (selectedSize < 0 || selectedSize > 2) setSelectedSize(1);
-    } else if (type === 'starship') {
-      if (selectedSize < 3) setSelectedSize(4);
+      setSelectedStrengthSteps(newSize <= 0 ? 1 : newSize === 1 ? 2 : newSize === 2 ? 3 : 4);
     }
     setInstalledMods([]);
     setInstalledWeapons([]);
@@ -342,34 +378,82 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
 
         {/* Main Content Area */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
-          {/* STEP 1: VEHICLE SIZE & LOCOMOTION ARCHITECTURE */}
+          {/* STEP 1: VEHICLE CLASSIFICATION, SIZE & ARCHITECTURE */}
           {step === 1 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-              {/* PROMPT 1: CHOOSE VEHICLE SIZE */}
+              {/* PROMPT 1: CHOOSE CRAFT TYPE */}
+              <div>
+                <div style={{ fontSize: '0.72rem', fontWeight: 900, color: '#38bdf8', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 4 }}>
+                  STEP 1 — PROMPT 1: CRAFT CLASSIFICATION
+                </div>
+                <label style={{ fontSize: '1.15rem', fontWeight: 950, color: '#f8fafc', display: 'block', marginBottom: 12 }}>
+                  Select Craft Classification
+                </label>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10 }}>
+                  {[
+                    { id: 'vehicle', title: 'Vehicle', desc: 'Ground, Hover, APCs, Tanks & Aircraft' },
+                    { id: 'walker', title: 'Walker (Mech)', desc: 'Bipedal & Quadruped Combat Mechs' },
+                    { id: 'power_armor', title: 'Power Armor', desc: 'Exosuits & Heavy Battlesuits' },
+                    { id: 'starship', title: 'Starship', desc: 'Corvettes, Shuttles & Interceptors' }
+                  ].map((c) => {
+                    const isSelected = craftType === c.id;
+                    return (
+                      <button
+                        key={c.id}
+                        type="button"
+                        onClick={() => handleSelectCraftType(c.id as SciFiCraftType)}
+                        style={{
+                          padding: '14px 16px',
+                          borderRadius: 14,
+                          textAlign: 'left',
+                          background: isSelected
+                            ? 'linear-gradient(135deg, rgba(14, 165, 233, 0.25) 0%, rgba(3, 105, 161, 0.35) 100%)'
+                            : 'rgba(255, 255, 255, 0.03)',
+                          border: isSelected ? '2px solid #38bdf8' : '1px solid #1e293b',
+                          cursor: 'pointer',
+                          boxShadow: isSelected ? '0 4px 14px rgba(56, 189, 248, 0.25)' : 'none',
+                          transition: 'all 0.15s ease'
+                        }}
+                      >
+                        <div style={{ fontWeight: 950, fontSize: '1rem', color: isSelected ? '#38bdf8' : '#f8fafc' }}>
+                          {c.title}
+                        </div>
+                        <div style={{ fontSize: '0.74rem', color: isSelected ? '#bae6fd' : '#94a3b8', marginTop: 4, lineHeight: 1.35 }}>
+                          {c.desc}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* PROMPT 2: CHOOSE SIZE (ONLY VALID SIZES FOR SELECTED TYPE) */}
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, flexWrap: 'wrap', gap: 8 }}>
                   <div>
                     <div style={{ fontSize: '0.72rem', fontWeight: 900, color: '#38bdf8', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                      STEP 1 — PRIMARY SPECIFICATION
+                      STEP 1 — PROMPT 2: VEHICLE SIZE
                     </div>
                     <label style={{ fontSize: '1.1rem', fontWeight: 950, color: '#f8fafc', display: 'block', margin: '2px 0 0' }}>
-                      Select Vehicle Size ({selectedSizeDef.sizeCategory} • Size {selectedSize})
+                      {getCraftTypeSizeLabel(craftType, selectedSize)} (Size {selectedSize} • {selectedSizeDef.sizeCategory})
                     </label>
                   </div>
 
-                  {/* Size Stepper Button */}
+                  {/* Size Stepper Button bounded to validSizes */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#0f172a', padding: '4px 8px', borderRadius: 10, border: '1px solid #1e293b' }}>
                     <button
-                      onClick={() => handleSelectSize(Math.max(-2, selectedSize - 1))}
-                      disabled={selectedSize <= -2}
+                      type="button"
+                      onClick={handleStepDown}
+                      disabled={!canStepDown}
                       style={{
                         padding: '4px 10px',
                         borderRadius: 6,
                         background: '#1e293b',
                         border: '1px solid #334155',
-                        color: selectedSize <= -2 ? '#475569' : '#fff',
+                        color: !canStepDown ? '#475569' : '#fff',
                         fontWeight: 900,
-                        cursor: selectedSize <= -2 ? 'not-allowed' : 'pointer'
+                        cursor: !canStepDown ? 'not-allowed' : 'pointer'
                       }}
                     >
                       -
@@ -378,16 +462,17 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
                       Size {selectedSize}
                     </span>
                     <button
-                      onClick={() => handleSelectSize(Math.min(9, selectedSize + 1))}
-                      disabled={selectedSize >= 9}
+                      type="button"
+                      onClick={handleStepUp}
+                      disabled={!canStepUp}
                       style={{
                         padding: '4px 10px',
                         borderRadius: 6,
                         background: '#1e293b',
                         border: '1px solid #334155',
-                        color: selectedSize >= 9 ? '#475569' : '#fff',
+                        color: !canStepUp ? '#475569' : '#fff',
                         fontWeight: 900,
-                        cursor: selectedSize >= 9 ? 'not-allowed' : 'pointer'
+                        cursor: !canStepUp ? 'not-allowed' : 'pointer'
                       }}
                     >
                       +
@@ -395,13 +480,15 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
                   </div>
                 </div>
 
-                {/* Clickable Size Grid */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 8, marginBottom: 14 }}>
-                  {SWADE_VEHICLE_SIZES.map((sz) => {
+                {/* Filtered Clickable Size Grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 8, marginBottom: 14 }}>
+                  {SWADE_VEHICLE_SIZES.filter((sz) => validSizes.includes(sz.size)).map((sz) => {
                     const isSelected = selectedSize === sz.size;
+                    const archetypeLabel = getCraftTypeSizeLabel(craftType, sz.size);
                     return (
                       <button
                         key={sz.size}
+                        type="button"
                         onClick={() => handleSelectSize(sz.size)}
                         style={{
                           padding: '10px 8px',
@@ -419,10 +506,10 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
                           Size {sz.size}
                         </div>
                         <div style={{ fontSize: '0.72rem', fontWeight: 800, color: isSelected ? '#7dd3fc' : '#94a3b8', marginTop: 2 }}>
-                          {sz.sizeCategory}
+                          {archetypeLabel}
                         </div>
                         <div style={{ fontSize: '0.66rem', color: '#64748b', marginTop: 3 }}>
-                          Tough {sz.baseToughness} ({sz.baseArmor})
+                          Tough {sz.baseToughness} ({sz.baseArmor}) • {sz.modSlots} Mods
                         </div>
                       </button>
                     );
@@ -497,44 +584,11 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
                 </div>
               </div>
 
-              {/* PROMPT 2: CRAFT TYPE & LOCOMOTION */}
+              {/* PROMPT 3: LOCOMOTION & SPECIAL ARCHITECTURE */}
               <div>
                 <label style={{ fontSize: '0.8rem', fontWeight: 900, color: '#38bdf8', textTransform: 'uppercase', display: 'block', marginBottom: 10, letterSpacing: '0.05em' }}>
-                  PROMPT 2: SELECT CRAFT CATEGORY & LOCOMOTION
+                  PROMPT 3: DRIVE & SPECIAL ARCHITECTURE
                 </label>
-
-                {/* Craft Categories */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10, marginBottom: 14 }}>
-                  {[
-                    { id: 'vehicle', title: 'Vehicle', desc: 'Ground, Hover, APCs, Tanks & VTOLs' },
-                    { id: 'walker', title: 'Walker (Mech)', desc: 'Bipedal & Quadruped Combat Mechs' },
-                    { id: 'power_armor', title: 'Power Armor', desc: 'Exosuits & Heavy Battlesuits' },
-                    { id: 'starship', title: 'Starship', desc: 'Corvettes, Shuttles & Interceptors' }
-                  ].map((c) => (
-                    <button
-                      key={c.id}
-                      onClick={() => handleSelectCraftType(c.id as SciFiCraftType)}
-                      style={{
-                        padding: '12px 14px',
-                        borderRadius: 12,
-                        textAlign: 'left',
-                        background:
-                          craftType === c.id
-                            ? 'linear-gradient(135deg, rgba(14, 165, 233, 0.2) 0%, rgba(3, 105, 161, 0.3) 100%)'
-                            : 'rgba(255, 255, 255, 0.04)',
-                        border: craftType === c.id ? '2px solid #38bdf8' : '1px solid #1e293b',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <div style={{ fontWeight: 900, fontSize: '0.94rem', color: craftType === c.id ? '#38bdf8' : '#f8fafc' }}>
-                        {c.title}
-                      </div>
-                      <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: 3 }}>
-                        {c.desc}
-                      </div>
-                    </button>
-                  ))}
-                </div>
 
                 {/* Locomotion Options */}
                 <div style={{ background: '#0f172a', padding: 16, borderRadius: 14, border: '1px solid #1e293b' }}>
@@ -548,6 +602,7 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
                         {['Hover / Grav', 'Wheeled', 'Tracked', 'VTOL / Rotor', 'Fixed-Wing Supersonic', 'Submersible / Naval'].map((loco) => (
                           <button
                             key={loco}
+                            type="button"
                             onClick={() => setSelectedLocomotion(loco as VehicleLocomotion)}
                             style={{
                               padding: '8px 14px',
@@ -569,6 +624,7 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
                         {['Bipedal Walker', 'Quadruped Walker'].map((loco) => (
                           <button
                             key={loco}
+                            type="button"
                             onClick={() => setSelectedLocomotion(loco as VehicleLocomotion)}
                             style={{
                               padding: '8px 14px',
@@ -633,6 +689,7 @@ export const CraftWizardModal: React.FC<CraftWizardModalProps> = ({
                         {[1, 2, 3, 4].map((stepCount) => (
                           <button
                             key={stepCount}
+                            type="button"
                             onClick={() => setSelectedStrengthSteps(stepCount)}
                             style={{
                               padding: '4px 10px',

@@ -1,4 +1,4 @@
-import { CraftFrameDef, CraftModDef, CraftWeaponDef, SciFiCraft } from '../types/scifiCraft';
+import { CraftFrameDef, CraftModDef, CraftWeaponDef, SciFiCraft, SciFiCraftType } from '../types/scifiCraft';
 
 // ============================================================================
 // SCI-FI COMPANION FRAMES
@@ -1225,5 +1225,111 @@ export function getVehicleSizeDef(size: number): VehicleSizeDef {
   if (match) return match;
   if (size < -2) return SWADE_VEHICLE_SIZES[0];
   return SWADE_VEHICLE_SIZES[SWADE_VEHICLE_SIZES.length - 1];
+}
+
+export function getValidSizesForType(type: SciFiCraftType): number[] {
+  switch (type) {
+    case 'power_armor':
+      return [-1, 0, 1, 2, 3];
+    case 'walker':
+      return [2, 3, 4, 5, 6, 7, 8, 9];
+    case 'starship':
+      return [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    case 'vehicle':
+    default:
+      return [-2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+  }
+}
+
+export function getCraftTypeSizeLabel(type: SciFiCraftType, size: number): string {
+  if (type === 'power_armor') {
+    switch (size) {
+      case -1:
+        return 'Ultralight Exosuit';
+      case 0:
+        return 'Scout / Infiltration Armor';
+      case 1:
+        return 'Standard Combat Power Armor';
+      case 2:
+        return 'Heavy Assault Battlesuit';
+      case 3:
+        return 'Dreadnought Titan Battlesuit';
+      default:
+        return 'Power Armor';
+    }
+  }
+  if (type === 'walker') {
+    switch (size) {
+      case 2:
+        return 'Light Scout Mech';
+      case 3:
+        return 'Recon Patrol Walker';
+      case 4:
+        return 'Combat Trooper Mech';
+      case 5:
+        return 'Medium Support Walker';
+      case 6:
+        return 'Heavy Assault Walker';
+      case 7:
+        return 'Heavy Siege Walker';
+      case 8:
+        return 'Colossal Titan Walker';
+      case 9:
+        return 'Siege Bastion Titan';
+      default:
+        return 'Combat Walker';
+    }
+  }
+  if (type === 'starship') {
+    switch (size) {
+      case 1:
+        return 'Escape Pod / Probe';
+      case 2:
+        return 'Courier Shuttle';
+      case 3:
+        return 'Light Fighter / Scout';
+      case 4:
+        return 'Corvette / Heavy Fighter';
+      case 5:
+        return 'Gunship / Armed Transport';
+      case 6:
+        return 'Heavy Dropship / Freighter';
+      case 7:
+        return 'Frigate / Destroyer';
+      case 8:
+        return 'Heavy Destroyer / Bulk Carrier';
+      case 9:
+        return 'Cruiser / Battleship';
+      default:
+        return 'Starship';
+    }
+  }
+  // Default Vehicle
+  switch (size) {
+    case -2:
+      return 'Mini-Drone / Ultralight';
+    case -1:
+      return 'Hoverbike / Motorcycle';
+    case 1:
+      return 'Recon Buggy / ATV';
+    case 2:
+      return 'Sedan / Armored Car';
+    case 3:
+      return 'Light APC / VTOL Gunship';
+    case 4:
+      return 'Standard APC / Light Tank';
+    case 5:
+      return 'Medium Tank / Heavy Hovertank';
+    case 6:
+      return 'Main Battle Tank';
+    case 7:
+      return 'Heavy Artillery Platform';
+    case 8:
+      return 'Super-Heavy Tank / Heavy Dropship';
+    case 9:
+      return 'Land Fortress / Planetary Crawler';
+    default:
+      return 'Ground / Air Vehicle';
+  }
 }
 
