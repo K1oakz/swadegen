@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { RobotBuilderTab } from './RobotBuilderTab';
+import { PathfinderRulesModal } from './PathfinderRulesModal';
 import {
   AdvanceEntry,
   ArcaneBackgroundId,
@@ -12,6 +13,7 @@ import {
 } from '../types/swade';
 import {
   ATTRIBUTE_META,
+  PF_GEAR_CATALOG,
   SWADE_ANCESTRIES,
   SWADE_ARCANE_BACKGROUNDS,
   SWADE_ARMOR_CATALOG,
@@ -155,6 +157,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
   const [customGearName, setCustomGearName] = useState('');
   const [customGearWeight, setCustomGearWeight] = useState('1');
   const [customGearCost, setCustomGearCost] = useState('10');
+  const [showPathfinderRules, setShowPathfinderRules] = useState(false);
 
   // Derived & Point budgets
   const ancestry = getAncestry(character.ancestryId);
@@ -179,7 +182,9 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
 
     const updatedSkills = character.skills.map((sk) => {
       const bonusSteps = newAnc.skillBonuses?.[sk.skillId] || 0;
-      const minDie: DieSides | 0 = bonusSteps > 0 ? 6 : sk.isCore ? 4 : 0;
+      const startStepIdx = (sk.isCore ? 0 : -1) + bonusSteps;
+      const minDie: DieSides | 0 =
+        startStepIdx >= 1 ? 6 : startStepIdx === 0 ? 4 : 0;
       return {
         ...sk,
         die: sk.die < minDie ? minDie : sk.die
@@ -253,7 +258,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
     {
       id: 'gear',
       label: `${isRobot ? '9' : '8'}. Weapons & Gear`,
-      badge: `$${character.currency}`
+      badge: `${character.currency} ${character.settingRules.freeClassEdge ? 'gp' : '$'}`
     }
   ];
 
@@ -399,6 +404,50 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
               >
                 Sci-Fi Companion Only
               </button>
+              <button
+                type="button"
+                onClick={() =>
+                  onUpdateCharacter({
+                    sourceBooks: ['core', 'pathfinder'],
+                    setting: 'Savage Pathfinder (Golarion)',
+                    settingRules: { ...character.settingRules, freeClassEdge: true }
+                  })
+                }
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: 8,
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  background: 'rgba(245, 158, 11, 0.16)',
+                  border: '1px solid #f59e0b',
+                  color: '#fde68a',
+                  cursor: 'pointer'
+                }}
+              >
+                Savage Pathfinder (Core + PF)
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  onUpdateCharacter({
+                    sourceBooks: ['pathfinder'],
+                    setting: 'Savage Pathfinder (Golarion)',
+                    settingRules: { ...character.settingRules, freeClassEdge: true }
+                  })
+                }
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: 8,
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  background: 'rgba(234, 88, 12, 0.16)',
+                  border: '1px solid #ea580c',
+                  color: '#fed7aa',
+                  cursor: 'pointer'
+                }}
+              >
+                Savage Pathfinder Only
+              </button>
             </div>
 
             {/* Source Books Grid */}
@@ -466,7 +515,27 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
             </div>
 
             {/* Next Step Banner */}
-            <div style={{ marginTop: 22, display: 'flex', justifyContent: 'flex-end' }}>
+            <div style={{ marginTop: 22, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+              {(character.sourceBooks || ['core']).includes('pathfinder') ? (
+                <button
+                  type="button"
+                  onClick={() => setShowPathfinderRules(true)}
+                  style={{
+                    padding: '9px 14px',
+                    borderRadius: 10,
+                    background: 'rgba(245, 158, 11, 0.16)',
+                    border: '1px solid #f59e0b',
+                    color: '#fde68a',
+                    fontSize: '0.8rem',
+                    fontWeight: 800,
+                    cursor: 'pointer'
+                  }}
+                >
+                  Open Savage Pathfinder Reference (Deities, Domains, Bloodlines &amp; Materials)
+                </button>
+              ) : (
+                <div />
+              )}
               <button
                 type="button"
                 onClick={() => setActiveTab('identity')}
@@ -890,6 +959,33 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
                   </div>
                   <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
                     Wild Cards wearing no armor gain +2 bonus to Toughness.
+                  </div>
+                </button>
+
+                <button
+                  onClick={() =>
+                    onUpdateCharacter({
+                      settingRules: {
+                        ...character.settingRules,
+                        freeClassEdge: !character.settingRules.freeClassEdge
+                      }
+                    })
+                  }
+                  style={{
+                    padding: '10px 12px',
+                    borderRadius: 10,
+                    background: character.settingRules.freeClassEdge
+                      ? 'rgba(245, 158, 11, 0.16)'
+                      : 'rgba(0, 0, 0, 0.3)',
+                    border: `1px solid ${character.settingRules.freeClassEdge ? '#f59e0b' : 'var(--border-subtle)'}`,
+                    textAlign: 'left'
+                  }}
+                >
+                  <div style={{ fontWeight: 800, fontSize: '0.82rem', color: '#fff' }}>
+                    {character.settingRules.freeClassEdge ? '✅' : '⬜'} Savage Pathfinder: Free Class Edge &amp; Gold Standard
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
+                    Grants +1 free Class/Background/Professional Edge at creation and uses 300 gp (+600 gp/pt) starting wealth.
                   </div>
                 </button>
               </div>
@@ -2097,7 +2193,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
                 value={customEdgeCat}
                 onChange={(e) => setCustomEdgeCat(e.target.value as EdgeCategory)}
               >
-                {(['Background', 'Combat', 'Leadership', 'Power', 'Professional', 'Social', 'Weird', 'Legendary'] as EdgeCategory[]).map((c) => (
+                {(['Background', 'Class', 'Combat', 'Leadership', 'Power', 'Prestige', 'Professional', 'Social', 'Weird', 'Legendary'] as EdgeCategory[]).map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>
@@ -2309,7 +2405,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
 
             {/* Category Pills */}
             <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 8, marginBottom: 10 }}>
-              {(['All', 'Background', 'Combat', 'Leadership', 'Power', 'Professional', 'Social', 'Weird', 'Legendary'] as const).map((cat) => (
+              {(['All', 'Background', 'Class', 'Combat', 'Leadership', 'Power', 'Prestige', 'Professional', 'Social', 'Weird', 'Legendary'] as const).map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setEdgeCategoryFilter(cat)}
@@ -2423,9 +2519,26 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
                           }
                         ];
                         const updates: Partial<SwadeCharacter> = { edges: updatedEdges };
-                        if (ed.id === 'arcane_background' && character.arcaneBackgroundId === 'none') {
-                          updates.arcaneBackgroundId = 'magic';
-                          updates.playState = { ...character.playState, currentPowerPoints: 10 };
+                        const edgeToAbMap: Partial<Record<string, ArcaneBackgroundId>> = {
+                          arcane_background: 'magic',
+                          pf_bard: 'pf_bard',
+                          pf_cleric: 'pf_cleric',
+                          pf_druid: 'pf_druid',
+                          pf_sorcerer: 'pf_sorcerer',
+                          pf_wizard: 'pf_wizard',
+                          pf_mystic_powers_monk: 'pf_mystic_monk',
+                          pf_mystic_powers_paladin: 'pf_mystic_paladin',
+                          pf_mystic_powers_ranger: 'pf_mystic_ranger',
+                          pf_shadowdancer_iii: 'pf_mystic_shadowdancer'
+                        };
+                        const mappedAbId = edgeToAbMap[ed.id];
+                        if (mappedAbId && character.arcaneBackgroundId === 'none') {
+                          const abDef = SWADE_ARCANE_BACKGROUNDS.find((a) => a.id === mappedAbId);
+                          updates.arcaneBackgroundId = mappedAbId;
+                          updates.playState = {
+                            ...character.playState,
+                            currentPowerPoints: abDef?.startingPowerPoints ?? 10
+                          };
                         }
                         onUpdateCharacter(updates);
                       }}
@@ -2463,9 +2576,29 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
               padding: 16
             }}
           >
-            <h3 style={{ fontSize: '0.98rem', fontWeight: 800, color: '#c084fc', marginBottom: 6 }}>
-              ARCANE BACKGROUND & POWER POINTS
-            </h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 6 }}>
+              <h3 style={{ fontSize: '0.98rem', fontWeight: 800, color: '#c084fc', margin: 0 }}>
+                ARCANE BACKGROUND &amp; POWER POINTS
+              </h3>
+              {(character.sourceBooks || ['core']).includes('pathfinder') && (
+                <button
+                  type="button"
+                  onClick={() => setShowPathfinderRules(true)}
+                  style={{
+                    padding: '6px 11px',
+                    borderRadius: 8,
+                    background: 'rgba(245, 158, 11, 0.16)',
+                    border: '1px solid #f59e0b',
+                    color: '#fde68a',
+                    fontSize: '0.74rem',
+                    fontWeight: 800,
+                    cursor: 'pointer'
+                  }}
+                >
+                  Deities, Domains &amp; Bloodlines
+                </button>
+              )}
+            </div>
             <p style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', marginBottom: 12 }}>
               Choose an Arcane Background to unlock Powers and Power Points. Customize each power with its own <strong>Trappings</strong> (fire, frost, necromancy, clockwork gadgets, etc.).
             </p>
@@ -2477,7 +2610,11 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
                 gap: 10
               }}
             >
-              {SWADE_ARCANE_BACKGROUNDS.map((ab) => {
+              {SWADE_ARCANE_BACKGROUNDS.filter((ab) => {
+                if (ab.id === 'none' || character.arcaneBackgroundId === ab.id) return true;
+                const activeBooks = character.sourceBooks && character.sourceBooks.length > 0 ? character.sourceBooks : ['core'];
+                return activeBooks.includes(ab.source || 'core');
+              }).map((ab) => {
                 const selected = character.arcaneBackgroundId === ab.id;
                 return (
                   <button
@@ -3117,7 +3254,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
             </div>
 
             {character.gear.length > 0 && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 8 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 8, marginBottom: 14 }}>
                 {character.gear.map((g, idx) => (
                   <div
                     key={g.id}
@@ -3136,7 +3273,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
                         {g.name} (x{g.quantity})
                       </div>
                       <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-                        {g.weight} lbs • ${g.cost}
+                        {g.weight} lbs • {g.cost} {character.settingRules.freeClassEdge ? 'gp' : '$'}
                       </div>
                     </div>
                     <button
@@ -3153,8 +3290,49 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
                 ))}
               </div>
             )}
+
+            {(character.sourceBooks || ['core']).includes('pathfinder') && (
+              <div>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: 6 }}>
+                  ADD SAVAGE PATHFINDER ADVENTURING &amp; ALCHEMICAL GEAR:
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, maxHeight: 190, overflowY: 'auto' }}>
+                  {PF_GEAR_CATALOG.map((catG, i) => (
+                    <button
+                      key={i}
+                      onClick={() =>
+                        onUpdateCharacter({
+                          gear: [
+                            ...character.gear,
+                            {
+                              ...catG,
+                              id: `pf_gr_${Date.now()}_${i}`
+                            }
+                          ]
+                        })
+                      }
+                      style={{
+                        padding: '6px 9px',
+                        borderRadius: 8,
+                        background: 'rgba(245, 158, 11, 0.14)',
+                        border: '1px solid rgba(245, 158, 11, 0.3)',
+                        fontSize: '0.73rem',
+                        color: '#fde68a',
+                        fontWeight: 700
+                      }}
+                    >
+                      + {catG.name} ({catG.cost} gp)
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
+      )}
+
+      {showPathfinderRules && (
+        <PathfinderRulesModal onClose={() => setShowPathfinderRules(false)} />
       )}
     </div>
   );

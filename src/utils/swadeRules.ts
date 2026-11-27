@@ -183,12 +183,13 @@ export function calculateEdgeBudget(character: SwadeCharacter): {
 } {
   const ancestry = getAncestry(character.ancestryId);
   const ancestryFree = ancestry.freeEdgeBonus || 0;
+  const pfClassEdgeFree = character.settingRules.freeClassEdge ? 1 : 0;
   const bornAHeroFree = character.settingRules.bornAHero ? 1 : 0;
   const blindBonus = character.hindrances.some((h) => h.hindranceId === 'blind') ? 1 : 0;
   const hindranceEdges = character.hindranceAllocation.edges;
   const advanceEdges = character.advancesList.filter((a) => a.type === 'Edge').length;
 
-  const budget = ancestryFree + bornAHeroFree + blindBonus + hindranceEdges + advanceEdges;
+  const budget = ancestryFree + pfClassEdgeFree + bornAHeroFree + blindBonus + hindranceEdges + advanceEdges;
   const spent = character.edges.length;
 
   return {
@@ -305,6 +306,10 @@ export function calculateDerivedStats(character: SwadeCharacter): DerivedStatsSu
   if (character.edges.some((e) => e.edgeId === 'trademark_weapon')) {
     parry += 1;
     parryBreakdown.push('Trademark Weapon: +1');
+  } else if (character.edges.some((e) => e.edgeId === 'pf_imp_trademark_weapon')) {
+    // Improved Trademark Weapon provides +2 total if base Trademark Weapon isn't separately listed
+    parry += 1;
+    parryBreakdown.push('Imp. Trademark Weapon (base): +1');
   }
 
   if (character.customParryMod !== 0) {
@@ -383,10 +388,13 @@ export function calculateDerivedStats(character: SwadeCharacter): DerivedStatsSu
     const ppEdgesCount = character.edges.filter((e) => e.edgeId === 'power_points').length;
     maxPowerPoints += ppEdgesCount * 5 + character.maxPowerPointsMod;
   }
+  if (character.ancestryId === 'pf_gnome') {
+    maxPowerPoints += 1;
+  }
 
   // Starting Bennies
   let startingBennies = character.isWildCard ? 3 : 0;
-  if (character.ancestryId === 'half_folk') startingBennies += 1;
+  if (character.ancestryId === 'half_folk' || character.ancestryId === 'pf_halfling') startingBennies += 1;
   if (character.hindrances.some((h) => h.hindranceId === 'bad_luck')) startingBennies -= 1;
   if (character.hindrances.some((h) => h.hindranceId === 'young')) startingBennies += 1;
   activeEdgeDefs.forEach((ed) => {
@@ -394,10 +402,11 @@ export function calculateDerivedStats(character: SwadeCharacter): DerivedStatsSu
   });
   startingBennies = Math.max(0, startingBennies);
 
-  // Encumbrance (SWADE rule: d4=20 lbs, d6=40, d8=60, d10=80, d12=100; Brawny/Soldier increases effective Str by 1 step)
+  // Encumbrance (SWADE rule: d4=20 lbs, d6=40, d8=60, d10=80, d12=100; Brawny/Soldier/PF Dwarf increases effective Str by 1 step)
   let effectiveStrIdx = getDieStepIndex(character.attributes.strength); // 0..4
   if (character.edges.some((e) => e.edgeId === 'brawny')) effectiveStrIdx += 1;
   if (character.edges.some((e) => e.edgeId === 'soldier')) effectiveStrIdx += 1;
+  if (character.ancestryId === 'pf_dwarf') effectiveStrIdx += 1;
   const maxLoad = (effectiveStrIdx + 1) * 20;
 
   const weaponsWeight = character.weapons.reduce((s, w) => s + w.weight, 0);
@@ -406,17 +415,23 @@ export function calculateDerivedStats(character: SwadeCharacter): DerivedStatsSu
   const totalWeight = Math.round((weaponsWeight + armorWeight + gearWeight) * 10) / 10;
 
   // Starting Funds
-  let startingFunds = 500 + character.hindranceAllocation.wealth * 1000;
-  if (character.edges.some((e) => e.edgeId === 'rich')) startingFunds = 1500 + character.hindranceAllocation.wealth * 1000;
+  const isPathfinderEconomy =
+    Boolean(character.settingRules.freeClassEdge) ||
+    (Boolean(character.sourceBooks?.includes('pathfinder')) && !character.sourceBooks?.includes('core'));
+  const baseFunds = isPathfinderEconomy ? 300 : 500;
+  const wealthStep = isPathfinderEconomy ? 600 : 1000;
+  let startingFunds = baseFunds + character.hindranceAllocation.wealth * wealthStep;
+  if (character.edges.some((e) => e.edgeId === 'rich')) startingFunds = baseFunds * 3 + character.hindranceAllocation.wealth * wealthStep;
   if (character.hindrances.some((h) => h.hindranceId === 'poverty')) startingFunds = Math.floor(startingFunds / 2);
 
   // Active Wounds / Fatigue / Distracted Penalty
   const penaltyBreakdown: string[] = [];
   let activePenalty = 0;
 
-  // Nerves of Steel ignores 1 pt of Wound penalties, Android ignores 1 pt
+  // Nerves of Steel ignores 1 pt of Wound penalties (+1 more for Improved Nerves of Steel), Android ignores 1 pt
   let woundIgnore = 0;
   if (character.edges.some((e) => e.edgeId === 'nerves_of_steel')) woundIgnore += 1;
+  if (character.edges.some((e) => e.edgeId === 'pf_imp_nerves_of_steel')) woundIgnore += 1;
   if (character.ancestryId === 'android') woundIgnore += 1;
 
   const effectiveWoundPenalty = Math.max(0, Math.min(3, character.playState.wounds) - woundIgnore);
@@ -478,8 +493,32 @@ export function checkEdgeRequirements(edge: EdgeDef, character: SwadeCharacter):
     reasons.push('Requires Wild Card');
   }
 
-  if (edge.requiresArcane && character.arcaneBackgroundId === 'none' && !character.edges.some((e) => e.edgeId === 'arcane_background')) {
+  const pfArcaneEdges = [
+    'pf_bard',
+    'pf_cleric',
+    'pf_druid',
+    'pf_sorcerer',
+    'pf_wizard',
+    'pf_mystic_powers_monk',
+    'pf_mystic_powers_paladin',
+    'pf_mystic_powers_ranger',
+    'pf_shadowdancer_iii'
+  ];
+  const hasArcaneAccess =
+    character.arcaneBackgroundId !== 'none' ||
+    character.edges.some((e) => e.edgeId === 'arcane_background' || pfArcaneEdges.includes(e.edgeId));
+
+  if (edge.requiresArcane && !hasArcaneAccess) {
     reasons.push('Requires Arcane Background');
+  }
+
+  if (edge.requiredEdges) {
+    edge.requiredEdges.forEach((reqId) => {
+      if (!character.edges.some((e) => e.edgeId === reqId)) {
+        const reqName = SWADE_EDGES.find((e) => e.id === reqId)?.name || reqId;
+        reasons.push(`Requires ${reqName} Edge`);
+      }
+    });
   }
 
   if (edge.minAttributes) {
@@ -635,7 +674,7 @@ export function calculateSkillRollModifiers(
 
   // --- Persuasion ---
   if (lowerId === 'persuasion' || lowerName.includes('persuasion')) {
-    if (hasEdge('very_attractive')) {
+    if (hasEdge('very_attractive') || hasEdge('pf_very_attractive')) {
       totalMod += 2;
       breakdown.push('Very Attractive: +2');
     } else if (hasEdge('attractive')) {
@@ -675,7 +714,7 @@ export function calculateSkillRollModifiers(
 
   // --- Performance ---
   if (lowerId === 'performance' || lowerName.includes('performance')) {
-    if (hasEdge('very_attractive')) {
+    if (hasEdge('very_attractive') || hasEdge('pf_very_attractive')) {
       totalMod += 2;
       breakdown.push('Very Attractive: +2');
     } else if (hasEdge('attractive')) {
@@ -731,6 +770,10 @@ export function calculateSkillRollModifiers(
     if (hasEdge('streetwise')) {
       totalMod += 2;
       breakdown.push('Streetwise: +2');
+    }
+    if (hasEdge('pf_troubadour')) {
+      totalMod += 2;
+      breakdown.push('Troubadour: +2');
     }
     const clueless = getHindrance('clueless');
     if (clueless) {

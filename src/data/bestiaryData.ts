@@ -1,4 +1,5 @@
 import { CreatureStatBlock } from '../types/bestiary';
+import { PATHFINDER_BESTIARY_CREATURES } from './pathfinderBestiaryData';
 
 export const BESTIARY_CREATURES: CreatureStatBlock[] = [
   // ==========================================================================
@@ -5938,7 +5939,8 @@ export const BESTIARY_CREATURES: CreatureStatBlock[] = [
     description: 'A terrifying amalgamation of human DNA, gorilla muscle fibers, and reptile scales produced in a black-budget laboratory.',
     tactics: 'Leaps across rooftops and alleyways, spitting acid to soften targets before ripping them apart with multiple arms.',
     habitat: 'Clandestine corporate laboratories, sewers, and industrial alleys.'
-  }
+  },
+  ...PATHFINDER_BESTIARY_CREATURES
 ];
 
 export const SOURCEBOOK_DESCRIPTIONS: Record<string, string> = {
@@ -5946,5 +5948,6 @@ export const SOURCEBOOK_DESCRIPTIONS: Record<string, string> = {
   'Fantasy Companion': 'Archmages, aberrations, legendary beasts, and mythical monsters from fantasy settings.',
   'Sci-Fi Companion': 'Complete official bestiary from the SWADE Science Fiction Companion, featuring alien flora, apex predators, war mechs, cyborgs, and cosmic entities.',
   'Horror Companion': 'Cosmic dread, elder terrors, gothic night-stalkers, and unrelenting undead.',
-  'Super Powers Companion': 'Metahuman nemeses, mutagenic abominations, and four-color super-threats.'
+  'Super Powers Companion': 'Metahuman nemeses, mutagenic abominations, and four-color super-threats.',
+  'Savage Pathfinder': 'Official Golarion creatures, animals, undead, and townsfolk from the Pathfinder for Savage Worlds Core Rules.'
 };

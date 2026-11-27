@@ -3,7 +3,8 @@ export type BestiarySourcebook =
   | 'Fantasy Companion'
   | 'Sci-Fi Companion'
   | 'Horror Companion'
-  | 'Super Powers Companion';
+  | 'Super Powers Companion'
+  | 'Savage Pathfinder';
 
 export type CreatureClassification =
   | 'Beast'

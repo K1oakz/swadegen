@@ -175,7 +175,7 @@ export const HomeHubView: React.FC<HomeHubViewProps> = ({
               Characters
             </h2>
             <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', margin: '0 0 16px 0', lineHeight: 1.45 }}>
-              Hero creation, compendium sourcebooks, race/robot options, edges, hindrances, powers, and live play sheets with exploding dice rolls.
+              Hero creation, compendium sourcebooks (Core, Sci-Fi &amp; Savage Pathfinder), race/robot options, class &amp; prestige edges, hindrances, powers, and live play sheets with exploding dice rolls.
             </p>
 
             {/* Quick Metrics */}
@@ -563,7 +563,7 @@ export const HomeHubView: React.FC<HomeHubViewProps> = ({
                 MULTI-GENRE COMPENDIUM
               </span>
               <span style={{ fontSize: '0.78rem', color: '#94a3b8', fontWeight: 700 }}>
-                5 Sourcebooks
+                6 Sourcebooks
               </span>
             </div>
 
@@ -572,7 +572,7 @@ export const HomeHubView: React.FC<HomeHubViewProps> = ({
             </h2>
             <p style={{ fontSize: '0.82rem', color: '#94a3b8', margin: '0 0 16px 0', lineHeight: 1.45 }}>
               Comprehensive creature and threat index with authentic stat blocks across Core Rules,
-              Fantasy, Sci-Fi, Horror, and Super Powers companions. Clean reference views without roller or play sheet bloat.
+              Fantasy, Sci-Fi, Horror, Super Powers companions, and Savage Pathfinder. Clean reference views without roller or play sheet bloat.
             </p>
 
             {/* Quick Metrics */}

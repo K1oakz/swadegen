@@ -12,6 +12,19 @@ import {
   SwadeCharacter,
   WeaponItem
 } from '../types/swade';
+import {
+  PF_ANCESTRIES,
+  PF_ARCANE_BACKGROUNDS,
+  PF_ARMOR_CATALOG,
+  PF_EDGES,
+  PF_GEAR_CATALOG,
+  PF_HINDRANCES,
+  PF_POWERS,
+  PF_SAMPLE_CHARACTERS,
+  PF_WEAPONS_CATALOG
+} from './pathfinderData';
+
+export { PF_GEAR_CATALOG };
 
 export const SWADE_SOURCE_BOOKS: SourceBook[] = [
   {
@@ -27,6 +40,13 @@ export const SWADE_SOURCE_BOOKS: SourceBook[] = [
     abbr: 'Sci-Fi',
     icon: 'SF',
     description: 'Spaceships, robots, cyberware, power armor, blasters, plasma weapons, and alien ancestries.'
+  },
+  {
+    id: 'pathfinder',
+    name: 'Pathfinder for Savage Worlds',
+    abbr: 'Pathfinder',
+    icon: 'PF',
+    description: 'Golarion ancestries, 11 Class Edge trees, 10 Prestige Edge paths, Arcane Backgrounds, Powers, Armor, Weapons, Alchemical Gear, and Bestiary.'
   }
 ];
 
@@ -541,6 +561,7 @@ export const SWADE_ANCESTRIES: AncestryDef[] = [
       { name: 'Slight Build', description: 'Delicate skeletal frame subtracts 1 from Toughness.' }
     ]
   },
+  ...PF_ANCESTRIES,
   {
     id: 'custom',
     name: 'Custom Ancestry',
@@ -757,6 +778,7 @@ export const SWADE_HINDRANCES: HindranceDef[] = [
     effect: '-2 Agility & Smarts in Zero-G',
     source: 'scifi'
   },
+  ...PF_HINDRANCES
 ];
 
 export const SWADE_EDGES: EdgeDef[] = [
@@ -1875,6 +1897,7 @@ export const SWADE_EDGES: EdgeDef[] = [
     summary: 'The galaxy looks to this legend; gains +1 Benny per session and allies add +1 to Spirit checks when with them.',
     source: 'scifi'
   },
+  ...PF_EDGES
 ];
 
 export const SWADE_ARCANE_BACKGROUNDS: ArcaneBackgroundDef[] = [
@@ -1931,7 +1954,8 @@ export const SWADE_ARCANE_BACKGROUNDS: ArcaneBackgroundDef[] = [
     startingPowers: 1,
     startingPowerPoints: 15,
     summary: 'Heroes born with a natural knack, minor superpower, or innate mystical talent.'
-  }
+  },
+  ...PF_ARCANE_BACKGROUNDS
 ];
 
 export const SWADE_POWERS: PowerDef[] = [
@@ -1983,7 +2007,8 @@ export const SWADE_POWERS: PowerDef[] = [
   { id: 'teleport', name: 'Teleport', rankRequired: 'Seasoned', powerPoints: '2', range: 'Smarts', duration: 'Instant', summary: 'Instantly vanish and reappear up to 12" away (24" on a raise).' },
   { id: 'wall_walker', name: 'Wall Walker', rankRequired: 'Novice', powerPoints: '2', range: 'Touch', duration: '5', summary: 'Walk on walls and ceilings at half Pace (full Pace on a raise).' },
   { id: 'warrior_s_gift', name: "Warrior's Gift", rankRequired: 'Seasoned', powerPoints: '4', range: 'Touch', duration: '5', summary: 'Temporarily grants the target any one Combat Edge they meet the Rank for (ignore 1 Rank on raise).' },
-  { id: 'zombie', name: 'Zombie', rankRequired: 'Veteran', powerPoints: '3/corpse', range: 'Smarts', duration: '1 hour', summary: 'Animates corpses as loyal undead skeletons or zombies.' }
+  { id: 'zombie', name: 'Zombie', rankRequired: 'Veteran', powerPoints: '3/corpse', range: 'Smarts', duration: '1 hour', summary: 'Animates corpses as loyal undead skeletons or zombies.' },
+  ...PF_POWERS
 ];
 
 export const SWADE_WEAPONS_CATALOG: Omit<WeaponItem, 'id' | 'equipped'>[] = [
@@ -2031,6 +2056,7 @@ export const SWADE_WEAPONS_CATALOG: Omit<WeaponItem, 'id' | 'equipped'>[] = [
   { name: 'Plasma Pistol', category: 'Ranged', damage: '2d8', ap: 4, range: '10/20/40', rof: 1, minStr: 6, weight: 3, cost: 450, notes: 'Superheated plasma, Heavy Weapon, 20 shots', source: 'scifi' },
   { name: 'Plasma Rifle', category: 'Ranged', damage: '3d8', ap: 6, range: '20/40/80', rof: 2, minStr: 8, weight: 9, cost: 950, notes: 'Heavy plasma bolt, Heavy Weapon, 30 shots', source: 'scifi' },
   { name: 'Flechette Pistol', category: 'Ranged', damage: '2d6', ap: 0, range: '10/20/40', rof: 3, minStr: 4, weight: 2, cost: 180, notes: 'Shatter-needles; safe inside starship hulls', source: 'scifi' },
+  ...PF_WEAPONS_CATALOG
 ];
 
 export const SWADE_ARMOR_CATALOG: Omit<ArmorItem, 'id' | 'equipped'>[] = [
@@ -2051,6 +2077,7 @@ export const SWADE_ARMOR_CATALOG: Omit<ArmorItem, 'id' | 'equipped'>[] = [
   { name: 'Exoskeleton Power Frame', type: 'Armor', armorBonus: 2, parryBonus: 0, minStr: 6, weight: 25, cost: 8000, notes: '+2 Armor, +2 die steps to Strength, Pace +2', source: 'scifi' },
   { name: 'Heavy Combat Power Armor', type: 'Armor', armorBonus: 8, parryBonus: 0, minStr: 8, weight: 45, cost: 25000, notes: '+8 Heavy Armor, sealed environmental, jump-jets', source: 'scifi' },
   { name: 'Deflector Shield', type: 'Shield', armorBonus: 0, parryBonus: 2, coverBonus: 2, minStr: 4, weight: 3, cost: 1200, notes: 'Personal deflector screen; +2 Parry, -2 ranged attack penalty', source: 'scifi' },
+  ...PF_ARMOR_CATALOG
 ];
 
 export const INITIAL_SKILLS_TEMPLATE = () =>
@@ -2478,5 +2505,6 @@ export const SAMPLE_CHARACTERS: SwadeCharacter[] = [
     avatarEmoji: '',
     avatarImage: '',
     updatedAt: Date.now() - 3600000
-  }
+  },
+  ...PF_SAMPLE_CHARACTERS
 ];

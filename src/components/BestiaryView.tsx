@@ -19,7 +19,8 @@ export const BestiaryView: React.FC<BestiaryViewProps> = ({ onGoHome }) => {
     'Fantasy Companion',
     'Sci-Fi Companion',
     'Horror Companion',
-    'Super Powers Companion'
+    'Super Powers Companion',
+    'Savage Pathfinder'
   ];
 
   const classifications: CreatureClassification[] = [
@@ -136,7 +137,7 @@ export const BestiaryView: React.FC<BestiaryViewProps> = ({ onGoHome }) => {
           </h1>
           <p style={{ fontSize: '0.85rem', color: '#cbd5e1', margin: 0, maxWidth: 680, lineHeight: 1.45 }}>
             A standalone creature and encounter compendium spanning the Core Rules, Fantasy, Sci-Fi, Horror,
-            and Super Powers companions. Clean stat blocks with no interactive rollers or play state.
+            Super Powers companions, and Savage Pathfinder. Clean stat blocks with no interactive rollers or play state.
           </p>
         </div>
 
@@ -171,7 +172,7 @@ export const BestiaryView: React.FC<BestiaryViewProps> = ({ onGoHome }) => {
               SOURCEBOOKS
             </div>
             <div style={{ fontSize: '1.3rem', fontWeight: 950, color: '#f8fafc' }}>
-              5
+              {sourcebooks.length}
             </div>
           </div>
         </div>

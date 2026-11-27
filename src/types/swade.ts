@@ -8,9 +8,11 @@ export type HindranceSeverity = 'Minor' | 'Major';
 
 export type EdgeCategory =
   | 'Background'
+  | 'Class'
   | 'Combat'
   | 'Leadership'
   | 'Power'
+  | 'Prestige'
   | 'Professional'
   | 'Social'
   | 'Weird'
@@ -23,7 +25,16 @@ export type ArcaneBackgroundId =
   | 'psionics'
   | 'shamanism'
   | 'weird_science'
-  | 'gifted';
+  | 'gifted'
+  | 'pf_bard'
+  | 'pf_cleric'
+  | 'pf_druid'
+  | 'pf_sorcerer'
+  | 'pf_wizard'
+  | 'pf_mystic_monk'
+  | 'pf_mystic_paladin'
+  | 'pf_mystic_ranger'
+  | 'pf_mystic_shadowdancer';
 
 export interface SourceBook {
   id: string;
@@ -103,6 +114,7 @@ export interface EdgeDef {
   requirementsText: string;
   minAttributes?: Partial<Record<AttributeId, DieSides>>;
   minSkills?: Record<string, DieSides>;
+  requiredEdges?: string[];
   requiresArcane?: boolean;
   requiresWildCard?: boolean;
   summary: string;
@@ -134,6 +146,7 @@ export interface ArcaneBackgroundDef {
   startingPowers: number;
   startingPowerPoints: number;
   summary: string;
+  source?: string;
 }
 
 export interface PowerDef {
@@ -213,6 +226,7 @@ export interface SettingRulesConfig {
   bornAHero: boolean;       // +1 free Edge at creation, ignore Rank reqs at creation
   moreSkillPoints: boolean; // 15 base skill points instead of 12
   unarmoredHero: boolean;   // +2 Toughness when wearing no armor
+  freeClassEdge?: boolean;  // Savage Pathfinder: +1 free Class/Background/Professional Edge & 300 gp (+600 gp) standard
 }
 
 export interface PlayState {
