@@ -35,7 +35,13 @@ export type ArcaneBackgroundId =
   | 'pf_mystic_paladin'
   | 'pf_mystic_ranger'
   | 'pf_mystic_shadowdancer'
-  | 'pf_mystic_red_mantis';
+  | 'pf_mystic_red_mantis'
+  | 'pf_alchemist'
+  | 'pf_oracle'
+  | 'pf_summoner'
+  | 'pf_witch'
+  | 'pf_mystic_inquisitor'
+  | 'pf_mystic_rogue';
 
 export interface SourceBook {
   id: string;

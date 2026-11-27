@@ -549,5 +549,151 @@ export const PATHFINDER_BESTIARY_CREATURES: CreatureStatBlock[] = [
     ],
     description: 'Reanimated humanoid corpses driven by necromantic magic or foul plagues.',
     habitat: 'Graveyards, crypts, battlefields, and Geb.'
+  },
+  {
+    id: 'pf_eidolon_biped',
+    name: 'Eidolon (Biped Base Form)',
+    subtitle: 'Summoner Bonded Outsider',
+    sourcebook: 'Savage Pathfinder',
+    classification: 'Demon & Fiend',
+    isWildCard: false,
+    size: 0,
+    scale: 'Normal',
+    pace: 7,
+    parry: 5,
+    toughness: 6,
+    armor: 1,
+    attributes: { agility: 'd6', smarts: 'd4', spirit: 'd6', strength: 'd6', vigor: 'd6' },
+    skills: [
+      { name: 'Athletics', die: 'd6' },
+      { name: 'Fighting', die: 'd6' },
+      { name: 'Notice', die: 'd6' },
+      { name: 'Stealth', die: 'd4' }
+    ],
+    abilities: [
+      { name: 'Armor +1', effect: 'Natural armor (+3 Evolution Points to customize at Novice).' },
+      { name: 'Bash', effect: 'Str+d4 melee strike.' },
+      { name: 'Limbs (Arms & Legs)', effect: 'Bipedal limbs; can wield weapons and wear equipment.' },
+      { name: 'Outsider', effect: 'Native outsider sharing its Summoner’s glowing soul rune & languages; cannot heal naturally.' }
+    ],
+    description: 'A customizable bipedal outsider manifested by a Summoner.',
+    habitat: 'Summoned from outer planes.'
+  },
+  {
+    id: 'pf_eidolon_quadruped',
+    name: 'Eidolon (Quadruped Base Form)',
+    subtitle: 'Summoner Bonded Outsider',
+    sourcebook: 'Savage Pathfinder',
+    classification: 'Demon & Fiend',
+    isWildCard: false,
+    size: 0,
+    scale: 'Normal',
+    pace: 8,
+    parry: 5,
+    toughness: 6,
+    armor: 1,
+    attributes: { agility: 'd6', smarts: 'd4', spirit: 'd6', strength: 'd6', vigor: 'd6' },
+    skills: [
+      { name: 'Athletics', die: 'd6' },
+      { name: 'Fighting', die: 'd6' },
+      { name: 'Notice', die: 'd6' },
+      { name: 'Stealth', die: 'd4' }
+    ],
+    abilities: [
+      { name: 'Armor +1', effect: 'Natural armor (+3 Evolution Points to customize at Novice).' },
+      { name: 'Bite', effect: 'Str+d4 natural weapon.' },
+      { name: 'Quadruped (Legs x2)', effect: 'Four-legged frame (Pace 8, eligible for Pounce & Mount evolutions).' }
+    ],
+    description: 'A swift four-legged outsider bonded to a Summoner.',
+    habitat: 'Summoned from outer planes.'
+  },
+  {
+    id: 'pf_eidolon_serpentine',
+    name: 'Eidolon (Serpentine Base Form)',
+    subtitle: 'Summoner Bonded Outsider',
+    sourcebook: 'Savage Pathfinder',
+    classification: 'Demon & Fiend',
+    isWildCard: false,
+    size: 0,
+    scale: 'Normal',
+    pace: 6,
+    parry: 5,
+    toughness: 6,
+    armor: 1,
+    attributes: { agility: 'd6', smarts: 'd4', spirit: 'd6', strength: 'd6', vigor: 'd6' },
+    skills: [
+      { name: 'Athletics', die: 'd6' },
+      { name: 'Fighting', die: 'd6' },
+      { name: 'Notice', die: 'd6' },
+      { name: 'Stealth', die: 'd4' }
+    ],
+    abilities: [
+      { name: 'Armor +1', effect: 'Natural armor (+3 Evolution Points to customize at Novice).' },
+      { name: 'Bash (Tail)', effect: 'Str+d4, Reach 1.' },
+      { name: 'Wall Walker', effect: 'Climb at Pace 6 across vertical/inverted surfaces.' }
+    ],
+    description: 'A coiling snake-like outsider with Reach and Wall Walker.',
+    habitat: 'Summoned from outer planes.'
+  },
+  {
+    id: 'pf_summon_attendant',
+    name: 'Summoned Attendant',
+    subtitle: 'Novice Summon Ally Servant',
+    sourcebook: 'Savage Pathfinder',
+    classification: 'Construct',
+    isWildCard: false,
+    size: 0,
+    scale: 'Normal',
+    pace: 6,
+    parry: 4,
+    toughness: 4,
+    armor: 0,
+    attributes: { agility: 'd4', smarts: 'd4', spirit: 'd4', strength: 'd4', vigor: 'd4' },
+    skills: [
+      { name: 'Athletics', die: 'd4' },
+      { name: 'Fighting', die: 'd4' },
+      { name: 'Notice', die: 'd4' },
+      { name: 'Shooting', die: 'd4' },
+      { name: 'Stealth', die: 'd6' }
+    ],
+    abilities: [
+      { name: 'Claws', effect: 'Str+d4.' },
+      { name: 'Construct', effect: '+2 recover from Shaken; ignore 1 Wound penalty; doesn’t breathe; immune to poison and disease.' },
+      { name: 'Fearless', effect: 'Immune to Fear and Intimidation.' }
+    ],
+    description: 'Conjured magical construct summoned with 1 PP via summon ally (APG p. 95).',
+    habitat: 'Conjured on demand.'
+  },
+  {
+    id: 'pf_summon_bodyguard',
+    name: 'Summoned Bodyguard',
+    subtitle: 'Seasoned Summon Ally Servant',
+    sourcebook: 'Savage Pathfinder',
+    classification: 'Construct',
+    isWildCard: false,
+    size: 0,
+    scale: 'Normal',
+    pace: 6,
+    parry: 6,
+    toughness: 7,
+    armor: 2,
+    attributes: { agility: 'd6', smarts: 'd4', spirit: 'd6', strength: 'd8', vigor: 'd6' },
+    skills: [
+      { name: 'Athletics', die: 'd6' },
+      { name: 'Fighting', die: 'd8' },
+      { name: 'Intimidation', die: 'd6' },
+      { name: 'Notice', die: 'd4' },
+      { name: 'Shooting', die: 'd6' },
+      { name: 'Stealth', die: 'd4' }
+    ],
+    abilities: [
+      { name: 'Edge: First Strike', effect: 'May make a free Fighting attack once per round when a foe moves into Reach.' },
+      { name: 'Armor +2', effect: 'Hardened construct skin.' },
+      { name: 'Construct', effect: '+2 recover from Shaken; ignore 1 Wound penalty; immune to poison and disease.' },
+      { name: 'Fearless', effect: 'Immune to Fear and Intimidation.' }
+    ],
+    gear: ['Melee weapon (Str+d6)'],
+    description: 'Armored magical defender summoned for 3 PP via summon ally (APG p. 95).',
+    habitat: 'Conjured on demand.'
   }
 ];

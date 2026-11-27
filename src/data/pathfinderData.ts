@@ -12,6 +12,44 @@ import {
   SwadeCharacter,
   WeaponItem
 } from '../types/swade';
+import {
+  PF_APG_ALCHEMIST_FEATURES,
+  PF_APG_ALTERNATE_ANCESTRIES,
+  PF_APG_ANCESTRIES,
+  PF_APG_ARCANE_BACKGROUNDS,
+  PF_APG_ARTIFACTS,
+  PF_APG_CAVALIER_ORDERS,
+  PF_APG_COMMON_NAMES,
+  PF_APG_EDGES,
+  PF_APG_EIDOLON_EVOLUTIONS,
+  PF_APG_ENCHANTMENTS,
+  PF_APG_GEAR_CATALOG,
+  PF_APG_HINDRANCES,
+  PF_APG_INTELLIGENT_ITEMS,
+  PF_APG_MAGIC_ITEMS,
+  PF_APG_ORACLE_CURSES,
+  PF_APG_ORACLE_MYSTERIES,
+  PF_APG_POWERS,
+  PF_APG_RULES_UPDATES,
+  PF_APG_SAMPLE_CHARACTERS,
+  PF_APG_WEAPONS_CATALOG,
+  PF_APG_WITCH_HEXES
+} from './pathfinderApgData';
+
+export {
+  PF_APG_ALCHEMIST_FEATURES,
+  PF_APG_ALTERNATE_ANCESTRIES,
+  PF_APG_CAVALIER_ORDERS,
+  PF_APG_COMMON_NAMES,
+  PF_APG_EIDOLON_EVOLUTIONS,
+  PF_APG_ENCHANTMENTS,
+  PF_APG_INTELLIGENT_ITEMS,
+  PF_APG_MAGIC_ITEMS,
+  PF_APG_ORACLE_CURSES,
+  PF_APG_ORACLE_MYSTERIES,
+  PF_APG_RULES_UPDATES,
+  PF_APG_WITCH_HEXES
+};
 
 export const PF_ANCESTRIES: AncestryDef[] = [
   {
@@ -121,7 +159,8 @@ export const PF_ANCESTRIES: AncestryDef[] = [
     traits: [
       { name: 'Adaptability', description: 'Start with one free Edge (must meet requirements) and a d6 in any one Attribute instead of d4 (does not raise max).' }
     ]
-  }
+  },
+  ...PF_APG_ANCESTRIES
 ];
 
 export const PF_HINDRANCES: HindranceDef[] = [
@@ -140,7 +179,8 @@ export const PF_HINDRANCES: HindranceDef[] = [
     summary: '-2 to Fear checks and resisting Intimidation.',
     effect: '-2 Fear checks & resisting Intimidation',
     source: 'pathfinder'
-  }
+  },
+  ...PF_APG_HINDRANCES
 ];
 
 export const PF_EDGES: EdgeDef[] = [
@@ -1418,7 +1458,8 @@ export const PF_EDGES: EdgeDef[] = [
     parryBonus: 1,
     summary: 'Increase Parry by an additional +1 and Fighting bonus damage die becomes d10.',
     source: 'pathfinder'
-  }
+  },
+  ...PF_APG_EDGES
 ];
 
 export const PF_ARCANE_BACKGROUNDS: ArcaneBackgroundDef[] = [
@@ -1521,7 +1562,8 @@ export const PF_ARCANE_BACKGROUNDS: ArcaneBackgroundDef[] = [
     startingPowerPoints: 10,
     summary: 'Dedicated 10 PP for Red Mantis III to invoke disguise (self), intangibility (self), mind wipe, and teleport (self) as limited free actions.',
     source: 'pathfinder'
-  }
+  },
+  ...PF_APG_ARCANE_BACKGROUNDS
 ];
 
 export const PF_POWERS: PowerDef[] = [
@@ -1539,7 +1581,8 @@ export const PF_POWERS: PowerDef[] = [
   { id: 'pf_scrying', name: 'Scrying', rankRequired: 'Seasoned', powerPoints: '3', range: 'Self', duration: '5', summary: 'Caster sees and hears a distant target and its immediate surroundings remotely.', source: 'pathfinder' },
   { id: 'pf_shape_change', name: 'Shape Change', rankRequired: 'Novice', powerPoints: 'Special', range: 'Self', duration: '5', summary: 'Caster transforms into an animal or creature based on Rank and PP spent.', source: 'pathfinder' },
   { id: 'pf_time_stop', name: 'Time Stop', rankRequired: 'Heroic', powerPoints: '8', range: 'Smarts', duration: 'Instant', summary: 'Briefly halts time so the caster takes an additional turn (4 actions with a raise).', source: 'pathfinder' },
-  { id: 'pf_wish', name: 'Wish', rankRequired: 'Legendary', powerPoints: '20', range: 'Smarts', duration: 'Instant', summary: 'Alters reality to grant an edge, raise a trait, restore fate, gain wealth, or rewind time.', source: 'pathfinder' }
+  { id: 'pf_wish', name: 'Wish', rankRequired: 'Legendary', powerPoints: '20', range: 'Smarts', duration: 'Instant', summary: 'Alters reality to grant an edge, raise a trait, restore fate, gain wealth, or rewind time.', source: 'pathfinder' },
+  ...PF_APG_POWERS
 ];
 
 export const PF_WEAPONS_CATALOG: Omit<WeaponItem, 'id' | 'equipped'>[] = [
@@ -1555,14 +1598,14 @@ export const PF_WEAPONS_CATALOG: Omit<WeaponItem, 'id' | 'equipped'>[] = [
   { name: 'Falchion (PF)', category: 'Melee', damage: 'Str+d8', ap: 1, range: 'Melee', rof: 1, minStr: 8, weight: 8, cost: 75, notes: 'AP 1, +1 damage if used Two Hands', source: 'pathfinder' },
   { name: 'Glaive (PF)', category: 'Melee', damage: 'Str+d8', ap: 0, range: 'Melee', rof: 1, minStr: 8, weight: 10, cost: 8, notes: 'Reach 1, Two Hands', source: 'pathfinder' },
   { name: 'Guisarme (PF)', category: 'Melee', damage: 'Str+d6', ap: 1, range: 'Melee', rof: 1, minStr: 6, weight: 12, cost: 9, notes: 'AP 1, Reach 1, Two Hands', source: 'pathfinder' },
-  { name: 'Halberd (PF)', category: 'Melee', damage: 'Str+d8', ap: 1, range: 'Melee', rof: 1, minStr: 8, weight: 12, cost: 10, notes: 'AP 1, Reach 1, Two Hands', source: 'pathfinder' },
+  { name: 'Halberd (PF)', category: 'Melee', damage: 'Str+d8', ap: 1, range: 'Melee', rof: 1, minStr: 8, weight: 12, cost: 10, notes: 'AP 1, Brace, Reach 1, Two Hands', source: 'pathfinder' },
   { name: 'Katana (PF)', category: 'Melee', damage: 'Str+d6+1', ap: 0, range: 'Melee', rof: 1, minStr: 6, weight: 3, cost: 50, notes: 'Two Hands', source: 'pathfinder' },
   { name: 'Lance (PF)', category: 'Melee', damage: 'Str+d8', ap: 0, range: 'Melee', rof: 1, minStr: 8, weight: 10, cost: 10, notes: 'AP 2 when charging, Reach 2, mounted only', source: 'pathfinder' },
   { name: 'Mace, Light (PF)', category: 'Melee', damage: 'Str+d6', ap: 0, range: 'Melee', rof: 1, minStr: 6, weight: 4, cost: 5, source: 'pathfinder' },
   { name: 'Mace, Heavy (PF)', category: 'Melee', damage: 'Str+d8', ap: 1, range: 'Melee', rof: 1, minStr: 8, weight: 8, cost: 12, notes: 'AP 1', source: 'pathfinder' },
   { name: 'Morningstar (PF)', category: 'Melee', damage: 'Str+d6', ap: 0, range: 'Melee', rof: 1, minStr: 6, weight: 6, cost: 8, source: 'pathfinder' },
   { name: 'Maul (PF)', category: 'Melee', damage: 'Str+d10', ap: 2, range: 'Melee', rof: 1, minStr: 10, weight: 10, cost: 12, notes: 'AP 2, Two Hands, +2 damage to break objects', source: 'pathfinder' },
-  { name: 'Pike (PF)', category: 'Melee', damage: 'Str+d8', ap: 0, range: 'Melee', rof: 1, minStr: 8, weight: 18, cost: 20, notes: 'AP 1 when set, Reach 2, Two Hands', source: 'pathfinder' },
+  { name: 'Pike (PF)', category: 'Melee', damage: 'Str+d8', ap: 0, range: 'Melee', rof: 1, minStr: 8, weight: 18, cost: 20, notes: 'AP 1 when set, Brace, Reach 2, Two Hands', source: 'pathfinder' },
   { name: 'Rapier (PF)', category: 'Melee', damage: 'Str+d4', ap: 0, range: 'Melee', rof: 1, minStr: 4, parryMod: 1, weight: 2, cost: 20, notes: 'Parry +1', source: 'pathfinder' },
   { name: 'Ranseur (PF)', category: 'Melee', damage: 'Str+d6', ap: 1, range: 'Melee', rof: 1, minStr: 6, weight: 12, cost: 10, notes: 'AP 1, Reach 1', source: 'pathfinder' },
   { name: 'Sap (PF)', category: 'Melee', damage: 'Str+d4', ap: 0, range: 'Melee', rof: 1, minStr: 4, weight: 1, cost: 2, notes: 'Nonlethal damage', source: 'pathfinder' },
@@ -1570,7 +1613,7 @@ export const PF_WEAPONS_CATALOG: Omit<WeaponItem, 'id' | 'equipped'>[] = [
   { name: 'Scythe (PF)', category: 'Melee', damage: 'Str+d6', ap: 0, range: 'Melee', rof: 1, minStr: 6, weight: 10, cost: 18, notes: 'Two Hands', source: 'pathfinder' },
   { name: 'Sickle (PF)', category: 'Melee', damage: 'Str+d4', ap: 0, range: 'Melee', rof: 1, minStr: 4, weight: 2, cost: 3, source: 'pathfinder' },
   { name: 'Spear, Short (PF)', category: 'Melee', damage: 'Str+d6', ap: 0, range: '4/8/16', rof: 1, minStr: 6, weight: 3, cost: 1, notes: 'One-handed, can be thrown', source: 'pathfinder' },
-  { name: 'Spear (PF)', category: 'Melee', damage: 'Str+d6', ap: 0, range: '3/6/12', rof: 1, minStr: 6, parryMod: 1, weight: 6, cost: 2, notes: 'Reach 1, Parry +1 if used Two Hands', source: 'pathfinder' },
+  { name: 'Spear (PF)', category: 'Melee', damage: 'Str+d6', ap: 0, range: '3/6/12', rof: 1, minStr: 6, parryMod: 1, weight: 6, cost: 2, notes: 'Brace, Reach 1, Parry +1 if used Two Hands', source: 'pathfinder' },
   { name: 'Spiked Chain (PF)', category: 'Melee', damage: 'Str+d6', ap: 1, range: 'Melee', rof: 1, minStr: 6, weight: 6, cost: 8, notes: 'AP 1, ignores shield bonus, Two Hands', source: 'pathfinder' },
   { name: 'Staff / Quarterstaff (PF)', category: 'Melee', damage: 'Str+d4', ap: 0, range: 'Melee', rof: 1, minStr: 4, parryMod: 1, weight: 4, cost: 0, notes: 'Parry +1, Reach 1, Two Hands', source: 'pathfinder' },
   { name: 'Starknife (PF)', category: 'Melee', damage: 'Str+d4', ap: 0, range: '3/6/12', rof: 1, minStr: 4, parryMod: 1, weight: 3, cost: 28, notes: 'Parry +1, can be thrown', source: 'pathfinder' },
@@ -1578,7 +1621,7 @@ export const PF_WEAPONS_CATALOG: Omit<WeaponItem, 'id' | 'equipped'>[] = [
   { name: 'Sword, Great (PF)', category: 'Melee', damage: 'Str+d10', ap: 2, range: 'Melee', rof: 1, minStr: 10, weight: 8, cost: 50, notes: 'AP 2, Two Hands', source: 'pathfinder' },
   { name: 'Sword, Long (PF)', category: 'Melee', damage: 'Str+d8', ap: 0, range: 'Melee', rof: 1, minStr: 8, weight: 4, cost: 15, source: 'pathfinder' },
   { name: 'Sword, Short (PF)', category: 'Melee', damage: 'Str+d6', ap: 0, range: 'Melee', rof: 1, minStr: 6, weight: 2, cost: 10, source: 'pathfinder' },
-  { name: 'Trident (PF)', category: 'Melee', damage: 'Str+d6', ap: 0, range: '3/6/12', rof: 1, minStr: 6, weight: 4, cost: 15, notes: 'Reach 1, can be thrown', source: 'pathfinder' },
+  { name: 'Trident (PF)', category: 'Melee', damage: 'Str+d6', ap: 0, range: '3/6/12', rof: 1, minStr: 6, weight: 4, cost: 15, notes: 'Brace, Reach 1, can be thrown', source: 'pathfinder' },
   { name: 'Warhammer (PF)', category: 'Melee', damage: 'Str+d6', ap: 1, range: 'Melee', rof: 1, minStr: 6, weight: 5, cost: 12, notes: 'AP 1', source: 'pathfinder' },
   { name: 'Whip (PF)', category: 'Melee', damage: 'Str+d4', ap: 0, range: 'Melee', rof: 1, minStr: 4, parryMod: -1, weight: 2, cost: 5, notes: 'Parry -1, Reach 2, Entangles on raise instead of bonus damage', source: 'pathfinder' },
   // Companion Melee Weapons (p. 87)
@@ -1610,7 +1653,8 @@ export const PF_WEAPONS_CATALOG: Omit<WeaponItem, 'id' | 'equipped'>[] = [
   { name: 'Holy Water (PF)', category: 'Thrown', damage: '2d4', ap: 0, range: '3/6/12', rof: 1, minStr: 4, weight: 1, cost: 25, notes: 'SBT vs Undead & Evil creatures (2d4 + 2d4-2 next turn)', source: 'pathfinder' },
   { name: 'Smokestick (PF)', category: 'Special', damage: '0', ap: 0, range: '3/6/12', rof: 1, minStr: 4, weight: 0.1, cost: 20, notes: 'MBT thick smoke (Dark illumination) for 1 min', source: 'pathfinder' },
   { name: 'Tanglefoot Bag (PF)', category: 'Thrown', damage: '0', ap: 0, range: '1/2/4', rof: 1, minStr: 4, weight: 4, cost: 50, notes: 'Size <=3 target Distracted 5 rds + Athletics or Entangled', source: 'pathfinder' },
-  { name: 'Thunderstone (PF)', category: 'Thrown', damage: '0', ap: 0, range: '3/6/12', rof: 1, minStr: 4, weight: 1, cost: 30, notes: 'MBT; Vigor roll or Shaken & deafened 1 hour', source: 'pathfinder' }
+  { name: 'Thunderstone (PF)', category: 'Thrown', damage: '0', ap: 0, range: '3/6/12', rof: 1, minStr: 4, weight: 1, cost: 30, notes: 'MBT; Vigor roll or Shaken & deafened 1 hour', source: 'pathfinder' },
+  ...PF_APG_WEAPONS_CATALOG
 ];
 
 export const PF_ARMOR_CATALOG: Omit<ArmorItem, 'id' | 'equipped'>[] = [
@@ -1672,7 +1716,8 @@ export const PF_GEAR_CATALOG: Omit<GearItem, 'id'>[] = [
   // Companion Magic Items (p. 88)
   { name: 'Mask of the Mantis', quantity: 1, weight: 1, cost: 6000, notes: '3 daily charges (free action, 5 rds): Darkvision 10", Detect Arcana, or free Notice reroll', source: 'pathfinder' },
   { name: 'Unguent of Revivification', quantity: 1, weight: 1, cost: 300, notes: 'Preserves corpse 5 days, or gives corporeal undead living appearance 5 days (-2 Occult to identify)', source: 'pathfinder' },
-  { name: 'Wayfinder', quantity: 1, weight: 1, cost: 500, notes: 'Light command word, free Survival (navigation) reroll, slots 1 Ioun Stone', source: 'pathfinder' }
+  { name: 'Wayfinder', quantity: 1, weight: 1, cost: 500, notes: 'Light command word, free Survival (navigation) reroll, slots 1 Ioun Stone', source: 'pathfinder' },
+  ...PF_APG_GEAR_CATALOG
 ];
 
 // ============================================================================
@@ -2026,7 +2071,8 @@ export const PF_ARTIFACTS: PfArtifactDef[] = [
   { tier: 'Major', name: 'Axe of the Dwarvish Lords', weight: '12 lbs', summary: 'Dwarven waraxe (Str+d6+1, AP 3, Accurate, Damaging, Throwing, Bane [goblin], Keen). Doubles dwarf darkvision; -2 Persuasion for non-dwarves; 1/week summon elder earth elemental for 20 rds.', destruction: 'Rusts away if used by a goblin to behead a dwarven king.' },
   { tier: 'Major', name: 'Codex of the Infinite Planes', weight: '300 lbs', summary: 'Opening deals 10d6 dmg (Evade half; annihilation if Incap). Study daily (Occult -4) to learn banish, blast, intangibility, mind wipe, teleport (Gate), summon planar ally, planar binding, planar travel; failure triggers Catastrophe.', destruction: 'Tear out one page and leave it on every plane in existence (triggers a Catastrophe).' },
   { tier: 'Major', name: 'Orb of Dragonkind', weight: '5 lbs', summary: '10 orbs keyed to chromatic/metallic dragons: dominate matching dragons within 600 ft (Spirit -4), inherit dragon Armor & breath immunity, 3/day breath weapon, sense dragons within 10/100 mi, plus unique power per color (Black: Major fly; Blue: Major speed/Quickness; Brass: Major Greater Teleport; Bronze: Minor scrying; Copper: Major puppet; Gold: any orb power 1/day + puppet orb-holders; Green: spectral touch-hand; Red: Minor wall of fire; Silver: Major healing; White: Major cold env. protection).', destruction: 'Caught in the breath weapon of a dragon blood-relative to the dragon trapped within (releases breath in 15" radius).' },
-  { tier: 'Major', name: 'The Shadowstaff', weight: '1 lb', summary: '+2 Toughness and Evasion (-2 all Traits in bright sunlight or pitch dark); 3/day summon 3 shadows, Shadow Form (major intangibility), Shadow Bolt (cold dmg); 1/month summon a greater nightshade shadow.', destruction: 'Exposed to true sunlight continuously for 24 hours.' }
+  { tier: 'Major', name: 'The Shadowstaff', weight: '1 lb', summary: '+2 Toughness and Evasion (-2 all Traits in bright sunlight or pitch dark); 3/day summon 3 shadows, Shadow Form (major intangibility), Shadow Bolt (cold dmg); 1/month summon a greater nightshade shadow.', destruction: 'Exposed to true sunlight continuously for 24 hours.' },
+  ...PF_APG_ARTIFACTS
 ];
 
 // ============================================================================
@@ -2035,6 +2081,7 @@ export const PF_ARTIFACTS: PfArtifactDef[] = [
 
 const PF_BASE_SKILLS: Array<{ id: string; name: string; linkedAttribute: AttributeId; isCore: boolean }> = [
   { id: 'academics', name: 'Academics', linkedAttribute: 'smarts', isCore: false },
+  { id: 'alchemy', name: 'Alchemy', linkedAttribute: 'smarts', isCore: false },
   { id: 'athletics', name: 'Athletics', linkedAttribute: 'agility', isCore: true },
   { id: 'battle', name: 'Battle', linkedAttribute: 'smarts', isCore: false },
   { id: 'boating', name: 'Boating', linkedAttribute: 'agility', isCore: false },
@@ -2275,5 +2322,6 @@ export const PF_SAMPLE_CHARACTERS: SwadeCharacter[] = [
     avatarEmoji: '',
     avatarImage: '',
     updatedAt: Date.now() - 1200000
-  }
+  },
+  ...PF_APG_SAMPLE_CHARACTERS
 ];

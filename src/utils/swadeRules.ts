@@ -243,6 +243,9 @@ export function calculateDerivedStats(character: SwadeCharacter): DerivedStatsSu
   // Pace & Running Die
   let pace = 6 + (ancestry.paceMod || 0) + character.customPaceMod;
   let runningDie: DieSides = (ancestry.paceMod && ancestry.paceMod < 0) ? 4 : 6;
+  if (character.ancestryId === 'pf_catfolk') {
+    runningDie = stepDieUp(runningDie);
+  }
 
   activeEdgeDefs.forEach((ed) => {
     if (ed.paceBonus) pace += ed.paceBonus;
@@ -499,6 +502,10 @@ export function checkEdgeRequirements(edge: EdgeDef, character: SwadeCharacter):
     'pf_druid',
     'pf_sorcerer',
     'pf_wizard',
+    'pf_alchemist',
+    'pf_oracle',
+    'pf_summoner',
+    'pf_witch',
     'pf_mystic_powers_monk',
     'pf_mystic_powers_paladin',
     'pf_mystic_powers_ranger',
@@ -794,6 +801,14 @@ export function calculateSkillRollModifiers(
     if (hasEdge('woodsman')) {
       totalMod += 2;
       breakdown.push('Woodsman: +2');
+    }
+  }
+
+  // --- Riding ---
+  if (lowerId === 'riding' || lowerName.includes('riding')) {
+    if (getHindrance('pf_warded_against_nature')) {
+      totalMod -= 2;
+      breakdown.push('Warded Against Nature: -2');
     }
   }
 

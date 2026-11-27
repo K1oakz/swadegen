@@ -1,5 +1,17 @@
 import React, { useMemo, useState } from 'react';
 import {
+  PF_APG_ALCHEMIST_FEATURES,
+  PF_APG_ALTERNATE_ANCESTRIES,
+  PF_APG_CAVALIER_ORDERS,
+  PF_APG_COMMON_NAMES,
+  PF_APG_EIDOLON_EVOLUTIONS,
+  PF_APG_ENCHANTMENTS,
+  PF_APG_INTELLIGENT_ITEMS,
+  PF_APG_MAGIC_ITEMS,
+  PF_APG_ORACLE_CURSES,
+  PF_APG_ORACLE_MYSTERIES,
+  PF_APG_RULES_UPDATES,
+  PF_APG_WITCH_HEXES,
   PF_ARTIFACTS,
   PF_BLOODLINES,
   PF_COMPANION_MAGIC_ITEMS,
@@ -11,6 +23,7 @@ import {
   PF_OTHER_DEMON_LORDS,
   PF_OUTSIDER_DEMIGODS,
   PF_PLANES,
+  PF_POWERS,
   PF_SPECIAL_MATERIALS
 } from '../data/pathfinderData';
 
@@ -19,8 +32,10 @@ interface PathfinderRulesModalProps {
 }
 
 export const PathfinderRulesModal: React.FC<PathfinderRulesModalProps> = ({ onClose }) => {
-  const [activeTab, setActiveTab] = useState<'deities' | 'bloodlines' | 'factions' | 'materials' | 'magic'>('deities');
+  const [activeTab, setActiveTab] = useState<'deities' | 'apg' | 'ancestries' | 'bloodlines' | 'factions' | 'materials' | 'magic'>('deities');
   const [deitySubTab, setDeitySubTab] = useState<'core' | 'other' | 'demigods' | 'domains'>('core');
+  const [apgSubTab, setApgSubTab] = useState<'alchemist' | 'cavalier' | 'oracle' | 'summoner' | 'witch' | 'rules'>('alchemist');
+  const [magicSubTab, setMagicSubTab] = useState<'rules' | 'apg_items' | 'companion' | 'artifacts' | 'intelligent'>('rules');
   const [search, setSearch] = useState('');
 
   const q = search.trim().toLowerCase();
@@ -95,6 +110,45 @@ export const PathfinderRulesModal: React.FC<PathfinderRulesModalProps> = ({ onCl
     );
   }, [q]);
 
+  const filteredAltAncestries = useMemo(() => {
+    if (!q) return PF_APG_ALTERNATE_ANCESTRIES;
+    return PF_APG_ALTERNATE_ANCESTRIES.filter(
+      (grp) =>
+        grp.ancestry.toLowerCase().includes(q) ||
+        grp.options.some(
+          (o) =>
+            o.name.toLowerCase().includes(q) ||
+            o.replaces.toLowerCase().includes(q) ||
+            o.effect.toLowerCase().includes(q)
+        )
+    );
+  }, [q]);
+
+  const filteredApgItems = useMemo(() => {
+    if (!q) return PF_APG_MAGIC_ITEMS;
+    return PF_APG_MAGIC_ITEMS.filter(
+      (item) =>
+        item.name.toLowerCase().includes(q) ||
+        item.category.toLowerCase().includes(q) ||
+        item.summary.toLowerCase().includes(q)
+    );
+  }, [q]);
+
+  const filteredArtifacts = useMemo(() => {
+    if (!q) return PF_ARTIFACTS;
+    return PF_ARTIFACTS.filter(
+      (art) =>
+        art.name.toLowerCase().includes(q) ||
+        art.tier.toLowerCase().includes(q) ||
+        art.summary.toLowerCase().includes(q)
+    );
+  }, [q]);
+
+  const complexCantrips = useMemo(
+    () => PF_POWERS.filter((p) => p.id.startsWith('pf_cantrip_')),
+    []
+  );
+
   const alignmentPill = (al: string) => {
     const isGood = al.startsWith('Good');
     const isEvil = al.startsWith('Evil');
@@ -135,7 +189,7 @@ export const PathfinderRulesModal: React.FC<PathfinderRulesModalProps> = ({ onCl
       <div
         style={{
           width: '100%',
-          maxWidth: 960,
+          maxWidth: 980,
           maxHeight: '92vh',
           background: 'linear-gradient(180deg, #1b1410 0%, #0d0a08 100%)',
           border: '1.5px solid rgba(245, 158, 11, 0.45)',
@@ -159,7 +213,7 @@ export const PathfinderRulesModal: React.FC<PathfinderRulesModalProps> = ({ onCl
         >
           <div>
             <div style={{ fontSize: '0.72rem', fontWeight: 900, color: '#fbbf24', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-              PATHFINDER FOR SAVAGE WORLDS (CORE + COMPANION)
+              PATHFINDER FOR SAVAGE WORLDS (CORE + COMPANION + APG)
             </div>
             <h2 style={{ fontSize: '1.35rem', fontWeight: 950, color: '#fff', margin: '2px 0 0' }}>
               Savage Pathfinder Rules &amp; Golarion Reference
@@ -194,6 +248,8 @@ export const PathfinderRulesModal: React.FC<PathfinderRulesModalProps> = ({ onCl
         >
           {[
             { id: 'deities', label: 'Deities, Demigods & Domains' },
+            { id: 'apg', label: 'APG Classes & Rules' },
+            { id: 'ancestries', label: 'Ancestry Options' },
             { id: 'bloodlines', label: 'Sorcerer Bloodlines' },
             { id: 'factions', label: 'Factions & Planes' },
             { id: 'materials', label: 'Special Materials' },
@@ -381,6 +437,232 @@ export const PathfinderRulesModal: React.FC<PathfinderRulesModalProps> = ({ onCl
             </div>
           )}
 
+          {activeTab === 'apg' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {[
+                  { id: 'alchemist', label: 'Alchemist' },
+                  { id: 'cavalier', label: 'Cavalier Orders & Mount' },
+                  { id: 'oracle', label: 'Oracle Curses & Mysteries' },
+                  { id: 'summoner', label: 'Summoner Eidolons' },
+                  { id: 'witch', label: 'Witch Hexes' },
+                  { id: 'rules', label: 'APG Rules & Complex Cantrips' }
+                ].map((sub) => (
+                  <button
+                    key={sub.id}
+                    onClick={() => setApgSubTab(sub.id as typeof apgSubTab)}
+                    style={{
+                      padding: '6px 11px',
+                      borderRadius: 8,
+                      fontSize: '0.76rem',
+                      fontWeight: 800,
+                      background: apgSubTab === sub.id ? 'rgba(245, 158, 11, 0.25)' : 'rgba(0,0,0,0.35)',
+                      color: apgSubTab === sub.id ? '#fbbf24' : '#cbd5e1',
+                      border: apgSubTab === sub.id ? '1px solid #f59e0b' : '1px solid #292018',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {sub.label}
+                  </button>
+                ))}
+              </div>
+
+              {apgSubTab === 'alchemist' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 12, padding: 14 }}>
+                    <h3 style={{ color: '#fbbf24', margin: '0 0 8px 0', fontSize: '1rem' }}>Alchemist Core Mechanics</h3>
+                    <ul style={{ margin: 0, paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 6, fontSize: '0.82rem' }}>
+                      {PF_APG_ALCHEMIST_FEATURES.bombsAndMutagens.map((line, i) => (
+                        <li key={i}>{line}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(265px, 1fr))', gap: 10 }}>
+                    {PF_APG_ALCHEMIST_FEATURES.discoveries.map((d) => (
+                      <div key={d.name} style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 12, padding: 12 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 6 }}>
+                          <strong style={{ color: '#fff', fontSize: '0.88rem' }}>{d.name}</strong>
+                          <span style={{ fontSize: '0.66rem', fontWeight: 800, padding: '2px 6px', borderRadius: 6, background: 'rgba(245, 158, 11, 0.16)', color: '#fbbf24' }}>
+                            {d.tier}
+                          </span>
+                        </div>
+                        <p style={{ margin: '5px 0 0', fontSize: '0.79rem', color: '#cbd5e1' }}>{d.effect}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {apgSubTab === 'cavalier' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 12, padding: 12 }}>
+                    <strong style={{ color: '#fbbf24' }}>Cavalier Mount Progression &amp; Bond:</strong>{' '}
+                    <span style={{ fontSize: '0.82rem' }}>
+                      Novice: Hardy • Seasoned: Resilient • Veteran: Very Resilient • Heroic: Wild Card. When mount takes Wounds, spend a Benny to Soak using Riding skill.
+                    </span>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 10 }}>
+                    {PF_APG_CAVALIER_ORDERS.map((ord) => (
+                      <div key={ord.name} style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 12, padding: 12 }}>
+                        <div style={{ fontWeight: 900, color: '#fbbf24', fontSize: '0.92rem', marginBottom: 4 }}>{ord.name}</div>
+                        <div style={{ fontSize: '0.78rem', marginBottom: 4 }}><strong>Edicts:</strong> {ord.edicts}</div>
+                        <div style={{ fontSize: '0.78rem', color: '#fde68a', marginBottom: 4 }}><strong>Challenge:</strong> {ord.challenge}</div>
+                        <div style={{ fontSize: '0.78rem', color: '#93c5fd' }}><strong>Order Ability:</strong> {ord.orderAbility}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {apgSubTab === 'oracle' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  <div>
+                    <h4 style={{ color: '#fca5a5', margin: '0 0 8px 0', fontSize: '0.95rem' }}>Oracle Curses (Choose 1 at Novice)</h4>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(265px, 1fr))', gap: 8 }}>
+                      {PF_APG_ORACLE_CURSES.map((c) => (
+                        <div key={c.name} style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 10, padding: 10 }}>
+                          <strong style={{ color: '#fca5a5' }}>{c.name}</strong>
+                          <p style={{ margin: '4px 0 0', fontSize: '0.78rem' }}>{c.summary}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <h4 style={{ color: '#fbbf24', margin: '0 0 8px 0', fontSize: '0.95rem' }}>Oracle Mysteries</h4>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 10 }}>
+                      {PF_APG_ORACLE_MYSTERIES.map((m) => (
+                        <div key={m.name} style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 12, padding: 12 }}>
+                          <div style={{ fontWeight: 900, color: '#fbbf24', fontSize: '0.92rem' }}>{m.name}</div>
+                          <div style={{ fontSize: '0.73rem', color: '#94a3b8', marginTop: 2 }}><strong>Deities:</strong> {m.deities}</div>
+                          <div style={{ fontSize: '0.76rem', color: '#e9d5ff', marginTop: 4 }}><strong>Available Powers:</strong> {m.powers.join(', ')}</div>
+                          <div style={{ fontSize: '0.77rem', color: '#fde68a', marginTop: 4 }}><strong>Greater Revelation:</strong> {m.greaterRevelation}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {apgSubTab === 'summoner' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 12, padding: 12 }}>
+                    <h4 style={{ color: '#fbbf24', margin: '0 0 6px 0' }}>Eidolon Base Forms (Start with 3 Evolution Points)</h4>
+                    <ul style={{ margin: 0, paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 4, fontSize: '0.8rem' }}>
+                      {PF_APG_EIDOLON_EVOLUTIONS.baseForms.map((bf, i) => (
+                        <li key={i}>{bf}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 8 }}>
+                    {PF_APG_EIDOLON_EVOLUTIONS.evolutions.map((ev) => (
+                      <div key={ev.name} style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 10, padding: 10 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 6 }}>
+                          <strong style={{ color: '#fff', fontSize: '0.84rem' }}>{ev.name}</strong>
+                          <span style={{ fontSize: '0.67rem', fontWeight: 800, padding: '2px 6px', borderRadius: 6, background: 'rgba(56, 189, 248, 0.16)', color: '#7dd3fc' }}>
+                            {ev.rank} • {ev.cost} pt
+                          </span>
+                        </div>
+                        <p style={{ margin: '4px 0 0', fontSize: '0.77rem', color: '#cbd5e1' }}>{ev.summary}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {apgSubTab === 'witch' && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(275px, 1fr))', gap: 10 }}>
+                  {PF_APG_WITCH_HEXES.map((hx) => (
+                    <div key={hx.name} style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 12, padding: 12 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 6 }}>
+                        <strong style={{ color: '#e9d5ff', fontSize: '0.88rem' }}>{hx.name}</strong>
+                        <span style={{ fontSize: '0.66rem', fontWeight: 800, padding: '2px 6px', borderRadius: 6, background: 'rgba(168, 85, 247, 0.2)', color: '#d8b4fe' }}>
+                          {hx.tier}
+                        </span>
+                      </div>
+                      <p style={{ margin: '5px 0 0', fontSize: '0.79rem', color: '#cbd5e1' }}>{hx.effect}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {apgSubTab === 'rules' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {PF_APG_RULES_UPDATES.map((ru) => (
+                      <div key={ru.title} style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 12, padding: 12 }}>
+                        <strong style={{ color: '#fbbf24' }}>{ru.title}</strong>
+                        <p style={{ margin: '4px 0 0', fontSize: '0.8rem' }}>{ru.summary}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 12, padding: 14 }}>
+                    <h4 style={{ color: '#93c5fd', margin: '0 0 8px 0' }}>Complex Cantrips (0 PP, 2 chosen with AB, +1 per New Powers)</h4>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: 8 }}>
+                      {complexCantrips.map((c) => (
+                        <div key={c.id} style={{ padding: 9, borderRadius: 8, background: 'rgba(255,255,255,0.03)', border: '1px solid #292018' }}>
+                          <strong style={{ color: '#fff', fontSize: '0.83rem' }}>{c.name}</strong>
+                          <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>Range: {c.range} • Duration: {c.duration}</div>
+                          <p style={{ margin: '4px 0 0', fontSize: '0.76rem' }}>{c.summary}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'ancestries' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+                <div>
+                  <h3 style={{ color: '#fbbf24', margin: 0, fontSize: '1.05rem' }}>Alternate Ancestral Abilities (APG Ch. 1)</h3>
+                  <p style={{ margin: '2px 0 0', fontSize: '0.79rem', color: '#94a3b8' }}>
+                    Swap ancestral traits for alternate heritages (no two chosen abilities may replace the same base trait).
+                  </p>
+                </div>
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Filter ancestry or ability..."
+                  style={{ minWidth: 220 }}
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 10 }}>
+                {filteredAltAncestries.map((grp) => (
+                  <div key={grp.ancestry} style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 12, padding: 12 }}>
+                    <div style={{ fontWeight: 900, color: '#fbbf24', fontSize: '0.94rem', marginBottom: 6 }}>{grp.ancestry}</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {grp.options.map((opt) => (
+                        <div key={opt.name} style={{ fontSize: '0.78rem', paddingTop: 6, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                          <div>
+                            <strong style={{ color: '#fff' }}>{opt.name}</strong>{' '}
+                            <span style={{ color: '#fca5a5', fontSize: '0.72rem' }}>(Replaces {opt.replaces})</span>
+                          </div>
+                          <div style={{ color: '#cbd5e1', marginTop: 2 }}>{opt.effect}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 12, padding: 14 }}>
+                <h4 style={{ color: '#fbbf24', margin: '0 0 8px 0' }}>New Ancestry Common Names (APG p. 32)</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: '0.79rem' }}>
+                  {PF_APG_COMMON_NAMES.map((row) => (
+                    <div key={row.ancestry}>
+                      <strong style={{ color: '#fff' }}>{row.ancestry}:</strong>{' '}
+                      <span style={{ color: '#93c5fd' }}>M:</span> {row.male} • <span style={{ color: '#f9a8d4' }}>F:</span> {row.female}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
           {activeTab === 'bloodlines' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <h3 style={{ color: '#fbbf24', margin: 0, fontSize: '1.1rem' }}>Sorcerer Bloodlines</h3>
@@ -519,90 +801,208 @@ export const PathfinderRulesModal: React.FC<PathfinderRulesModalProps> = ({ onCl
           )}
 
           {activeTab === 'magic' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 12, padding: 14 }}>
-                <h3 style={{ color: '#fbbf24', margin: '0 0 8px 0', fontSize: '1.05rem' }}>Using Magic Items</h3>
-                <ul style={{ margin: 0, paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 6, fontSize: '0.82rem' }}>
-                  {PF_MAGIC_ITEM_RULES.usage.map((rule, i) => (
-                    <li key={i}>{rule}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 12, padding: 14 }}>
-                <h3 style={{ color: '#fbbf24', margin: '0 0 8px 0', fontSize: '1.05rem' }}>Starting Wealth by Rank</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))', gap: 8 }}>
-                  {PF_MAGIC_ITEM_RULES.wealthByRank.map((row) => (
-                    <div key={row.rank} style={{ padding: 10, borderRadius: 8, background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.25)' }}>
-                      <div style={{ fontSize: '0.75rem', fontWeight: 900, color: '#fbbf24' }}>{row.rank}</div>
-                      <div style={{ fontSize: '0.84rem', fontWeight: 700, color: '#fff', marginTop: 2 }}>{row.wealth}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 12, padding: 14 }}>
-                <h3 style={{ color: '#fbbf24', margin: '0 0 10px 0', fontSize: '1.05rem' }}>Companion Magic Items</h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  {PF_COMPANION_MAGIC_ITEMS.map((item) => (
-                    <div key={item.name} style={{ padding: 11, borderRadius: 10, background: 'rgba(255,255,255,0.03)', border: '1px solid #292018' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
-                        <strong style={{ color: '#e9d5ff', fontSize: '0.92rem' }}>{item.name}</strong>
-                        <span style={{ fontSize: '0.75rem', color: '#4ade80', fontWeight: 700 }}>
-                          {item.cost} • {item.weight} • Craft: {item.craft}
-                        </span>
-                      </div>
-                      <p style={{ margin: '5px 0 0', fontSize: '0.8rem', color: '#cbd5e1' }}>{item.summary}</p>
-                      {item.details && (
-                        <ul style={{ margin: '6px 0 0', paddingLeft: 18, fontSize: '0.77rem', color: '#fde68a' }}>
-                          {item.details.map((d, idx) => (
-                            <li key={idx}>{d}</li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                  {[
+                    { id: 'rules', label: 'Rules & Wealth' },
+                    { id: 'apg_items', label: `APG Enchantments & Items (${filteredApgItems.length})` },
+                    { id: 'companion', label: `Companion Items (${PF_COMPANION_MAGIC_ITEMS.length})` },
+                    { id: 'artifacts', label: `Artifacts (${filteredArtifacts.length})` },
+                    { id: 'intelligent', label: 'Intelligent Items' }
+                  ].map((sub) => (
+                    <button
+                      key={sub.id}
+                      onClick={() => setMagicSubTab(sub.id as typeof magicSubTab)}
+                      style={{
+                        padding: '6px 11px',
+                        borderRadius: 8,
+                        fontSize: '0.76rem',
+                        fontWeight: 800,
+                        background: magicSubTab === sub.id ? 'rgba(245, 158, 11, 0.25)' : 'rgba(0,0,0,0.35)',
+                        color: magicSubTab === sub.id ? '#fbbf24' : '#cbd5e1',
+                        border: magicSubTab === sub.id ? '1px solid #f59e0b' : '1px solid #292018',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {sub.label}
+                    </button>
                   ))}
                 </div>
+                {(magicSubTab === 'apg_items' || magicSubTab === 'artifacts') && (
+                  <input
+                    type="text"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Filter magic items or artifacts..."
+                    style={{ minWidth: 220 }}
+                  />
+                )}
               </div>
 
-              <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 12, padding: 14 }}>
-                <h3 style={{ color: '#fbbf24', margin: '0 0 10px 0', fontSize: '1.05rem' }}>Minor &amp; Major Artifacts</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 10 }}>
-                  {PF_ARTIFACTS.map((art) => (
-                    <div key={art.name} style={{ padding: 11, borderRadius: 10, background: 'rgba(255,255,255,0.03)', border: '1px solid #292018' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-                        <strong style={{ color: '#fff', fontSize: '0.88rem' }}>{art.name}</strong>
-                        <span
-                          style={{
-                            fontSize: '0.66rem',
-                            fontWeight: 900,
-                            padding: '2px 7px',
-                            borderRadius: 6,
-                            background: art.tier === 'Major' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(168, 85, 247, 0.2)',
-                            color: art.tier === 'Major' ? '#fca5a5' : '#d8b4fe'
-                          }}
-                        >
-                          {art.tier} Artifact
-                        </span>
-                      </div>
-                      <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: 2 }}>Weight: {art.weight}</div>
-                      <p style={{ margin: '5px 0', fontSize: '0.78rem', color: '#cbd5e1' }}>{art.summary}</p>
-                      <div style={{ fontSize: '0.75rem', color: '#fca5a5' }}>
-                        <strong>Destruction:</strong> {art.destruction}
-                      </div>
+              {magicSubTab === 'rules' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 12, padding: 14 }}>
+                    <h3 style={{ color: '#fbbf24', margin: '0 0 8px 0', fontSize: '1.05rem' }}>Using Magic Items</h3>
+                    <ul style={{ margin: 0, paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 6, fontSize: '0.82rem' }}>
+                      {PF_MAGIC_ITEM_RULES.usage.map((rule, i) => (
+                        <li key={i}>{rule}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 12, padding: 14 }}>
+                    <h3 style={{ color: '#fbbf24', margin: '0 0 8px 0', fontSize: '1.05rem' }}>Starting Wealth by Rank</h3>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))', gap: 8 }}>
+                      {PF_MAGIC_ITEM_RULES.wealthByRank.map((row) => (
+                        <div key={row.rank} style={{ padding: 10, borderRadius: 8, background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.25)' }}>
+                          <div style={{ fontSize: '0.75rem', fontWeight: 900, color: '#fbbf24' }}>{row.rank}</div>
+                          <div style={{ fontSize: '0.84rem', fontWeight: 700, color: '#fff', marginTop: 2 }}>{row.wealth}</div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </div>
 
-              <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 12, padding: 14 }}>
-                <h3 style={{ color: '#fbbf24', margin: '0 0 8px 0', fontSize: '1.05rem' }}>Key Savage Pathfinder Setting Rules</h3>
-                <ul style={{ margin: 0, paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 6, fontSize: '0.82rem' }}>
-                  {PF_MAGIC_ITEM_RULES.settingDifferences.map((diff, i) => (
-                    <li key={i}>{diff}</li>
-                  ))}
-                </ul>
-              </div>
+                  <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 12, padding: 14 }}>
+                    <h3 style={{ color: '#fbbf24', margin: '0 0 8px 0', fontSize: '1.05rem' }}>Key Savage Pathfinder Setting Rules</h3>
+                    <ul style={{ margin: 0, paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 6, fontSize: '0.82rem' }}>
+                      {PF_MAGIC_ITEM_RULES.settingDifferences.map((diff, i) => (
+                        <li key={i}>{diff}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )}
+
+              {magicSubTab === 'apg_items' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 12, padding: 14 }}>
+                    <h4 style={{ color: '#fbbf24', margin: '0 0 8px 0' }}>APG Enchantment Qualities (5 pts max per item)</h4>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 8 }}>
+                      {PF_APG_ENCHANTMENTS.map((en) => (
+                        <div key={en.name} style={{ padding: 9, borderRadius: 8, background: 'rgba(255,255,255,0.03)', border: '1px solid #292018' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 6 }}>
+                            <strong style={{ color: '#fff', fontSize: '0.84rem' }}>{en.name} ({en.pts} pt)</strong>
+                            <span style={{ fontSize: '0.7rem', color: '#4ade80' }}>{en.cost}</span>
+                          </div>
+                          <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>{en.kind} • Craft: {en.craft}</div>
+                          <p style={{ margin: '4px 0 0', fontSize: '0.76rem' }}>{en.effect}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 10 }}>
+                    {filteredApgItems.map((item) => (
+                      <div key={item.name} style={{ padding: 11, borderRadius: 10, background: 'rgba(0,0,0,0.35)', border: '1px solid #292018' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 6 }}>
+                          <strong style={{ color: '#fff', fontSize: '0.88rem' }}>{item.name}</strong>
+                          <span style={{ fontSize: '0.65rem', fontWeight: 800, padding: '2px 6px', borderRadius: 6, background: item.category === 'Cursed Items' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(245, 158, 11, 0.16)', color: item.category === 'Cursed Items' ? '#fca5a5' : '#fbbf24' }}>
+                            {item.category}
+                          </span>
+                        </div>
+                        <div style={{ fontSize: '0.73rem', color: '#4ade80', marginTop: 2 }}>
+                          {item.price} • {item.weight} • Craft: {item.craft}
+                        </div>
+                        <p style={{ margin: '5px 0 0', fontSize: '0.78rem', color: '#cbd5e1' }}>{item.summary}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {magicSubTab === 'companion' && (
+                <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 12, padding: 14 }}>
+                  <h3 style={{ color: '#fbbf24', margin: '0 0 10px 0', fontSize: '1.05rem' }}>Companion Magic Items</h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {PF_COMPANION_MAGIC_ITEMS.map((item) => (
+                      <div key={item.name} style={{ padding: 11, borderRadius: 10, background: 'rgba(255,255,255,0.03)', border: '1px solid #292018' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+                          <strong style={{ color: '#e9d5ff', fontSize: '0.92rem' }}>{item.name}</strong>
+                          <span style={{ fontSize: '0.75rem', color: '#4ade80', fontWeight: 700 }}>
+                            {item.cost} • {item.weight} • Craft: {item.craft}
+                          </span>
+                        </div>
+                        <p style={{ margin: '5px 0 0', fontSize: '0.8rem', color: '#cbd5e1' }}>{item.summary}</p>
+                        {item.details && (
+                          <ul style={{ margin: '6px 0 0', paddingLeft: 18, fontSize: '0.77rem', color: '#fde68a' }}>
+                            {item.details.map((d, idx) => (
+                              <li key={idx}>{d}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {magicSubTab === 'artifacts' && (
+                <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 12, padding: 14 }}>
+                  <h3 style={{ color: '#fbbf24', margin: '0 0 10px 0', fontSize: '1.05rem' }}>Minor &amp; Major Artifacts (Core + Companion + APG)</h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 10 }}>
+                    {filteredArtifacts.map((art) => (
+                      <div key={art.name} style={{ padding: 11, borderRadius: 10, background: 'rgba(255,255,255,0.03)', border: '1px solid #292018' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+                          <strong style={{ color: '#fff', fontSize: '0.88rem' }}>{art.name}</strong>
+                          <span
+                            style={{
+                              fontSize: '0.66rem',
+                              fontWeight: 900,
+                              padding: '2px 7px',
+                              borderRadius: 6,
+                              background: art.tier === 'Major' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(168, 85, 247, 0.2)',
+                              color: art.tier === 'Major' ? '#fca5a5' : '#d8b4fe'
+                            }}
+                          >
+                            {art.tier} Artifact
+                          </span>
+                        </div>
+                        <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: 2 }}>Weight: {art.weight}</div>
+                        <p style={{ margin: '5px 0', fontSize: '0.78rem', color: '#cbd5e1' }}>{art.summary}</p>
+                        <div style={{ fontSize: '0.75rem', color: '#fca5a5' }}>
+                          <strong>Destruction:</strong> {art.destruction}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {magicSubTab === 'intelligent' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid #292018', borderRadius: 12, padding: 14 }}>
+                    <h3 style={{ color: '#fbbf24', margin: '0 0 6px 0', fontSize: '1rem' }}>Intelligent Items (APG pp. 125–130)</h3>
+                    <p style={{ margin: 0, fontSize: '0.82rem' }}>{PF_APG_INTELLIGENT_ITEMS.overview}</p>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 10 }}>
+                    <div style={{ background: 'rgba(0,0,0,0.35)', border: '1px solid #292018', borderRadius: 12, padding: 12 }}>
+                      <strong style={{ color: '#fbbf24', fontSize: '0.86rem' }}>Smarts &amp; Spirit</strong>
+                      {PF_APG_INTELLIGENT_ITEMS.attributesTable.map((r) => (
+                        <div key={r.die} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', borderTop: '1px solid #292018', padding: '4px 0' }}>
+                          <span>{r.die}</span><span>{r.price}</span><span style={{ color: '#93c5fd' }}>Ego {r.ego}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ background: 'rgba(0,0,0,0.35)', border: '1px solid #292018', borderRadius: 12, padding: 12 }}>
+                      <strong style={{ color: '#fbbf24', fontSize: '0.86rem' }}>Senses &amp; Communication</strong>
+                      {PF_APG_INTELLIGENT_ITEMS.sensesTable.map((r) => (
+                        <div key={r.ability} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', borderTop: '1px solid #292018', padding: '4px 0', gap: 6 }}>
+                          <span>{r.ability}</span><span>{r.price}</span><span style={{ color: '#93c5fd' }}>Ego {r.ego}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ background: 'rgba(0,0,0,0.35)', border: '1px solid #292018', borderRadius: 12, padding: 12 }}>
+                      <strong style={{ color: '#fbbf24', fontSize: '0.86rem' }}>Ego Personality Conflict Penalty</strong>
+                      {PF_APG_INTELLIGENT_ITEMS.egoModifierTable.map((r) => (
+                        <div key={r.ego} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', borderTop: '1px solid #292018', padding: '4px 0' }}>
+                          <span>Ego {r.ego}</span><span style={{ color: '#fca5a5' }}>Spirit {r.spiritMod}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

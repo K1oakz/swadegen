@@ -46,7 +46,7 @@ export const SWADE_SOURCE_BOOKS: SourceBook[] = [
     name: 'Pathfinder for Savage Worlds',
     abbr: 'Pathfinder',
     icon: 'PF',
-    description: 'Core Rules + Companion: Golarion ancestries, 11 Class Edge trees, 13 Prestige Edge paths (including Harrower, Hellknight & Red Mantis), Arcane Backgrounds, Powers, Gear, Deities, Factions, Planes, Artifacts & Bestiary.'
+    description: "Core Rules + Companion + Advanced Player's Guide: 12 ancestries, 17 Class Edge trees, 21 Prestige paths, Alchemy skill, Complex Cantrips, APG Gear/Magic Items/Artifacts, Iconic Paths & Bestiary."
   }
 ];
 
@@ -575,6 +575,7 @@ export const SWADE_ANCESTRIES: AncestryDef[] = [
 
 export const SWADE_SKILLS: SkillDef[] = [
   { id: 'academics', name: 'Academics', linkedAttribute: 'smarts', isCore: false, description: 'Liberal arts, history, literature, archeology, and humanities.' },
+  { id: 'alchemy', name: 'Alchemy', linkedAttribute: 'smarts', isCore: false, description: 'Arcane skill for the Alchemist Class Edge and crafting common alchemical items (Savage Pathfinder APG).' },
   { id: 'athletics', name: 'Athletics', linkedAttribute: 'agility', isCore: true, description: 'Climbing, jumping, swimming, throwing, catching, and grappling.' },
   { id: 'battle', name: 'Battle', linkedAttribute: 'smarts', isCore: false, description: 'Mass combat strategy, tactics, and military logistics.' },
   { id: 'boating', name: 'Boating', linkedAttribute: 'agility', isCore: false, description: 'Sailing, rowing, and piloting watercraft.' },

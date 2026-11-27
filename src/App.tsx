@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { DieSides, RollLogEntry, SwadeCharacter } from './types/swade';
-import { SAMPLE_CHARACTERS } from './data/swadeData';
+import { SAMPLE_CHARACTERS, SWADE_SKILLS } from './data/swadeData';
 import {
   createBlankCharacter,
   executeSwadeDamageRoll,
@@ -32,7 +32,24 @@ export const App: React.FC = () => {
       const raw = localStorage.getItem(STORAGE_KEY_ROSTER);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((char: SwadeCharacter) => {
+            const existingIds = new Set((char.skills || []).map((s) => s.skillId));
+            const missingSkills = SWADE_SKILLS.filter((sk) => !existingIds.has(sk.id)).map((sk) => ({
+              skillId: sk.id,
+              name: sk.name,
+              linkedAttribute: sk.linkedAttribute,
+              isCore: sk.isCore,
+              die: (sk.isCore ? 4 : 0) as DieSides | 0,
+              modifier: 0
+            }));
+            if (missingSkills.length === 0) return char;
+            const merged = [...(char.skills || []), ...missingSkills].sort((a, b) =>
+              a.name.localeCompare(b.name)
+            );
+            return { ...char, skills: merged };
+          });
+        }
       }
     } catch (e) {
       console.error('Failed loading SWADE characters from localStorage:', e);

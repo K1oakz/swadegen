@@ -13,6 +13,7 @@ import {
 } from '../types/swade';
 import {
   ATTRIBUTE_META,
+  DIE_STEPS,
   PF_GEAR_CATALOG,
   SWADE_ANCESTRIES,
   SWADE_ARCANE_BACKGROUNDS,
@@ -174,7 +175,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
     const newAnc = getAncestry(newAncestryId);
     const updatedAttrs = { ...character.attributes };
     (Object.keys(updatedAttrs) as AttributeId[]).forEach((attr) => {
-      const minDie: DieSides = newAnc.attributeBonuses?.[attr] ? 6 : 4;
+      const minDie: DieSides = DIE_STEPS[Math.min(4, newAnc.attributeBonuses?.[attr] || 0)];
       if (updatedAttrs[attr] < minDie) {
         updatedAttrs[attr] = minDie;
       }
@@ -1615,7 +1616,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
               const meta = ATTRIBUTE_META[attr];
               const die = character.attributes[attr];
               const mod = character.attributeModifiers[attr] || 0;
-              const minDie: DieSides = ancestry.attributeBonuses?.[attr] ? 6 : 4;
+              const minDie: DieSides = DIE_STEPS[Math.min(4, ancestry.attributeBonuses?.[attr] || 0)];
 
               return (
                 <div
@@ -1637,7 +1638,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
                     <div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         <span style={{ fontWeight: 900, fontSize: '1rem', color: '#fff' }}>{meta.name}</span>
-                        {minDie === 6 && (
+                        {minDie > 4 && (
                           <span
                             style={{
                               fontSize: '0.66rem',
@@ -1648,7 +1649,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
                               fontWeight: 800
                             }}
                           >
-                            {ancestry.name} Starts d6
+                            {ancestry.name} Starts d{minDie}
                           </span>
                         )}
                       </div>
@@ -2526,9 +2527,15 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
                           pf_druid: 'pf_druid',
                           pf_sorcerer: 'pf_sorcerer',
                           pf_wizard: 'pf_wizard',
+                          pf_alchemist: 'pf_alchemist',
+                          pf_oracle: 'pf_oracle',
+                          pf_summoner: 'pf_summoner',
+                          pf_witch: 'pf_witch',
                           pf_mystic_powers_monk: 'pf_mystic_monk',
                           pf_mystic_powers_paladin: 'pf_mystic_paladin',
                           pf_mystic_powers_ranger: 'pf_mystic_ranger',
+                          pf_mystic_powers_inquisitor: 'pf_mystic_inquisitor',
+                          pf_mystic_powers_rogue: 'pf_mystic_rogue',
                           pf_shadowdancer_iii: 'pf_mystic_shadowdancer',
                           pf_red_mantis_iii: 'pf_mystic_red_mantis'
                         };
