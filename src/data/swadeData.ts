@@ -46,7 +46,7 @@ export const SWADE_SOURCE_BOOKS: SourceBook[] = [
     name: 'Pathfinder for Savage Worlds',
     abbr: 'Pathfinder',
     icon: 'PF',
-    description: 'Golarion ancestries, 11 Class Edge trees, 10 Prestige Edge paths, Arcane Backgrounds, Powers, Armor, Weapons, Alchemical Gear, and Bestiary.'
+    description: 'Core Rules + Companion: Golarion ancestries, 11 Class Edge trees, 13 Prestige Edge paths (including Harrower, Hellknight & Red Mantis), Arcane Backgrounds, Powers, Gear, Deities, Factions, Planes, Artifacts & Bestiary.'
   }
 ];
 

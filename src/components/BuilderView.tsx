@@ -531,7 +531,7 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
                     cursor: 'pointer'
                   }}
                 >
-                  Open Savage Pathfinder Reference (Deities, Domains, Bloodlines &amp; Materials)
+                  Open Savage Pathfinder Reference (Deities, Domains, Bloodlines, Factions, Planes &amp; Artifacts)
                 </button>
               ) : (
                 <div />
@@ -2529,7 +2529,8 @@ export const BuilderView: React.FC<BuilderViewProps> = ({
                           pf_mystic_powers_monk: 'pf_mystic_monk',
                           pf_mystic_powers_paladin: 'pf_mystic_paladin',
                           pf_mystic_powers_ranger: 'pf_mystic_ranger',
-                          pf_shadowdancer_iii: 'pf_mystic_shadowdancer'
+                          pf_shadowdancer_iii: 'pf_mystic_shadowdancer',
+                          pf_red_mantis_iii: 'pf_mystic_red_mantis'
                         };
                         const mappedAbId = edgeToAbMap[ed.id];
                         if (mappedAbId && character.arcaneBackgroundId === 'none') {

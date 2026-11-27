@@ -734,6 +734,13 @@ export function calculateSkillRollModifiers(
       totalMod += 2;
       breakdown.push('Menacing: +2');
     }
+    if (
+      hasEdge('pf_hellknight') &&
+      character.armor.some((a) => a.equipped && a.name.toLowerCase().includes('hellknight'))
+    ) {
+      totalMod += 2;
+      breakdown.push('Hellknight Armor (Fearsomeness): +2');
+    }
     const tongueTied = getHindrance('tongue_tied');
     if (tongueTied) {
       totalMod -= 1;

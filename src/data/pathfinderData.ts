@@ -933,6 +933,102 @@ export const PF_EDGES: EdgeDef[] = [
     source: 'pathfinder'
   },
 
+  // Companion Prestige Edges (pp. 84–86)
+  {
+    id: 'pf_harrower',
+    name: 'Harrower',
+    category: 'Prestige',
+    rankRequired: 'Seasoned',
+    requirementsText: 'Seasoned, Occult d6+, Performance d6+, AB or Mystic Powers',
+    requiresArcane: true,
+    minSkills: { occult: 6, performance: 6 },
+    summary: 'Once per encounter (free action, 5 rds), gain Action Card suit bonus: Spades (+2 attacks vs chosen foe), Hearts (+2 Support), Diamonds (+2 Parry), Clubs (free Soak reroll).',
+    source: 'pathfinder'
+  },
+  {
+    id: 'pf_harrower_ii',
+    name: 'Harrower II',
+    category: 'Prestige',
+    rankRequired: 'Veteran',
+    requirementsText: 'Veteran, Harrower',
+    requiredEdges: ['pf_harrower'],
+    summary: 'Summon force harrow deck (Athletics throwing, 4/8/16, 2d6, AP 1); once/encounter 5-rd suit mod (Spades SBT 2d6, Hearts ignore 2 penalty on 1st attack, Diamonds AP 4, Clubs free damage reroll).',
+    source: 'pathfinder'
+  },
+  {
+    id: 'pf_harrower_iii',
+    name: 'Harrower III',
+    category: 'Prestige',
+    rankRequired: 'Heroic',
+    requirementsText: 'Heroic, Harrower',
+    requiredEdges: ['pf_harrower'],
+    summary: 'Before round 1 Action Cards are dealt, inspect top 5 cards, discard any, reorder the rest, and choose dealing order.',
+    source: 'pathfinder'
+  },
+
+  {
+    id: 'pf_hellknight',
+    name: 'Hellknight',
+    category: 'Prestige',
+    rankRequired: 'Seasoned',
+    requirementsText: 'Seasoned, Intimidation d8+, Notice d6+, Occult d8+, must slay a devil',
+    minSkills: { intimidation: 8, notice: 6, occult: 8 },
+    summary: 'Granted Hellknight Armor; while worn gain Fearsomeness (+2 Intimidation), Infernal Sight (ignore all Illumination penalties), and Vigilance (-4 acid/cold/fire damage).',
+    source: 'pathfinder'
+  },
+  {
+    id: 'pf_hellknight_ii',
+    name: 'Hellknight II',
+    category: 'Prestige',
+    rankRequired: 'Veteran',
+    requirementsText: 'Veteran, Hellknight',
+    requiredEdges: ['pf_hellknight'],
+    summary: 'Gain a faithful Very Resilient hellhound companion (resummoned for free on next Advance if slain).',
+    source: 'pathfinder'
+  },
+  {
+    id: 'pf_hellknight_iii',
+    name: 'Hellknight III',
+    category: 'Prestige',
+    rankRequired: 'Heroic',
+    requirementsText: 'Heroic, Hellknight II',
+    requiredEdges: ['pf_hellknight_ii'],
+    summary: 'Limited action to grant wielded weapon Elemental (fire), Vicious, or Brutal enchantment (within 100 ft); gain Immunity: Fire while wearing Hellknight armor.',
+    source: 'pathfinder'
+  },
+
+  {
+    id: 'pf_red_mantis',
+    name: 'Red Mantis',
+    category: 'Prestige',
+    rankRequired: 'Seasoned',
+    requirementsText: 'Seasoned, Intimidation d6+, Notice d6+, Stealth d8+, Trademark Weapon (sawtooth sabre), Two-Weapon Fighting',
+    minSkills: { intimidation: 6, notice: 6, stealth: 8 },
+    requiredEdges: ['trademark_weapon', 'pf_two_weapon_fighting'],
+    summary: 'Prayer Attack: once per encounter (limited action within 5"), Test target with Fighting vs Spirit; target is Stunned (Paralyzed with a raise).',
+    source: 'pathfinder'
+  },
+  {
+    id: 'pf_red_mantis_ii',
+    name: 'Red Mantis II',
+    category: 'Prestige',
+    rankRequired: 'Veteran',
+    requirementsText: 'Veteran, Red Mantis',
+    requiredEdges: ['pf_red_mantis'],
+    summary: 'Veil of red mist once/encounter (limited free action, 5 rds): free Soak roll whenever Wounded; if slain, may disintegrate leaving only gear.',
+    source: 'pathfinder'
+  },
+  {
+    id: 'pf_red_mantis_iii',
+    name: 'Red Mantis III',
+    category: 'Prestige',
+    rankRequired: 'Heroic',
+    requirementsText: 'Heroic, Red Mantis II',
+    requiredEdges: ['pf_red_mantis_ii'],
+    summary: 'Mystic Powers (Red Mantis): 10 dedicated PP to automatically cast disguise (self), intangibility (self), mind wipe, or teleport (self) as a limited free action.',
+    source: 'pathfinder'
+  },
+
   // =========================================================================
   // SAVAGE PATHFINDER-SPECIFIC & IMPROVED EDGES
   // =========================================================================
@@ -1415,6 +1511,16 @@ export const PF_ARCANE_BACKGROUNDS: ArcaneBackgroundDef[] = [
     startingPowerPoints: 10,
     summary: 'Dedicated 10 PP for Shadowdancer III to cast blast, illusion, summon ally (shade), and teleport (self).',
     source: 'pathfinder'
+  },
+  {
+    id: 'pf_mystic_red_mantis',
+    name: 'Mystic Powers (Red Mantis)',
+    arcaneSkillId: 'focus',
+    arcaneSkillName: 'Automatic / Red Mantis',
+    startingPowers: 4,
+    startingPowerPoints: 10,
+    summary: 'Dedicated 10 PP for Red Mantis III to invoke disguise (self), intangibility (self), mind wipe, and teleport (self) as limited free actions.',
+    source: 'pathfinder'
   }
 ];
 
@@ -1475,6 +1581,12 @@ export const PF_WEAPONS_CATALOG: Omit<WeaponItem, 'id' | 'equipped'>[] = [
   { name: 'Trident (PF)', category: 'Melee', damage: 'Str+d6', ap: 0, range: '3/6/12', rof: 1, minStr: 6, weight: 4, cost: 15, notes: 'Reach 1, can be thrown', source: 'pathfinder' },
   { name: 'Warhammer (PF)', category: 'Melee', damage: 'Str+d6', ap: 1, range: 'Melee', rof: 1, minStr: 6, weight: 5, cost: 12, notes: 'AP 1', source: 'pathfinder' },
   { name: 'Whip (PF)', category: 'Melee', damage: 'Str+d4', ap: 0, range: 'Melee', rof: 1, minStr: 4, parryMod: -1, weight: 2, cost: 5, notes: 'Parry -1, Reach 2, Entangles on raise instead of bonus damage', source: 'pathfinder' },
+  // Companion Melee Weapons (p. 87)
+  { name: 'Bladed Scarf (PF)', category: 'Melee', damage: 'Str+d4', ap: 1, range: 'Melee', rof: 1, minStr: 4, weight: 1, cost: 12, notes: 'AP 1, Two Hands; deals Str+d4 to grappled foes', source: 'pathfinder' },
+  { name: 'Kusarigama (PF)', category: 'Melee', damage: 'Str+d6', ap: 1, range: 'Melee', rof: 1, minStr: 6, weight: 3, cost: 12, notes: 'AP 1, Two Hands, Reach 1', source: 'pathfinder' },
+  { name: 'Ogre Hook (PF)', category: 'Melee', damage: 'Str+d10', ap: 2, range: 'Melee', rof: 1, minStr: 10, weight: 10, cost: 24, notes: 'AP 2, Two Hands, Rending Attack (bleeding on Size 1+)', source: 'pathfinder' },
+  { name: 'Sawtooth Sabre (PF)', category: 'Melee', damage: 'Str+d6', ap: 0, range: 'Melee', rof: 1, minStr: 6, weight: 4, cost: 35, notes: '-1 to Incapacitation rolls (Red Mantis signature blade)', source: 'pathfinder' },
+  { name: 'War Razor (PF)', category: 'Melee', damage: 'Str+d4', ap: 0, range: 'Melee', rof: 1, minStr: 4, weight: 3, cost: 25, notes: '+1 Stealth to conceal (folding blade)', source: 'pathfinder' },
 
   // Ranged & Thrown Weapons (p. 110)
   { name: 'Bolas (PF)', category: 'Thrown', damage: 'Str+d4', ap: 0, range: '3/6/12', rof: 1, minStr: 4, weight: 2, cost: 5, notes: 'Entangles on raise (Hardness 8)', source: 'pathfinder' },
@@ -1516,6 +1628,12 @@ export const PF_ARMOR_CATALOG: Omit<ArmorItem, 'id' | 'equipped'>[] = [
   { name: 'Plate Greaves (PF)', type: 'Armor', armorBonus: 4, parryBonus: 0, minStr: 10, weight: 10, cost: 500, notes: 'Heavy; covers legs', source: 'pathfinder' },
   { name: 'Heavy Plate Helm (PF)', type: 'Armor', armorBonus: 4, parryBonus: 0, minStr: 10, weight: 4, cost: 250, notes: 'Heavy; covers head', source: 'pathfinder' },
   { name: 'Heavy Plate Helm, Enclosed (PF)', type: 'Armor', armorBonus: 4, parryBonus: 0, minStr: 10, weight: 8, cost: 300, notes: 'Heavy; covers head, -1 vision Notice', source: 'pathfinder' },
+  // Companion Hellknight Armor (p. 87)
+  { name: 'Hellknight Armor Breastplate (PF)', type: 'Armor', armorBonus: 4, parryBonus: 0, minStr: 10, weight: 30, cost: 500, notes: 'Heavy; torso. Grants Hellknight Edge benefits when worn by a Hellknight', source: 'pathfinder' },
+  { name: 'Hellknight Armor Vambraces (PF)', type: 'Armor', armorBonus: 4, parryBonus: 0, minStr: 10, weight: 10, cost: 250, notes: 'Heavy; arms', source: 'pathfinder' },
+  { name: 'Hellknight Armor Greaves (PF)', type: 'Armor', armorBonus: 4, parryBonus: 0, minStr: 10, weight: 10, cost: 500, notes: 'Heavy; legs', source: 'pathfinder' },
+  { name: 'Hellknight Heavy Helm (PF)', type: 'Armor', armorBonus: 4, parryBonus: 0, minStr: 10, weight: 4, cost: 250, notes: 'Heavy; head', source: 'pathfinder' },
+  { name: 'Hellknight Heavy Helm, Enclosed (PF)', type: 'Armor', armorBonus: 4, parryBonus: 0, minStr: 10, weight: 8, cost: 300, notes: 'Heavy; head (-1 vision Notice unless Infernal Sight)', source: 'pathfinder' },
   // Barding
   { name: 'Leather Barding (Horse Armor)', type: 'Armor', armorBonus: 2, parryBonus: 0, minStr: 8, weight: 50, cost: 300, notes: 'Horse armor', source: 'pathfinder' },
   { name: 'Chain Barding (Horse Armor)', type: 'Armor', armorBonus: 3, parryBonus: 0, minStr: 10, weight: 110, cost: 500, notes: 'Horse armor', source: 'pathfinder' },
@@ -1550,7 +1668,11 @@ export const PF_GEAR_CATALOG: Omit<GearItem, 'id'>[] = [
   { name: 'Manacles', quantity: 1, weight: 2, cost: 15, source: 'pathfinder' },
   { name: 'Armor Spikes', quantity: 1, weight: 10, cost: 50, notes: '+1 damage when Crushing while Grappling', source: 'pathfinder' },
   { name: 'Shield Spikes', quantity: 1, weight: 5, cost: 20, notes: '+1 damage when bashing with shield', source: 'pathfinder' },
-  { name: 'Gauntlet, Locked', quantity: 1, weight: 5, cost: 8, notes: '+1 Strength vs Disarm', source: 'pathfinder' }
+  { name: 'Gauntlet, Locked', quantity: 1, weight: 5, cost: 8, notes: '+1 Strength vs Disarm', source: 'pathfinder' },
+  // Companion Magic Items (p. 88)
+  { name: 'Mask of the Mantis', quantity: 1, weight: 1, cost: 6000, notes: '3 daily charges (free action, 5 rds): Darkvision 10", Detect Arcana, or free Notice reroll', source: 'pathfinder' },
+  { name: 'Unguent of Revivification', quantity: 1, weight: 1, cost: 300, notes: 'Preserves corpse 5 days, or gives corporeal undead living appearance 5 days (-2 Occult to identify)', source: 'pathfinder' },
+  { name: 'Wayfinder', quantity: 1, weight: 1, cost: 500, notes: 'Light command word, free Survival (navigation) reroll, slots 1 Ioun Stone', source: 'pathfinder' }
 ];
 
 // ============================================================================
@@ -1669,6 +1791,243 @@ export const PF_MAGIC_ITEM_RULES = {
     'Shields: Protect against half of attackers (rounded up) on the same Action Card unless flanked by allies or in a superior position.'
   ]
 };
+
+// ============================================================================
+// COMPANION REFERENCE DATA (OTHER DEITIES, DEMIGODS, FACTIONS, PLANES, ARTIFACTS)
+// ============================================================================
+
+export interface PfCompanionDeityDef {
+  name: string;
+  title?: string;
+  alignment: 'Good' | 'Neutral' | 'Evil';
+  concerns: string;
+  domains: string[];
+  favoredWeapon: string;
+}
+
+export const PF_OTHER_DEITIES: PfCompanionDeityDef[] = [
+  { name: 'Achaekek', title: 'He Who Walks in Blood', alignment: 'Evil', concerns: 'Assassination, the Red Mantis', domains: ['Death', 'Evil', 'Trickery', 'War'], favoredWeapon: 'Sawtooth sabre' },
+  { name: 'Apsu', title: 'The Waybringer', alignment: 'Good', concerns: 'Glory, good dragons, leadership, peace', domains: ['Creation', 'Good', 'Scalykind', 'Travel'], favoredWeapon: 'Bite or staff' },
+  { name: 'Besmara', title: 'The Pirate Queen', alignment: 'Neutral', concerns: 'Piracy, sea monsters, strife', domains: ['Trickery', 'War', 'Water', 'Weather'], favoredWeapon: 'Rapier' },
+  { name: 'Dahak', title: 'The Endless Destruction', alignment: 'Evil', concerns: 'Destruction, evil dragons, greed, treachery', domains: ['Destruction', 'Evil', 'Scalykind', 'Trickery'], favoredWeapon: 'Bite or whip' },
+  { name: 'Droskar', title: 'The Dark Smith', alignment: 'Evil', concerns: 'Cheating, slavery, toil', domains: ['Evil', 'Trickery'], favoredWeapon: 'Hammer' },
+  { name: 'Ghlaunder', title: 'The Gossamer King', alignment: 'Evil', concerns: 'Infection, parasites, stagnation', domains: ['Air', 'Animal', 'Destruction', 'Evil'], favoredWeapon: 'Spear' },
+  { name: 'Groetus', title: 'God of the End Times', alignment: 'Neutral', concerns: 'Empty places, oblivion, ruins', domains: ['Destruction', 'Madness', 'Void'], favoredWeapon: 'Heavy flail' },
+  { name: 'Gyronna', title: 'The Angry Hag', alignment: 'Evil', concerns: 'Extortion, hatred, spite', domains: ['Destruction', 'Evil', 'Madness'], favoredWeapon: 'Dagger' },
+  { name: 'Hanspur', title: 'The Water Rat', alignment: 'Neutral', concerns: 'River travel, rivers', domains: ['Death', 'Travel', 'Water'], favoredWeapon: 'Trident' },
+  { name: 'Kurgess', title: 'The Strong Man', alignment: 'Good', concerns: 'Bravery, competition, sports', domains: ['Community', 'Good', 'Strength', 'Travel'], favoredWeapon: 'Javelin' },
+  { name: 'Milani', title: 'The Everbloom', alignment: 'Good', concerns: 'Devotion, hope, uprisings', domains: ['Good', 'Healing', 'Liberation', 'Protection'], favoredWeapon: 'Morningstar' },
+  { name: 'Sivanah', title: 'The Seventh Veil', alignment: 'Neutral', concerns: 'Illusions, mystery, reflections', domains: ['Knowledge', 'Madness', 'Magic', 'Rune', 'Trickery'], favoredWeapon: 'Bladed scarf' },
+  { name: 'Zyphus', title: 'The Grim Harvestman', alignment: 'Evil', concerns: 'Accidental death, graveyards, tragedy', domains: ['Death', 'Destruction', 'Evil', 'Plant', 'War'], favoredWeapon: 'Heavy pick' }
+];
+
+export interface PfOutsiderDemigodDef {
+  group: 'Archdevils' | 'Demon Lords' | 'Eldest' | 'Empyreal Lords' | 'Horsemen';
+  name: string;
+  alignment: 'Good' | 'Neutral' | 'Evil';
+  concerns: string;
+  domains: string[];
+  favoredWeapon: string;
+}
+
+export const PF_OUTSIDER_DEMIGODS: PfOutsiderDemigodDef[] = [
+  // Archdevils
+  { group: 'Archdevils', name: 'Baalzebul', alignment: 'Evil', concerns: 'Arrogance, flies, lies', domains: ['Air', 'Death', 'Evil'], favoredWeapon: 'Spear' },
+  { group: 'Archdevils', name: 'Barbatos', alignment: 'Evil', concerns: 'Animals, corruption, gateways', domains: ['Evil', 'Magic', 'Travel'], favoredWeapon: 'Quarterstaff' },
+  { group: 'Archdevils', name: 'Belial', alignment: 'Evil', concerns: 'Adultery, deception, desire', domains: ['Destruction', 'Evil'], favoredWeapon: 'Ranseur' },
+  { group: 'Archdevils', name: 'Dispater', alignment: 'Evil', concerns: 'Cities, prisons, rulership', domains: ['Evil', 'Nobility', 'Trickery'], favoredWeapon: 'Heavy mace' },
+  { group: 'Archdevils', name: 'Geryon', alignment: 'Evil', concerns: 'Forbidden lore, heresy, snakes', domains: ['Evil', 'Strength', 'Water'], favoredWeapon: 'Heavy flail' },
+  { group: 'Archdevils', name: 'Mammon', alignment: 'Evil', concerns: 'Avarice, watchfulness, wealth', domains: ['Earth', 'Evil'], favoredWeapon: 'Shortspear' },
+  { group: 'Archdevils', name: 'Mephistopheles', alignment: 'Evil', concerns: 'Contracts, devils, secrets', domains: ['Evil', 'Knowledge', 'Rune'], favoredWeapon: 'Trident' },
+  { group: 'Archdevils', name: 'Moloch', alignment: 'Evil', concerns: 'Fire, obedience, war', domains: ['Evil', 'Fire', 'War'], favoredWeapon: 'Whip' },
+  // Demon Lords
+  { group: 'Demon Lords', name: 'Abraxas', alignment: 'Evil', concerns: 'Forbidden lore, magic, snakes', domains: ['Evil', 'Knowledge', 'Magic'], favoredWeapon: 'Whip' },
+  { group: 'Demon Lords', name: 'Angazhan', alignment: 'Evil', concerns: 'Apes, jungles, tyrants', domains: ['Animal', 'Evil', 'Plant'], favoredWeapon: 'Spear' },
+  { group: 'Demon Lords', name: 'Baphomet', alignment: 'Evil', concerns: 'Beasts, labyrinths, minotaurs', domains: ['Animal', 'Evil', 'Strength'], favoredWeapon: 'Glaive' },
+  { group: 'Demon Lords', name: "Cyth-V'sug", alignment: 'Evil', concerns: 'Disease, fungus, parasites', domains: ['Earth', 'Evil', 'Plant'], favoredWeapon: 'Scimitar' },
+  { group: 'Demon Lords', name: 'Dagon', alignment: 'Evil', concerns: 'Deformity, sea monsters, the sea', domains: ['Destruction', 'Evil', 'Water'], favoredWeapon: 'Trident' },
+  { group: 'Demon Lords', name: 'Deskari', alignment: 'Evil', concerns: 'Chasms, infestation, locusts', domains: ['Destruction', 'Evil', 'War'], favoredWeapon: 'Scythe' },
+  { group: 'Demon Lords', name: 'Gogunta', alignment: 'Evil', concerns: 'Amphibians, boggards, swamps', domains: ['Death', 'Evil', 'Water'], favoredWeapon: 'Whip' },
+  { group: 'Demon Lords', name: 'Kostchtchie', alignment: 'Evil', concerns: 'Cold, giants, revenge', domains: ['Chaos', 'Evil', 'Strength', 'War'], favoredWeapon: 'Warhammer' },
+  { group: 'Demon Lords', name: 'Nocticula', alignment: 'Evil', concerns: 'Assassins, darkness, lust', domains: ['Evil'], favoredWeapon: 'Hand crossbow' },
+  { group: 'Demon Lords', name: 'Orcus', alignment: 'Evil', concerns: 'Necromancy, undeath, wrath', domains: ['Death', 'Evil', 'Magic'], favoredWeapon: 'Heavy mace' },
+  { group: 'Demon Lords', name: 'Pazuzu', alignment: 'Evil', concerns: 'Sky, temptation, winged creatures', domains: ['Air', 'Evil', 'Trickery'], favoredWeapon: 'Longsword' },
+  { group: 'Demon Lords', name: 'Shax', alignment: 'Evil', concerns: 'Envy, lies, murder', domains: ['Destruction', 'Evil', 'Nobility'], favoredWeapon: 'Dagger' },
+  { group: 'Demon Lords', name: 'Socothbenoth', alignment: 'Evil', concerns: 'Perversion, pride, taboos', domains: ['Evil', 'Travel'], favoredWeapon: 'Quarterstaff' },
+  { group: 'Demon Lords', name: 'Zura', alignment: 'Evil', concerns: 'Blood, cannibalism, vampires', domains: ['Death', 'Evil', 'Madness'], favoredWeapon: 'Rapier' },
+  // Eldest
+  { group: 'Eldest', name: 'Count Ranalc', alignment: 'Neutral', concerns: 'Betrayal, exiles, shadows', domains: ['Nobility', 'Travel'], favoredWeapon: 'Rapier' },
+  { group: 'Eldest', name: 'Green Mother', alignment: 'Evil', concerns: 'Carnivorous plants, intrigue, seduction', domains: ['Evil', 'Earth', 'Plant'], favoredWeapon: 'Sickle' },
+  { group: 'Eldest', name: 'Imbrex', alignment: 'Neutral', concerns: 'Endings, statues, twins', domains: ['Community', 'Earth', 'Strength'], favoredWeapon: 'Dire flail' },
+  { group: 'Eldest', name: 'Lantern King', alignment: 'Neutral', concerns: 'Laughter, mischief, transformation', domains: ['Madness', 'Trickery'], favoredWeapon: 'Dagger' },
+  { group: 'Eldest', name: 'Lost Prince', alignment: 'Neutral', concerns: 'Forgotten things, sadness, solitude', domains: ['Knowledge', 'Madness', 'Nobility', 'Repose'], favoredWeapon: 'Quarterstaff' },
+  { group: 'Eldest', name: 'Magdh', alignment: 'Neutral', concerns: 'Complexity, fate, triplets', domains: ['Knowledge', 'Rune'], favoredWeapon: 'Scythe' },
+  { group: 'Eldest', name: 'Ng', alignment: 'Neutral', concerns: 'The seasons, secrets, wanderers', domains: ['Knowledge', 'Magic', 'Travel', 'Weather'], favoredWeapon: 'Gauntlet' },
+  { group: 'Eldest', name: 'Ragadahn', alignment: 'Evil', concerns: 'Linnorms, oceans, spirals', domains: ['Evil', 'Scalykind', 'Water'], favoredWeapon: 'Whip' },
+  { group: 'Eldest', name: 'Shyka', alignment: 'Neutral', concerns: 'Entropy, reincarnation, time', domains: ['Death', 'Destruction', 'Madness', 'Magic'], favoredWeapon: 'Light Mace' },
+  // Empyreal Lords
+  { group: 'Empyreal Lords', name: 'Andoletta', alignment: 'Good', concerns: 'Consolation, respect, security', domains: ['Good', 'Knowledge', 'Protection'], favoredWeapon: 'Quarterstaff' },
+  { group: 'Empyreal Lords', name: 'Arshea', alignment: 'Good', concerns: 'Freedom, physical beauty, sexuality', domains: ['Good', 'Liberation', 'Strength'], favoredWeapon: 'Flail' },
+  { group: 'Empyreal Lords', name: 'Korada', alignment: 'Good', concerns: 'Foresight, forgiveness, peace', domains: ['Good', 'Magic', 'Healing', 'Protection'], favoredWeapon: 'Unarmed' },
+  { group: 'Empyreal Lords', name: 'Ragathiel', alignment: 'Good', concerns: 'Chivalry, duty, vengeance', domains: ['Destruction', 'Good', 'Nobility'], favoredWeapon: 'Bastard sword' },
+  { group: 'Empyreal Lords', name: 'Sinashakti', alignment: 'Good', concerns: 'Journeys, joy, messengers', domains: ['Good', 'Travel'], favoredWeapon: 'Shortbow' },
+  { group: 'Empyreal Lords', name: 'Valani', alignment: 'Good', concerns: 'Change, growth, primality', domains: ['Earth', 'Good', 'Weather'], favoredWeapon: 'Club' },
+  // Horsemen
+  { group: 'Horsemen', name: 'Apollyon', alignment: 'Evil', concerns: 'Pestilence', domains: ['Air', 'Darkness', 'Destruction', 'Evil'], favoredWeapon: 'Scythe' },
+  { group: 'Horsemen', name: 'Charon', alignment: 'Evil', concerns: 'Death', domains: ['Death', 'Evil', 'Knowledge', 'Water'], favoredWeapon: 'Quarterstaff' },
+  { group: 'Horsemen', name: 'Szuriel', alignment: 'Evil', concerns: 'War', domains: ['Evil', 'Fire', 'Strength', 'War'], favoredWeapon: 'Greatsword' },
+  { group: 'Horsemen', name: 'Trelmarixian', alignment: 'Evil', concerns: 'Famine', domains: ['Earth', 'Evil', 'Madness', 'Weather'], favoredWeapon: 'Spiked gauntlet' }
+];
+
+export const PF_OTHER_DEMON_LORDS: string[] = [
+  'Aldinach (Lord of Scorpions)',
+  'Andirifkhu (Lord of Traps)',
+  'Areshkagal (Lord of Greed)',
+  'Flauros (Lord of Volcanoes)',
+  'Haagenti (Lord of Transformation)',
+  'Jezelda (Lord of Werewolves)',
+  'Jubilex (Lord of Sloth)',
+  'Kabriri (Lord of Ghouls)',
+  'Mazmezz (Lord of Vermin)',
+  'Mestama (Lord of Deception)',
+  'Nurgal (Lord of Senseless War)',
+  'Shivaska (Lord of Prisons)',
+  'Sifkesh (Lord of Heresy)',
+  'Urxehl (Lord of Storms)',
+  'Xoveron (Lord of Gluttony)',
+  'Yhidothrus (Lord of Time)',
+  'Zevgavizeb (Lord of Reptiles)'
+];
+
+export interface PfFactionDef {
+  name: string;
+  tier: 'Society' | 'Major' | 'Lesser';
+  alignment: string;
+  headquarters: string;
+  leader: string;
+  scope: string;
+  summary: string;
+}
+
+export const PF_FACTIONS: PfFactionDef[] = [
+  { name: 'The Pathfinder Society', tier: 'Society', alignment: 'Neutral (Mixed)', headquarters: 'Grand Lodge, Absalom', leader: 'The Masked Decemvirate (Steward Ambrus Valsin)', scope: 'Global', summary: 'Explorers, archaeologists, and chroniclers organized into Venture-Captains and Field Operatives trained under three branches: Scrolls (lore), Spells (magic), and Swords (combat).' },
+  { name: 'Aspis Consortium', tier: 'Major', alignment: 'Evil', headquarters: 'Ostenso (regional lodges)', leader: 'A. X. Adrius, Jaydis Milon Malddis IV & Patrons', scope: 'Regional', summary: 'Mercenary trade syndicate and rival to the Pathfinder Society using Bronze, Silver, and Gold agents to monopolize ancient relics and commerce.' },
+  { name: 'Eagle Knights', tier: 'Major', alignment: 'Good', headquarters: 'Golden Aerie, Almas (Andoran)', leader: 'General Reginald Cormoth', scope: 'National', summary: "Andoran's elite military order of Golden Legionnaires, Steel Falcons, and Twilight Talons dedicated to liberty and abolishing tyranny and slavery." },
+  { name: 'Fang Monastery', tier: 'Major', alignment: 'Evil', headquarters: 'Hidden mountain monastery', leader: 'The First Fang', scope: 'Unknown', summary: 'Secretive, ruthless martial-arts and assassin order seeking lost serpentfolk relics and teachings to prepare for shadowed conquest.' },
+  { name: 'Hellknights', tier: 'Major', alignment: 'Lawful (Good/Neutral/Evil; mostly Neutral)', headquarters: 'Varies by Order (Citadels across Cheliax)', leader: 'Lictors of each Order', scope: 'National (Cheliax)', summary: 'Pitiless armored enforcers of absolute law and order modeled on the discipline of Hell (e.g., Order of the Chain, Rack, Scourge, Nail, Godclaw).' },
+  { name: 'Red Mantis', tier: 'Major', alignment: 'Evil', headquarters: 'Crimson Citadel, Ilizmagorti (Mediogalti Island)', leader: 'Blood Mistress Jakalyn', scope: 'Regional', summary: 'Fanatical assassins devoted to Achaekek, wielding dual sawtooth sabres and feared even by sovereign monarchs.' },
+  { name: 'Blackfire Adepts', tier: 'Lesser', alignment: 'Evil', headquarters: 'Scattered cabals', leader: 'Decentralized', scope: 'Regional', summary: 'Outcast demonologists and planar mystics who rend planar veils with black flame; sworn foes of the Riftwardens.' },
+  { name: 'Bloatmages', tier: 'Lesser', alignment: 'Neutral / Evil', headquarters: 'Kaer Maga & scattered conclaves', leader: 'Independent masters', scope: 'Local / Regional', summary: 'Arcanists who swell their own blood supply to heighten spellcasting potency.' },
+  { name: 'The Coils of Ydersius', tier: 'Lesser', alignment: 'Evil', headquarters: 'Subterranean ruins & Darklands', leader: 'Serpentfolk priesthood', scope: 'Regional', summary: 'Cultists and degenerate serpentfolk seeking to restore the headless serpent god Ydersius.' },
+  { name: 'Eldritch Order of the Palatine Eye', tier: 'Lesser', alignment: 'Good / Neutral', headquarters: 'Ustalav', leader: 'Secretive council', scope: 'Regional', summary: 'Esoteric lodge of scholars and nobles opposing the Whispering Way while pursuing occult enlightenment.' },
+  { name: 'Free Captains', tier: 'Lesser', alignment: 'Neutral / Evil', headquarters: 'Port Peril (The Shackles)', leader: 'Hurricane King & Pirate Council', scope: 'Regional', summary: 'Shackles pirate captains bound by a strict maritime code of plunder and mutual defense.' },
+  { name: 'The Harbingers', tier: 'Lesser', alignment: 'Neutral / Chaotic', headquarters: 'Absalom', leader: 'Lady Arodeth', scope: 'Local', summary: 'Obsessed seekers trying to force failed prophecies from the Book of One Thousand Whispers to restore Aroden’s Age of Glory.' },
+  { name: 'Lion Blades', tier: 'Lesser', alignment: 'Neutral', headquarters: 'Oppara (Taldor)', leader: 'Imperial shadow masters', scope: 'National (Taldor)', summary: 'Secretive Taldan espionage, infiltration, and assassination agents trained in shadow schools.' },
+  { name: 'Norns', tier: 'Lesser', alignment: 'Neutral', headquarters: 'Lands of the Linnorm Kings', leader: 'Triumvirates', scope: 'Regional', summary: 'Hooded fey trios tied to the Eldest who test travelers and deliver cryptic, uncanny prophecies.' },
+  { name: 'Riftwardens', tier: 'Lesser', alignment: 'Neutral', headquarters: 'Quantium, Egorian, Absalom', leader: 'Obscure otherworldly masters', scope: 'Planar / Regional', summary: 'Bearers of the Sign of the Seeker’s Spiral who seal planar rifts and hunt Blackfire Adepts.' },
+  { name: 'Sczarni', tier: 'Lesser', alignment: 'Neutral / Evil', headquarters: 'Varisia (family bands)', leader: 'Family crime bosses', scope: 'Regional', summary: 'Tight-knit Varisian crime families specializing in smuggling, scams, pickpocketing, and extortion.' }
+];
+
+export interface PfPlaneDef {
+  sphere: 'Inner Sphere' | 'Outer Sphere' | 'Other Planes';
+  name: string;
+  alignmentOrTrait: string;
+  summary: string;
+}
+
+export const PF_PLANES: PfPlaneDef[] = [
+  { sphere: 'Inner Sphere', name: 'Material Plane & Dark Tapestry', alignmentOrTrait: 'Prime Reality', summary: 'Home to Golarion and countless distant worlds; between the stars lies the cold, alien void of the Dark Tapestry.' },
+  { sphere: 'Inner Sphere', name: 'Ethereal Plane', alignmentOrTrait: 'Transitive Mist', summary: 'Shifting misty border connecting Material, Shadow, First World, and Inner Sphere planes.' },
+  { sphere: 'Inner Sphere', name: 'The First World', alignmentOrTrait: 'Primal Fey Realm', summary: "Vibrant, chaotic 'rough draft' of creation ruled by the Eldest; origin of fey, linnorms, and gnomes." },
+  { sphere: 'Inner Sphere', name: 'Shadow Plane', alignmentOrTrait: 'Dark Reflection', summary: 'Twisted, gloomy reflection of the Material Plane with skewed distances useful for treacherous travel.' },
+  { sphere: 'Inner Sphere', name: 'Positive Energy Plane', alignmentOrTrait: 'Vitality & Souls', summary: 'Blinding furnace of creation and life energy; fatal to unprotected mortals within seconds.' },
+  { sphere: 'Inner Sphere', name: 'Negative Energy Plane', alignmentOrTrait: 'Entropy & Undeath', summary: 'Hollow void of destruction populated by intelligent undead and eerie insectoid horrors.' },
+  { sphere: 'Inner Sphere', name: 'Plane of Air', alignmentOrTrait: 'Elemental Air', summary: 'Boundless skies, drifting icebergs, storm borders, djinn floating cities, and warring dragons.' },
+  { sphere: 'Inner Sphere', name: 'Plane of Earth', alignmentOrTrait: 'Elemental Earth', summary: 'Eternal stone, planet-sized caverns, precious mineral veins, and crystal-lit shaitan realms.' },
+  { sphere: 'Inner Sphere', name: 'Plane of Fire', alignmentOrTrait: 'Elemental Fire', summary: 'Seas of flame and molten iron ruled by tyrannical efreet from the gleaming City of Brass.' },
+  { sphere: 'Inner Sphere', name: 'Plane of Water', alignmentOrTrait: 'Elemental Water', summary: 'Infinite oceans lit from above, ruled by marid genies alongside triton, merfolk, and sahuagin realms.' },
+  { sphere: 'Outer Sphere', name: 'Astral Plane', alignmentOrTrait: 'Silver Void / River of Souls', summary: 'Infinite silvery gulf linking the Inner and Outer Spheres along which dead mortal souls flow.' },
+  { sphere: 'Outer Sphere', name: 'Abaddon', alignmentOrTrait: 'Neutral Evil (Daemons)', summary: 'Eclipsed wasteland, source of the River Styx, ruled by the Four Horsemen of the Apocalypse.' },
+  { sphere: 'Outer Sphere', name: 'The Abyss', alignmentOrTrait: 'Chaotic Evil (Demons & Qlippoth)', summary: 'Infinite bottomless Outer Rifts spawning qlippoth and countless demon legions under the Demon Lords.' },
+  { sphere: 'Outer Sphere', name: 'Axis', alignmentOrTrait: 'Lawful Neutral (Axiomites & Inevitables)', summary: 'Endless city of mathematical perfection at the base of Pharasma’s Spire.' },
+  { sphere: 'Outer Sphere', name: 'The Boneyard', alignmentOrTrait: 'True Neutral (Pharasma & Aeons)', summary: 'Vast necropolis atop the Great Spire where Pharasma judges mortal souls beneath Groetus’s moon.' },
+  { sphere: 'Outer Sphere', name: 'Elysium', alignmentOrTrait: 'Chaotic Good (Azatas & Titans)', summary: 'Untamed paradise of wild beauty, cooperation, and wandering azatas.' },
+  { sphere: 'Outer Sphere', name: 'Heaven', alignmentOrTrait: 'Lawful Good (Archons)', summary: 'Seven-tiered celestial mountain of tempered glass and gold guarded by archons.' },
+  { sphere: 'Outer Sphere', name: 'Hell', alignmentOrTrait: 'Lawful Evil (Devils & Archdevils)', summary: 'Nine stacked iron-and-fire circles (Avernus to Nessus) ruled by Asmodeus and eight Archdevils.' },
+  { sphere: 'Outer Sphere', name: 'The Maelstrom', alignmentOrTrait: 'Chaotic Neutral (Proteans)', summary: 'Shifting sea of pure possibility surrounding the Outer Planes, home to serpentine proteans.' },
+  { sphere: 'Outer Sphere', name: 'Nirvana', alignmentOrTrait: 'Neutral Good (Agathions & Angels)', summary: 'Pastoral paradise of enlightenment tended by agathions and selfless angels.' },
+  { sphere: 'Other Planes', name: 'The Dead Vault', alignmentOrTrait: 'Divine Prison', summary: "Hidden prison within Golarion's core binding the Rough Beast Rovagug." },
+  { sphere: 'Other Planes', name: 'Dimension of Dream', alignmentOrTrait: 'Ethereal Dreamscape', summary: 'Shifting realm forged by the slumbering minds of mortal life.' },
+  { sphere: 'Other Planes', name: 'Dimension of Time', alignmentOrTrait: 'Hypothetical Realm', summary: 'Theoretical plane of temporal mastery and untold danger.' },
+  { sphere: 'Other Planes', name: 'The Immortal Ambulatory', alignmentOrTrait: "Apsu's Demiplane", summary: 'Mobile starry globe of floating islands serving as Apsu’s home.' },
+  { sphere: 'Other Planes', name: 'Leng', alignmentOrTrait: 'Nightmare Realm', summary: 'Malevolent realm between dream and reality whose slavers sail strange ships to the Material Plane.' }
+];
+
+export interface PfCompanionMagicItemDef {
+  name: string;
+  cost: string;
+  craft: string;
+  weight: string;
+  summary: string;
+  details?: string[];
+}
+
+export const PF_COMPANION_MAGIC_ITEMS: PfCompanionMagicItemDef[] = [
+  {
+    name: 'Mask of the Mantis',
+    cost: '6,000 gp',
+    craft: 'Darksight, invisibility; 3,000 gp',
+    weight: '1 lb',
+    summary: 'Traditional Red Mantis headgear with 3 daily charges (recharged every 24 hours). Spend 1 charge as a free action (5 rds) for Darkvision 10", Detect Arcana, or a free reroll on failed Notice rolls.'
+  },
+  {
+    name: 'Unguent of Revivification',
+    cost: '300 gp',
+    craft: '150 gp',
+    weight: '1 lb',
+    summary: 'Preserves a corpse for 5 days, or restores a living appearance to a corporeal undead for 5 days (-2 penalty on Occult rolls to identify the undead).'
+  },
+  {
+    name: 'Wayfinder',
+    cost: '500 gp',
+    craft: '250 gp',
+    weight: '1 lb',
+    summary: 'Silver Pathfinder Society compass: shines as light on command word, grants a free reroll on Survival (navigation), and holds 1 Ioun Stone for extra powers:',
+    details: [
+      'Clear Spindle: 1/day cast minor deflection on self (limited action).',
+      'Deep Red Sphere: Grants the Brawler Edge while slotted.',
+      'Incandescent Blue Sphere: 1/day cast minor darksight on self (limited action).',
+      'Dark Blue Rhomboid: No penalties to Notice rolls while asleep.',
+      'Iridescent Spindle: Continuous environmental protection while slotted.',
+      'Pale Green Prism: 1/day remove 1 Fatigue level (limited action).',
+      'Vibrant Purple Prism: 1/day gain 2 Power Points (limited action).'
+    ]
+  }
+];
+
+export interface PfArtifactDef {
+  tier: 'Minor' | 'Major';
+  name: string;
+  weight: string;
+  summary: string;
+  destruction: string;
+}
+
+export const PF_ARTIFACTS: PfArtifactDef[] = [
+  { tier: 'Minor', name: 'Book of Infinite Spells', weight: '3 lbs', summary: '10 one-way pages (1–3 arcane, 4–6 divine); cast current page spell 1/day for 0 PP (4/day if in your AB). Non-casters lose 1 Vigor die step on first attempt.', destruction: 'Cast dispel on the book while the current page holds the dispel power.' },
+  { tier: 'Minor', name: 'Deck of Many Things', weight: '—', summary: '22-card tarot/playing-card deck of sweeping cosmic fortune and doom (Balance, Comet, Donjon, Euryale, The Fates, Flames, Fool, Gem, Idiot, Jester, Key, Knight, Moon, Rogue, Ruin, Skull, Star, Sun, Talons, Throne, Vizier, The Void).', destruction: 'Lose the deck in a wager with a deity of law unaware of its nature.' },
+  { tier: 'Minor', name: 'Final Blades', weight: '1,000 lbs', summary: 'Galtan guillotines (Hardness 20) that decapitate Large or smaller helpless targets and trap their souls inside, preventing resurrection until released.', destruction: 'Shatter via Hardness 20 damage (releasing trapped souls as hostile incorporeal undead).' },
+  { tier: 'Minor', name: "Philosopher's Stone", weight: '3 lbs', summary: 'Break open (Hardness 14) for quicksilver good for 24 hrs: transmute 5,000 lbs iron to silver (25,000 gp) or 1,000 lbs lead to gold (50,000 gp), or mix with a healing potion for resurrection oil.', destruction: "Place in the heel of a titan's boot for one entire week." },
+  { tier: 'Minor', name: 'Sphere of Annihilation', weight: '—', summary: '2-ft void globe destroying all matter it touches. Spirit -4 (action) to move Pace 3 within 6" (10" once controlled). Negated by Rod of Cancellation in a 2d6x10 dmg blast.', destruction: '50% chance on gate spell (35% nothing, 15% 180-ft planar rift), or touch with a Rod of Cancellation.' },
+  { tier: 'Minor', name: 'Staff of the Magi', weight: '5 lbs', summary: '50-charge artifact: at-will detect arcana/light; 1–2 charge spells (dispel, fireball, lightning, invisibility, wall of fire, protection, growth, planar travel, summon sentinel, telekinesis); grants Arcane Resistance & absorbs spells as charges (explodes if >50).', destruction: 'Intentionally break for a Retributive Strike (6" LBT for Xd6 dmg; 4+ on d6 shunts wielder to another plane).' },
+  { tier: 'Minor', name: 'Talisman of Pure Good', weight: '—', summary: '6 charges; good Faith caster opens a flaming crack under an evil Faith caster within 100 ft (swallowed into the earth; Evasion if not pure).', destruction: 'Place in the mouth of a holy man who died committing a heinous act of his own free will.' },
+  { tier: 'Minor', name: 'Talisman of the Sphere', weight: '1 lb', summary: 'Adamantine loop granting +4 Spirit to control a Sphere of Annihilation (check every other round). Deals 3d6 dmg to non-casters who hold it.', destruction: 'Throw into a Sphere of Annihilation.' },
+  { tier: 'Minor', name: 'Talisman of Ultimate Evil', weight: '—', summary: '6 charges; evil Faith caster opens a flaming crack under a good Faith caster within 100 ft (swallowed into the earth).', destruction: 'Give to the newborn child of a redeemed villain.' },
+  { tier: 'Major', name: 'Axe of the Dwarvish Lords', weight: '12 lbs', summary: 'Dwarven waraxe (Str+d6+1, AP 3, Accurate, Damaging, Throwing, Bane [goblin], Keen). Doubles dwarf darkvision; -2 Persuasion for non-dwarves; 1/week summon elder earth elemental for 20 rds.', destruction: 'Rusts away if used by a goblin to behead a dwarven king.' },
+  { tier: 'Major', name: 'Codex of the Infinite Planes', weight: '300 lbs', summary: 'Opening deals 10d6 dmg (Evade half; annihilation if Incap). Study daily (Occult -4) to learn banish, blast, intangibility, mind wipe, teleport (Gate), summon planar ally, planar binding, planar travel; failure triggers Catastrophe.', destruction: 'Tear out one page and leave it on every plane in existence (triggers a Catastrophe).' },
+  { tier: 'Major', name: 'Orb of Dragonkind', weight: '5 lbs', summary: '10 orbs keyed to chromatic/metallic dragons: dominate matching dragons within 600 ft (Spirit -4), inherit dragon Armor & breath immunity, 3/day breath weapon, sense dragons within 10/100 mi, plus unique power per color (Black: Major fly; Blue: Major speed/Quickness; Brass: Major Greater Teleport; Bronze: Minor scrying; Copper: Major puppet; Gold: any orb power 1/day + puppet orb-holders; Green: spectral touch-hand; Red: Minor wall of fire; Silver: Major healing; White: Major cold env. protection).', destruction: 'Caught in the breath weapon of a dragon blood-relative to the dragon trapped within (releases breath in 15" radius).' },
+  { tier: 'Major', name: 'The Shadowstaff', weight: '1 lb', summary: '+2 Toughness and Evasion (-2 all Traits in bright sunlight or pitch dark); 3/day summon 3 shadows, Shadow Form (major intangibility), Shadow Bolt (cold dmg); 1/month summon a greater nightshade shadow.', destruction: 'Exposed to true sunlight continuously for 24 hours.' }
+];
 
 // ============================================================================
 // ICONIC PATH SAMPLE CHARACTERS (Novice Starting Profiles from Core Rules)
